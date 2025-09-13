@@ -17,7 +17,7 @@ def list(table):
     selector = Select()   
     contents = selector.table(table)\
                         .execute()\
-                        .retData()
+                        .retDict()
     return jsonify(contents)
 
 # ========================== 
@@ -46,7 +46,7 @@ def studentsSearch(table):
                         .sort(sort, order)\
                         .limit(limit)\
                         .execute()\
-                        .retData()
+                        .retDict()
     return jsonify(students)
 
 # ========================== 
