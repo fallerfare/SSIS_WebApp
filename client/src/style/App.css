@@ -7,6 +7,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'NavFont';
+    src: url('../assets/fonts/SpaceMono-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     font-family:'Courier New', Courier, monospace;
 }
@@ -32,8 +39,14 @@ body {
     color: #f7fa6b;
 }
 
+#navbar-links {
+  font-family: 'NavFont';
+}
+
 .navbar-container {
-    margin-top: 10px !important;
+    margin-top: 5px !important;
+    margin-top: 5px !important;
+    margin-left: 10px !important;
     
 }
 
@@ -41,6 +54,19 @@ body {
   border-left: 1px solid #f7fa6b !important;
   padding-left: 17px !important;
   margin-left: 17px !important;
+}
+
+/* for compressed, no line */
+@media (max-width: 767.98px) {
+  .navbar-nav .nav-item + .nav-item {
+    border-left: none !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+} 
+
+.nav-dropdown {
+    background-color: #f1ba4a !important; 
 }
 
 /* ===== */
