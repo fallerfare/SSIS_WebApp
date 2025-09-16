@@ -8,7 +8,7 @@ function NavBar() {
   return (
     <Navbar expand='lg' className='navbar-custom'>
       <Container className='navbar-container'>
-        <Navbar.Brand href='#home' id='navbar-brand'>mySSIS</Navbar.Brand>
+        <Navbar.Brand href='#home' id='navbar-brand'/>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='mx-auto' id='navbar-links'>

@@ -16,6 +16,7 @@
 
 body {
     font-family:'Courier New', Courier, monospace;
+    background-color: #fff2d0 !important;
 }
 
 /* ================ */
@@ -23,10 +24,10 @@ body {
 /* ===== */
 
 .navbar-custom {
-  background-color: #d65454 !important; 
+  background-color: #b32d2d !important; 
 }
 .navbar-custom .nav-link {
-  color: #000000 !important; 
+  color: #ffffff !important; 
   font-size: 17px;
 }
 .navbar-custom .nav-link:hover {
@@ -34,9 +35,18 @@ body {
 }
 
 #navbar-brand {
-    font-family: 'HeadFont';
-    font-size: 30px;
-    color: #f7fa6b;
+    background-image: url("../assets/images/logo.svg");
+    background-repeat: no-repeat;
+    background-size: contain;  
+    background-position: center;
+    display: block;   
+    height: 80px;
+    width: 200px;
+}
+
+.navbar-logo {
+  background-size: 40px;
+  display: block;
 }
 
 #navbar-links {
@@ -71,4 +81,78 @@ body {
 
 /* ===== */
 /* NAVBAR */
+/* ================ */
+
+/* ================ */
+/* TABLE */
+/* ===== */
+.table-card {
+  background: #ffffff;
+  border: 5px solid #000000; 
+  border-radius: 0.5rem;     
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  overflow: hidden;
+  width: 80%;
+  margin: 3rem auto;
+}
+
+.table {
+  width: 100%;
+}
+
+/* .tr, .th {
+  display: flex;
+  flex-shrink: 0; 
+  padding: 1 rem;
+  position: relative;
+} */
+
+.tr {
+  display: flex;
+}
+
+.th,
+.td {       
+  min-width: 0;        
+  padding: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+#header {
+  font-weight: bold;
+  padding: 7px;
+  font-family: 'NavFont';
+  background-color: #ffd905;
+}
+
+.resizer {
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 4px;
+  background: transparent;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+  border-radius: 6px; 
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.resizer.isResizing {
+  background: #ffbc06;
+  opacity: 1;
+}
+
+*:hover > .resizer {
+  background: #ffbc06;
+  opacity: 1;
+}
+
+/* ===== */
+/* TABLE */
 /* ================ */
