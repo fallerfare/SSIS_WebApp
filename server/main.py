@@ -2,8 +2,10 @@ from flask import Flask, jsonify, request
 import atexit
 from Functions.connection import connection_pool
 from Functions.Select import Select
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 @app.route("/")
 def home():
