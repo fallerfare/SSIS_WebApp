@@ -3,6 +3,7 @@ import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import '../style/App.css'
+import { Link } from "react-router-dom"
 
 function NavBar() {
   return (
@@ -18,9 +19,21 @@ function NavBar() {
             <Nav.Item>
               <NavDropdown title='tables' id='basic-nav-dropdown'>
                 <div className='nav-dropdown'>
-                <NavDropdown.Item href='#students'>students</NavDropdown.Item>
-                <NavDropdown.Item href='#programs'>programs</NavDropdown.Item>
-                <NavDropdown.Item href='#colleges'>colleges</NavDropdown.Item>
+                <NavDropdown.Item>
+                  <Nav.Link as={Link} to="/students/list">
+                    students
+                  </Nav.Link>
+                </NavDropdown.Item>
+                <NavDropdown.Item>
+                  <Nav.Link as={Link} to="/programs/list">
+                    programs
+                  </Nav.Link>
+                </NavDropdown.Item>
+                <NavDropdown.Item>
+                  <Nav.Link as={Link} to="/colleges/list">
+                    colleges
+                  </Nav.Link>
+                </NavDropdown.Item>
                 </div>
               </NavDropdown>
             </Nav.Item>
