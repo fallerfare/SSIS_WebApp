@@ -16,7 +16,7 @@
 
 body {
     font-family:'Courier New', Courier, monospace;
-    background-color: #fff2d0 !important;
+    background-color: #f5dfa8 !important;
 }
 
 /* ================ */
@@ -25,6 +25,9 @@ body {
 
 .navbar-custom {
   background-color: #b32d2d !important; 
+  top: 0 !important;
+  z-index: 3 !important;
+  position: sticky !important;
 }
 .navbar-custom .nav-link {
   color: #ffffff !important; 
@@ -76,7 +79,12 @@ body {
 } 
 
 .nav-dropdown {
-    background-color: #f1ba4a !important; 
+  background-color: #f1ba4a !important; 
+}
+
+.dropdown-item:hover{
+  background-color: #b32d2d !important; 
+  color: #f1ba4a !important;
 }
 
 /* ===== */
@@ -86,48 +94,61 @@ body {
 /* ================ */
 /* TABLE */
 /* ===== */
+/* Base Table Properties */
 .table-card {
   background: #ffffff;
   border: 5px solid #000000; 
   border-radius: 0.5rem;     
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 2px 3px 5px #490000;
   overflow: hidden;
   width: 80%;
   margin: 3rem auto;
 }
 
-.table {
+.table-scroll {
+  max-height: 500px;
   width: 100%;
 }
 
-/* .tr, .th {
-  display: flex;
-  flex-shrink: 0; 
-  padding: 1 rem;
-  position: relative;
-} */
+.table {
+  width: 100%;
+  /* border-collapse: collapse !important; */
+}
+/* Base Table Properties */
 
-.tr {
+/* tbody */
+.tr, .tr-rows {
   display: flex;
 }
 
-.th,
-.td {       
-  min-width: 0;        
-  padding: 0.75rem;
+.th, .td {       
+  min-width: 10;        
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  position: inherit;
+  text-align: center;
+  border: none;
+}
+/* tbody */
+
+/* thead */
+thead {
+  display: table-header-group !important;
 }
 
-
-#header {
-  font-weight: bold;
+thead .tr, .th{
   padding: 7px;
+  position: sticky !important;
+  top: 0;
+  z-index: 2;
+  font-weight: bold;
   font-family: 'NavFont';
-  background-color: #ffd905;
+  background-color: #ffd905 !important;
 }
+/* thead */
 
+/* resizer */
 .resizer {
   position: absolute;
   opacity: 0;
@@ -152,6 +173,7 @@ body {
   background: #ffbc06;
   opacity: 1;
 }
+/* resizer */
 
 /* ===== */
 /* TABLE */
