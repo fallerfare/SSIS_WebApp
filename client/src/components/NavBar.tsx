@@ -17,6 +17,9 @@ function NavBar() {
               <Nav.Link href='#home'>home</Nav.Link>
             </Nav.Item>
             <Nav.Item>
+              <Nav.Link href='#profile'>profile</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
               <NavDropdown title='tables' id='basic-nav-dropdown'>
                 <div className='nav-dropdown'>
                 <NavDropdown.Item>
@@ -38,7 +41,10 @@ function NavBar() {
               </NavDropdown>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href='#profile'>profile</Nav.Link>
+              <Nav.Link href='#enrollment'>enrollment</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href='#establish'>establish</Nav.Link>
             </Nav.Item>
           </Nav>
         </Navbar.Collapse>

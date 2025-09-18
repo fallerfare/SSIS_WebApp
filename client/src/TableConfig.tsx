@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import { useReactTable, getCoreRowModel } from "@tanstack/react-table"
-import type { ColumnDef } from "@tanstack/react-table"
+import { useReactTable, getCoreRowModel, getPaginationRowModel, getFilteredRowModel } from "@tanstack/react-table"
+import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table"
 
 type TableName = "students" | "programs" | "colleges"
 
@@ -103,6 +103,12 @@ export const CollegeColumns: ColumnDef<College>[] = [
 
 export function getTable(tableName: TableName) {
     const [data, setData] = useState<any[]>([])
+    const [pagination, setPagination] = useState({
+        pageIndex: 0,
+        pageSize: 10, // number of rows per page
+    })
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
   
     let columns: ColumnDef<any>[] = [];
         switch (tableName) {
@@ -130,7 +136,16 @@ export function getTable(tableName: TableName) {
     const table = useReactTable({
         data, 
         columns,
+
+        state: { 
+            columnFilters, 
+            pagination 
+        },
+        onColumnFiltersChange: setColumnFilters,
+        onPaginationChange: setPagination,
         getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
         columnResizeMode: "onChange",
     })
 
