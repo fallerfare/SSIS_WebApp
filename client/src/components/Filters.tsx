@@ -32,7 +32,6 @@ const Filters = ({columnFilters, setColumnFilters}: FiltersProps) => {
                         variant="filled"
                         placeholder = "Search..."
                         borderRadius={5}
-                        
                         value={filterName as string}
                         onChange={
                             (e) => onFilterChange('id_number', e.target.value)
