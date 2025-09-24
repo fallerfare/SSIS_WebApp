@@ -16,11 +16,32 @@ def home():
 # ==========
 @app.route("/<string:table>/list")
 def list(table): 
+    # tag = request.args.get('tag', '')
+    # key = request.args.get('key', '')
+    # sort = request.args.get('sort', '')
+    # order = request.args.get('order', 'asc')
+    limit = int(request.args.get('size', 10)) 
+    page = int(request.args.get('page', 0))
+
     selector = Select()   
-    contents = selector.table(table)\
+    total       = selector\
+                        .table(table)\
                         .execute()\
                         .retDict()
-    return jsonify(contents)
+    contents = selector\
+                        .table(table)\
+                        .limit(limit)\
+                        .offset(page)\
+                        .execute()\
+                        .retDict()
+
+    return jsonify({
+         "data": contents,
+        "total": len(total),
+        "page": page,
+        "limit": limit,
+        "totalPages": (len(total) + limit - 1)
+    })
 
 # ========================== 
 # COLUMN
@@ -31,25 +52,6 @@ def columns(table):
     contents = selector.table(table)\
                         .tableCols()
     return jsonify(contents)
-
-# ========================== 
-# FILTER
-# ==========
-@app.route("/<string:table>/filter")
-def studentsSearch(table):    
-    tag = request.args['tag']
-    key = request.args['key']
-    sort = request.args['sort']
-    order = request.args['order']
-    limit = request.args['limit']
-    selector = Select()
-    students = selector.table(table)\
-                        .search(tag, key)\
-                        .sort(sort, order)\
-                        .limit(limit)\
-                        .execute()\
-                        .retDict()
-    return jsonify(students)
 
 # ========================== 
 # CLOSE
