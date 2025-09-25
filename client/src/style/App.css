@@ -218,10 +218,19 @@ thead .tr, .th{
   position: relative;
 }
 
-.search .search-icon {
+.search-icon {
   width: 30px;
   height: 30px;
   margin-right: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.search-icon:hover{
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+  transform: scale(1.2); 
 }
 
 .search input {
@@ -230,14 +239,23 @@ thead .tr, .th{
   border-radius: 5px;
 }
 
-.edit-button {
+
+.delete-button, 
+.edit-button,
+.view-button {
   margin: 5px;
-  size: 30px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  display: inline-block;
 }
 
-.delete-button {
-  margin: 5px;
-  size: 30px;
+/* TO DO: Hover animation using hover versions of icons.. found in same folder */
+.edit-button:hover,
+.delete-button:hover,
+.view-button:hover {
+  transform: scale(1.2); 
 }
 
 
