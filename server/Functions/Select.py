@@ -10,6 +10,8 @@ class Select():
         self.groupquery     = f""
         self.sortquery      = f""
         self.limitquery     = f""
+        self.offsetquery = f""
+        self.countquery = f""
         self.table_name = None
         self.columns = []
         self.rows = []
@@ -26,8 +28,16 @@ class Select():
         self.limitquery = f"LIMIT {limit}"
         return self
     
+    def offset(self, offset):
+        self.offsetquery = f"OFFSET {offset}"
+        return self
+
     def group(self, group):
         self.groupquery = f"GROUP BY {group}"
+        return self
+    
+    def count(self, count):
+        self.countquery = (f"COUNT {count}", "COUNT (*)")
         return self
     
     def sort(self, sort_column, sort_order):
@@ -54,7 +64,7 @@ class Select():
                 self.params.append(f"%{key}%")
 
         elif key:            
-            searchAll = [f"{col} ILIKE %s" for col in self.columns]
+            searchAll = [f"{col} LIKE %s" for col in self.columns]
             self.params.extend([f"%{key}%"] * len(self.columns))
             self.searchquery = "WHERE " + " OR ".join(searchAll)
         
@@ -66,14 +76,17 @@ class Select():
             
         self.query = " ".join([
                     self.basequery,
+                    self.countquery,
                     self.columnquery,
                     self.tablequery,
                     self.searchquery,
                     self.groupquery,
                     self.sortquery,
-                    self.limitquery
+                    self.limitquery,
+                    self.offsetquery
                     ]).strip()
-        
+        print(self.query)
+
         conn = None
         try:
             conn = connection.get_conn()
