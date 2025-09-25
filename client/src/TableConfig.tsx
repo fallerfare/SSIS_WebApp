@@ -2,10 +2,9 @@ import { useState, useEffect } from "react"
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table"
 import type { ColumnDef, PaginationState } from "@tanstack/react-table"
 import EditIcon from "./assets/icons/edit-idle.png"
-// import EditIconHover from "./assets/icons/edit-hover.png"
 import DeleteIcon from "./assets/icons/trash-bin_close.png"
-// import DeleteIconHover from "./assets/icons/trash-bin_open.png"
-
+import ViewIcon from "./assets/icons/view-idle.png"
+import './style/App.css'
 
 type TableName = "students" | "programs" | "colleges"
 
@@ -116,6 +115,12 @@ export const ActionsColumns: ColumnDef<any>[] = [
             return (
               <div>
                 <img
+                  src={ViewIcon}
+                  alt="View"
+                  className="view-button"
+                  onClick={() => console.log("View clicked!", original)}
+                />
+                <img
                   src={EditIcon}
                   alt="Edit"
                   className="edit-button"
@@ -130,87 +135,9 @@ export const ActionsColumns: ColumnDef<any>[] = [
               </div>
             )
         },
-        meta: { flex: 2 }
+        meta: { flex: 1 }
     },
 ]
-
-// export function getTable(tableName: TableName) {
-//   const [data, setData] = useState<any[]>([])
-
-//   const [pageCount, setPageCount] = useState(0)
-  
-//   const [pagination, setPagination] = useState({
-//     pageIndex: 0,
-//     pageSize: 10,
-//   })
-
-//   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-//   const [sorting, setSorting] = useState<SortingState>([])
-
-//   let columns: ColumnDef<any>[] = []
-//   switch (tableName) {
-//     case "students":
-//       columns = StudentColumns
-//       break
-//     case "programs":
-//       columns = ProgramColumns
-//       break
-//     case "colleges":
-//       columns = CollegeColumns
-//       break
-//   }
-
-//   useEffect(() => {
-//     const { pageIndex, pageSize } = pagination
-
-//     const query = new URLSearchParams({
-//       page: pageIndex.toString(),
-//       size: pageSize.toString(),
-//       sort: sorting[0]?.id ?? "",
-//       order: sorting[0]?.desc ? "desc" : "asc",
-//       filters: JSON.stringify(columnFilters),
-//     })
-
-
-
-//     fetch(`http://localhost:8080/${tableName}/list?${query}`, {
-//       method: "GET",
-//       credentials: "include",
-//     })
-//       .then((res) => res.json())
-//       .then((json) => {
-//         setData(json.rows ?? json)
-//         setPageCount(json.pageCount ?? 0)
-//       })
-//       .catch((err) => console.error("Error fetching data:", err))
-//   }, [tableName, pagination, sorting, columnFilters])
-
-//   const table = useReactTable({
-//     data,
-//     columns,
-//     pageCount,
-//     state: {
-//       columnFilters,
-//       pagination,
-//       sorting,
-//     },
-    
-//     columnResizeMode: "onChange",
-//     getCoreRowModel: getCoreRowModel(),
-//     getFilteredRowModel: getFilteredRowModel(),
-
-//     onPaginationChange: setPagination,
-//     manualPagination: true, 
-
-//     onSortingChange: setSorting,
-//     onColumnFiltersChange: setColumnFilters,
-    
-//     manualSorting: false,
-//     manualFiltering: false,
-//   })
-
-//   return table
-// }
 
 export function getTable(tableName: TableName) {
   const [data, setData] = useState<any[]>([])
@@ -224,13 +151,13 @@ export function getTable(tableName: TableName) {
   let columns: ColumnDef<any>[] = []
   switch (tableName) {
     case "students":
-      columns = StudentColumns
+      columns = [...StudentColumns, ...ActionsColumns]
       break
     case "programs":
-      columns = ProgramColumns
+      columns = [...ProgramColumns, ...ActionsColumns]
       break
     case "colleges":
-      columns = CollegeColumns
+      columns = [...CollegeColumns, ...ActionsColumns]
       break
   }
 
