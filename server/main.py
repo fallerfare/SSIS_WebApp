@@ -1,57 +1,26 @@
-from flask import Flask, jsonify, request
+from flask import Flask
 import atexit
-from Functions.connection import connection_pool
-from Functions.Select import Select
+from flask_wtf import CSRFProtect
+from controllers.dbconnection.connection import connection_pool
 from flask_cors import CORS
+import os
+from dotenv import load_dotenv
+from controllers.authentication import auth
+from controllers.tableList import tableList
+
+load_dotenv()
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
-@app.route("/")
-def home():
-    return "Hello Skibidi"
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('WTF_CSRF_SECRET_KEY')
 
-# ========================== 
-# LIST
-# ==========
-@app.route("/<string:table>/list")
-def list(table): 
-    # tag = request.args.get('tag', '')
-    # key = request.args.get('key', '')
-    # sort = request.args.get('sort', '')
-    # order = request.args.get('order', 'asc')
-    limit = int(request.args.get('size', 10)) 
-    page = int(request.args.get('page', 0))
+csrf = CSRFProtect(app)
 
-    selector = Select()   
-    total       = selector\
-                        .table(table)\
-                        .execute()\
-                        .retDict()
-    contents = selector\
-                        .table(table)\
-                        .limit(limit)\
-                        .offset(page)\
-                        .execute()\
-                        .retDict()
-
-    return jsonify({
-         "data": contents,
-        "total": len(total),
-        "page": page,
-        "limit": limit,
-        "totalPages": (len(total) + limit - 1)
-    })
-
-# ========================== 
-# COLUMN
-# ==========
-@app.route("/<string:table>/columns")
-def columns(table): 
-    selector = Select()   
-    contents = selector.table(table)\
-                        .tableCols()
-    return jsonify(contents)
+app.register_blueprint(tableList)
+app.register_blueprint(auth)
 
 # ========================== 
 # CLOSE
@@ -62,4 +31,5 @@ def shutdown_pool():
         connection_pool.closeall()
 
 if __name__ == "__main__":
-    app.run(debug = True, port = 8080)
+    app.run()
+
