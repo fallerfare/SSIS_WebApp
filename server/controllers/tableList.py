@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models.Functions.Select import Select
+from services.Functions.Select import Select
 import math
 
 tableList = Blueprint("tableList", __name__)

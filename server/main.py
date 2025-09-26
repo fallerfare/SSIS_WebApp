@@ -1,7 +1,7 @@
 from flask import Flask
 import atexit
 from flask_wtf import CSRFProtect
-from models.Functions.connection import connection_pool
+from controllers.dbconnection.connection import connection_pool
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
