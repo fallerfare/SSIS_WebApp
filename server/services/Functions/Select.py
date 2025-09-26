@@ -1,4 +1,4 @@
-from . import connection
+from controllers.dbconnection import connection
 
 class Select():
     def __init__(self):
