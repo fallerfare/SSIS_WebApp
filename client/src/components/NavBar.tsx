@@ -23,17 +23,17 @@ function NavBar() {
               <NavDropdown title='tables' id='basic-nav-dropdown'>
                 <div className='nav-dropdown'>
                 <NavDropdown.Item>
-                  <Nav.Link as={Link} to="/students/list">
+                  <Nav.Link as={Link} to="/table/students">
                     students
                   </Nav.Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item>
-                  <Nav.Link as={Link} to="/programs/list">
+                  <Nav.Link as={Link} to="/table/programs">
                     programs
                   </Nav.Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item>
-                  <Nav.Link as={Link} to="/colleges/list">
+                  <Nav.Link as={Link} to="/table/colleges">
                     colleges
                   </Nav.Link>
                 </NavDropdown.Item>
