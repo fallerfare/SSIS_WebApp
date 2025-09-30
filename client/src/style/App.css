@@ -147,7 +147,7 @@ html, body {
 /* Base Table Properties */
 
 /* tbody */
-.tr, .tr-rows {
+.tr-custom, .tr-rows {
    display: flex;           
   justify-content: center;    
   align-items: center;        
@@ -155,7 +155,7 @@ html, body {
   border: none;
 }
 
-.th, .td {       
+.th-custom, .td-custom {       
   min-width: 10px;        
   overflow: hidden;
   text-overflow: ellipsis;
@@ -171,11 +171,8 @@ html, body {
 /* tbody */
 
 /* thead */
-thead {
-  display: table-header-group !important;
-}
 
-thead .tr, .th{
+.tr-custom, .th-custom{
   padding: 7px;
   position: sticky !important;
   top: 0;
