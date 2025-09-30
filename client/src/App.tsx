@@ -1,18 +1,12 @@
 import './style/App.css'
-import NavBar from "./components/NavBar"
-import Table from "./components/tables/Table"
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router } from "react-router-dom"
+import Layout from './components/Layout'
 
 function App() {
 
   return (
     <Router>
-      <NavBar />
-      <Routes>
-        <Route path="/students/list" element={<Table tableName="students" />} />
-        <Route path="/programs/list" element={<Table tableName="programs" />} />
-        <Route path="/colleges/list" element={<Table tableName="colleges" />} />
-      </Routes>
+      <Layout/>
     </Router>
   )
 }

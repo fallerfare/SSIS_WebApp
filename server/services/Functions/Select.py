@@ -49,13 +49,26 @@ class Select():
         self.columns = [col.split(" AS ")[-1].split(".")[-1] for col in spec_col]
         return self
     
-    def search(self, tag, key, table = None):
+    def search(self, tag, key, table = None, search_mult = {}):
         self.searchquery = ""
         self.params = []
 
         if table is None:
             table = self.table_name
-        if tag and key:
+
+        if search_mult:
+            conditions = []
+            for col, val in search_mult.items():
+                tag = self.aliascolumn.get(col, f"{table}.{col}")
+                if val == "Male":  
+                    conditions.append(f"{search_tag} = %s")
+                    self.params.append(val)
+                else:
+                    conditions.append(f"{search_tag} LIKE %s")
+                    self.params.append(f"%{val}%")
+            self.searchquery = "WHERE " + " AND ".join(conditions)
+
+        elif tag and key:
             search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
             self.searchquery = f"WHERE {search_tag} LIKE %s "
             if key == "Male":
