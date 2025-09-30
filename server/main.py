@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 from controllers.authentication import auth
 from controllers.tableList import tableList
+from controllers.actions.view import viewer
 
 load_dotenv()
 
@@ -19,6 +20,7 @@ app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('WTF_CSRF_SECRET_KEY')
 
 app.register_blueprint(tableList)
 app.register_blueprint(auth)
+app.register_blueprint(viewer)
 
 csrf = CSRFProtect(app)
 

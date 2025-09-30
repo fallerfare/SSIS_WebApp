@@ -16,6 +16,10 @@ type TableProps = {
 const Table = ({ tableName }: TableProps) => {
     const table = getTable(tableName)
 
+    // function handleRowClick(rowData: any) {
+        
+    // }
+
     return (
     
     // ========================== 
@@ -32,19 +36,13 @@ const Table = ({ tableName }: TableProps) => {
             />
         </Box>
         <Box className="table-card">
-            <Box className="table-scroll">
-                <Box as="table"
-                        className="table"
-                        width="100%">
-        
                     {/* ============ */}
                     {/* Headers */}
-                    <Box as="thead">
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <Box className="tr"
+                            <Box className="tr-custom"
                                     key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <Box className="th"
+                                    <Box className="th-custom"
                                             key={header.id}
                                             flex={(header.column.columnDef.meta as any)?.flex ?? 1}
                                             flexBasis={header.getSize()}>
@@ -64,20 +62,16 @@ const Table = ({ tableName }: TableProps) => {
                                 ))}
                             </Box>
                         ))}
-                    </Box>
                      {/* Headers */}
                     {/* ============ */}
         
                     {/* ============ */}
                     {/* Rows */}
-                    <Box as="tbody">
                         {table.getRowModel().rows.map((row) => (
-                                <Box as="tr"
-                                        className="tr-rows"
+                                <Box className="tr-rows"
                                         key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <Box as="td"
-                                                className="td"
+                                        <Box className="td-custom"
                                                 key={(cell.id)}
                                                 flex={(cell.column.columnDef.meta as any)?.flex ?? 1}
                                                 flexBasis={cell.column.getSize()}>
@@ -92,11 +86,8 @@ const Table = ({ tableName }: TableProps) => {
                                 </Box>
                             ))
                         }
-                    </Box>
                     {/* Rows */}
                     {/* ============ */}
-                </Box>
-            </Box>
         </Box>
         <Box className="pages-card">
                             
