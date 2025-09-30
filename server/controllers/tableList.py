@@ -7,7 +7,7 @@ tableList = Blueprint("tableList", __name__)
 # ========================== 
 # LIST
 # ==========
-@tableList.route("/<string:table>/list")
+@tableList.route("/table/<string:table>")
 def list(table): 
     tag = request.args.get('tag', '')
     key = request.args.get('key', '')
@@ -37,13 +37,3 @@ def list(table):
         "limit": limit,
         "totalPages": math.ceil(len(total) / limit)
     })
-
-# ========================== 
-# COLUMN
-# ==========
-@tableList.route("/<string:table>/columns")
-def columns(table): 
-    selector = Select()   
-    contents = selector.table(table)\
-                        .tableCols()
-    return jsonify(contents)

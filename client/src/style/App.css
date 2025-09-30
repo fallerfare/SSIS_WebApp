@@ -19,6 +19,20 @@ body {
     background-color: #f5dfa8 !important;
 }
 
+html, body {
+  overflow-x: hidden;
+}
+
+.logo {
+    background-image: url("../assets/images/logo.svg");
+    background-repeat: no-repeat;
+    background-size: contain;  
+    background-position: center;
+    display: block;   
+    height: 80px;
+    width: 200px;
+}
+
 /* ================ */
 /* NAVBAR */
 /* ===== */
@@ -47,10 +61,10 @@ body {
     width: 200px;
 }
 
-.navbar-logo {
+/* .navbar-logo {
   background-size: 40px;
   display: block;
-}
+} */
 
 #navbar-links {
   font-family: 'NavFont';
@@ -308,4 +322,84 @@ thead .tr, .th{
 
 /* ===== */
 /* PAGES */
+/* ================ */
+
+
+/* ================ */
+/* AUTH */
+/* ===== */
+
+.auth-card {
+  background: #ffa722;
+  border: 5px solid #000000; 
+  border-radius: 0.5rem;     
+  box-shadow: 2px 3px 5px #664400;
+  overflow: hidden;
+  width: 60%;
+  /* height: 500px; */
+  padding: 20px;
+  margin: 0 auto auto auto;
+  display: list-item;
+  justify-content: center;  
+  align-items: center;
+}
+
+.auth-head-card {
+  background: #b32d2d;
+  border: 5px solid #000000; 
+  border-radius: 0.5rem;     
+  box-shadow: 2px 3px 5px #664400;
+  overflow: hidden;
+  width: 60%;
+  padding: 20px;
+  margin: 7px auto 40px auto;
+  display: flex;
+  justify-content: center;  
+  align-items: center;
+}
+
+.auth-head-card h1 {
+  text-align: center;
+  font-family: "NavFont";
+  font-weight: bolder;
+  color: #ffc561;
+}
+
+.auth-logo {
+    background-image: url("../assets/images/loginlogo.png");
+    background-repeat: no-repeat;
+    background-size: contain;  
+    background-position: center;
+    display: flex;   
+    height: 300px;
+    max-width: 35%;
+    min-width: 10%;
+    margin: 5px 29% -12% auto;
+    padding: 5px;
+    position: relative
+}
+
+.auth-card input{
+  border-radius: 5px;
+  margin: 7px ;
+  padding: 3px;
+  background-color: #cbfafa;
+  border-color: #000000;
+  border-width: 3px;
+  width: 45%;
+}
+
+.auth-card button{
+  border-radius: 5px;
+  margin: 7px ;
+  padding: 6px;
+  background-color: #b32d2d;
+  border-color: #000000;
+  border-width: 3px;
+  color: #f1ba4a;
+  font-weight: bold;
+}
+
+/* ===== */
+/* AUTH */
 /* ================ */

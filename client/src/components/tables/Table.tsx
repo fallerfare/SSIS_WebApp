@@ -8,14 +8,12 @@ import prevten from "../../assets/icons/prevten.png"
 import prev from "../../assets/icons/prev.png"
 import nextten from "../../assets/icons/nextten.png"
 import next from "../../assets/icons/next.png"
-// import { getColumns } from "./ColumnsConfig.ts"
 
 type TableProps = {
     tableName: "students" | "programs" | "colleges"
 }
 
 const Table = ({ tableName }: TableProps) => {
-    // const columns = getColumns(tableName)   
     const table = getTable(tableName)
 
     return (

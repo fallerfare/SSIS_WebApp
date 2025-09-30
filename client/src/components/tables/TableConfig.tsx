@@ -5,7 +5,7 @@ import { StudentColumns } from "./StudentsTable"
 import { ProgramColumns } from "./ProgramsTable"
 import { CollegeColumns } from "./CollegesTable"
 import { ActionsColumns } from "./ActionsColumn"
-import { fetchTableData } from "@/controller/api"
+import { fetchTableData } from "../../controller/api"
 
 type TableName = "students" | "programs" | "colleges"
 
