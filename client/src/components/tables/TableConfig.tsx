@@ -4,12 +4,13 @@ import type { ColumnDef, PaginationState } from "@tanstack/react-table"
 import { StudentColumns } from "./StudentsTable"
 import { ProgramColumns } from "./ProgramsTable"
 import { CollegeColumns } from "./CollegesTable"
-import { ActionsColumns } from "./ActionsColumn"
+import { getActionsColumns } from "./ActionsColumn"
 import { fetchTableData } from "../../controller/api"
 
 type TableName = "students" | "programs" | "colleges"
 
-export function getTable(tableName: TableName) {
+export function getTable(tableName: TableName,
+                                      onView: (data:any) => void) {
   const [data, setData] = useState<any[]>([])
 
   // ===============
@@ -32,13 +33,13 @@ export function getTable(tableName: TableName) {
   let columns: ColumnDef<any>[] = []
   switch (tableName) {
     case "students":
-      columns = [...StudentColumns, ...ActionsColumns]
+      columns = [...StudentColumns, ...getActionsColumns("students", onView)]
       break
     case "programs":
-      columns = [...ProgramColumns, ...ActionsColumns]
+      columns = [...ProgramColumns, ...getActionsColumns("programs", onView)]
       break
     case "colleges":
-      columns = [...CollegeColumns, ...ActionsColumns]
+      columns = [...CollegeColumns, ...getActionsColumns("colleges", onView)]
       break
   }
 

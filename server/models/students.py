@@ -6,7 +6,7 @@ class Student(Model):
         super().__init__(table, tag, key, limit, offset)
         self.selector = Select.Select()
         self.insertor = Insert.Insert()
-        self.student = {}  # internal dict that holds student data
+        self.student = {}  
 
     def get(self, id_number):
         self.student = (
@@ -21,6 +21,14 @@ class Student(Model):
     # ====================
     # PROPERTIES
     # ========
+    @property
+    def id_number(self):
+        return self.student.get("id_number")
+
+    @id_number.setter
+    def id_number(self, value):
+        self.student["id_number"] = value
+    
     @property
     def first_name(self):
         return self.student.get("first_name")
