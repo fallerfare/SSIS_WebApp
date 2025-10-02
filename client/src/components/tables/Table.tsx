@@ -8,13 +8,24 @@ import prevten from "../../assets/icons/prevten.png"
 import prev from "../../assets/icons/prev.png"
 import nextten from "../../assets/icons/nextten.png"
 import next from "../../assets/icons/next.png"
+import { useState } from "react"
+import ViewModal from "../popups/view.tsx"
 
-type TableProps = {
+type TableProps = { 
     tableName: "students" | "programs" | "colleges"
 }
 
 const Table = ({ tableName }: TableProps) => {
-    const table = getTable(tableName)
+
+    const [isViewOpen, setIsViewOpen] = useState(false)
+    const [viewData, setViewData] = useState<any>(null)
+
+    const handleView = (data: any) => {
+        setViewData(data)
+        setIsViewOpen(true)
+    }
+
+    const table = getTable(tableName, handleView)
 
     // function handleRowClick(rowData: any) {
         
@@ -135,6 +146,14 @@ const Table = ({ tableName }: TableProps) => {
                 </select>
         
         </Box>
+
+        <ViewModal 
+        isOpen={isViewOpen} 
+        onClose={() => setIsViewOpen(false)}
+        viewData={viewData}
+        >
+        </ViewModal>
+
     </Box>
     // ========== 
     // TABLE

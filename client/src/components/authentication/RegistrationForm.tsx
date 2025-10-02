@@ -2,7 +2,7 @@ import { useState, useEffect, type ChangeEvent, type FormEvent } from "react"
 import type { UserData } from "../../models/types/UserData"
 import { fetchCsrf, sendCsrf } from "../../controller/fetchCsrf"
 import { Box } from "@chakra-ui/react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export default function RegistrationForm() {
 
@@ -76,6 +76,13 @@ export default function RegistrationForm() {
             <br />
 
             <button type="submit">Register</button>
+
+            <p>
+                Already have an account?{" "}
+                <Link to="/login" style={{ color: "blue", textDecoration: "underline" }}>
+                  Log In
+                </Link>
+            </p>
 
           </form>
           <p>{message}</p>
