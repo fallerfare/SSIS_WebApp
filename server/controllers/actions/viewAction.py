@@ -8,7 +8,7 @@ viewer = Blueprint("viewer", __name__)
 # ========================== 
 # STUDENT VIEW
 # ==========
-@viewer.route("/api/students/<string:id_number>", methods = ["GET"])
+@viewer.route("/view/students/<string:id_number>", methods = ["GET"])
 def view_students(id_number):
     student = Student()         
     print(id_number)
@@ -23,7 +23,7 @@ def view_students(id_number):
 # ========================== 
 # PROGRAM VIEW
 # ==========
-@viewer.route("/api/programs/<string:program_code>", methods = ["GET"])
+@viewer.route("/view/programs/<string:program_code>", methods = ["GET"])
 def view_programs(program_code):
     program = Program()         
     print(program_code)
@@ -38,7 +38,7 @@ def view_programs(program_code):
 # ========================== 
 # COLLEGE VIEW
 # ==========
-@viewer.route("/api/colleges/<string:college_code>", methods = ["GET"])
+@viewer.route("/view/colleges/<string:college_code>", methods = ["GET"])
 def view_colleges(college_code):
     college = College()         
     print(college_code)

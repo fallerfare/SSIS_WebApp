@@ -1,7 +1,0 @@
-1) Handle comboboxes for college =>program
-2) Edit Ation Button => handleView => Confirm Changes => onConfirm => handleEdit
-3) handleDelete
-4) learn this shi bruv
-5) Add Pages
-6) Remove Home and Profile cuh
-7) Delete this text before committing

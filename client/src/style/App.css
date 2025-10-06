@@ -44,7 +44,7 @@ html, body {
 .navbar-custom {
   background-color: #b32d2d !important; 
   top: 0 !important;
-  z-index: 3 !important;
+  z-index: 10 !important;
   position: sticky !important;
 }
 .navbar-custom .nav-link {

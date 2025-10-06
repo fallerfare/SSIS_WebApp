@@ -9,7 +9,7 @@ deletor = Blueprint("deletor", __name__)
 # ========================== 
 # STUDENT DELETE
 # ==========
-@deletor.route("/api/students/<string:id_number>", methods = ["GET"])
+@deletor.route("/delete/students/<string:id_number>", methods = ["GET"])
 def view_students(id_number):
     student = Student()         
     print(id_number)
@@ -24,7 +24,7 @@ def view_students(id_number):
 # ========================== 
 # PROGRAM DELETE
 # ==========
-@deletor.route("/api/programs/<string:program_code>", methods = ["GET"])
+@deletor.route("/delete/programs/<string:program_code>", methods = ["GET"])
 def view_programs(program_code):
     program = Program()         
     print(program_code)
@@ -39,7 +39,7 @@ def view_programs(program_code):
 # ========================== 
 # COLLEGE DELETE
 # ==========
-@deletor.route("/api/colleges/<string:college_code>", methods = ["GET"])
+@deletor.route("/delete/colleges/<string:college_code>", methods = ["GET"])
 def view_colleges(college_code):
     college = College()         
     print(college_code)

@@ -35,14 +35,15 @@ class Insert():
     def execute(self, params = None):
         if params is not None:
             self.params = params
-            
+
         self.query = " ".join([
                     self.basequery,
                     self.tablequery,
                     self.columnquery,
                     self.valuesquery
                     ]).strip()
-        print(self.query)
+        print("Query:", self.query)
+        print("Params:", self.params)
 
         conn = None
         try:

@@ -1,57 +1,42 @@
 import { Box, Button, Grid, GridItem, Input } from "@chakra-ui/react"
 import { FormControl, FormLabel } from "@chakra-ui/form-control"
 import '../../style/App.css'
-import { useEffect, useState } from "react"
-import { getCollegeList, getProgramList } from "@/controller/api"
-import type { College } from "@/models/types/colleges"
-import type { Program } from "@/models/types/programs"
+import { useState } from "react"
+import { GenderDropdown, YearLevelDropdown, ProgramsDropdown, CollegesDropdown } from "./FieldsConfig"
+import type { Student } from "@/models/types/students"
+import { handleInsert } from "@/controller/api"
 
 const EnrollmentForm = () => {
+    
+    const [formData, setFormData] = useState<Student>({
+        id_number: "",
+        first_name: "",
+        middle_name: "",
+        last_name: "",
+        email: "",
+        gender: "",
+        year_level: 1,
+        college_code: "",
+        program_code: "",
+    })
 
-    function getGenders() {
-        return ["Male", "Female", "Others"]
+    const handleChange = (field: keyof Student) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [field]: e.target.value})
     }
-    const [selectedGender, setSelectedGender] = useState("")
-    const genders = getGenders()
 
-    function getYearLevel() {
-        return [1, 2, 3, 4, 5]
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        console.log("Clicked!")
+        try {
+            const response = await handleInsert<Student>("students", formData)
+            console.log("Inserted:", response)
+            alert("Enrollment successful!")
+        } catch (err) {
+            console.error(err)
+            alert("Failed to enroll student.")
+        }
     }
-    const [selectedYear, setSelectedYear] = useState("")
-    const years = getYearLevel()
-
-    const [selectedCollege, setSelectedCollege] = useState("")
-    const [listColleges, setColleges] = useState<College[]>([])
-
-    useEffect(() => {
-        const fetchColleges = async () => {
-            try {
-            const response: any = await getCollegeList()
-            console.log("Colleges response:", response)
-            setColleges(response.data)
-            } catch (err) {
-            console.error("Failed to fetch colleges:", err)
-            }
-        }
-        fetchColleges()
-    }, [])
-
-    const [selectedProgram, setSelectedProgram] = useState("")
-    const [listPrograms, setPrograms] = useState<Program[]>([])
-
-    useEffect(() => {
-        if (!selectedCollege) return
-        const fetchPrograms = async () => {
-            try {
-            const response: any = await getProgramList(selectedCollege)
-            console.log("Colleges response:", response)
-            setPrograms(response.data)
-            } catch (err) {
-            console.error("Failed to fetch colleges:", err)
-            }
-        }
-        fetchPrograms()
-    }, [selectedCollege])
 
     return (
     
@@ -70,111 +55,101 @@ const EnrollmentForm = () => {
             <GridItem colStart={1} rowStart={1} colSpan={2}>
             <FormControl>
                 <FormLabel className="text-label">First Name</FormLabel>
-                <Input className="text-box"/>
+                <Input   value={formData.first_name}
+                            className="text-box"
+                            onChange={handleChange("first_name")}/>
             </FormControl>
             </GridItem>
 
             <GridItem colStart={3} rowStart={1} colSpan={1}>
             <FormControl>
                 <FormLabel className="text-label">Middle Name</FormLabel>
-                <Input className="text-box" />
+                <Input   value={formData.middle_name}
+                            className="text-box"
+                            onChange={handleChange("middle_name")}/>
             </FormControl>
             </GridItem>
 
             <GridItem colStart={4} rowStart={1} colSpan={1}>
             <FormControl>
                 <FormLabel className="text-label">Last Name</FormLabel>
-                <Input className="text-box" />
+                <Input value={formData.last_name}
+                            className="text-box"
+                            onChange={handleChange("last_name")} />
             </FormControl>
             </GridItem>
 
             <GridItem colStart={1} rowStart={2} colSpan={4}>
             <FormControl>
                 <FormLabel className="text-label">Email</FormLabel>
-                <Input className="text-box" />
+                <Input value={formData.email}
+                            className="text-box"
+                            onChange={handleChange("email")} />
             </FormControl>
             </GridItem>    
 
             <GridItem colStart={1} rowStart={3} colSpan={1}>
             <FormControl>
                 <FormLabel className="text-label">Gender</FormLabel>
-                <select   id="gender"
-                            value={selectedGender}
-                            onChange={(e) => setSelectedGender(e.target.value)}
-                            className="options">
-                                <option value="" disabled hidden>
-                                    Select Gender
-                                </option>
-                                {genders.map((gender) => (  
-                                <option key={gender} value={gender}>
-                                    {gender}
-                                </option>
-                                ))}
-                </select>
+                <GenderDropdown
+                    selectedGender={formData.gender}
+                    setSelectedGender={(val) =>
+                        setFormData({ ...formData, gender: val })
+                        }
+                />
             </FormControl>
             </GridItem>    
 
             <GridItem colStart={2} rowStart={3} colSpan={1}>
             <FormControl>
                 <FormLabel className="text-label">Year Level</FormLabel>
-                <select   id="year"
-                            value={selectedYear}
-                            onChange={(e) => setSelectedYear(e.target.value)}
-                            className="options">
-                                <option value="" disabled hidden>
-                                    Select Year Level
-                                </option>
-                                {years.map((ylevel) => (  
-                                <option key={ylevel} value={ylevel}>
-                                    {ylevel}
-                                </option>
-                                ))}
-                </select>
+                <YearLevelDropdown
+                    selectedYear={formData.year_level}
+                    setSelectedYear={(val) =>
+                        setFormData({ ...formData, year_level: val })
+                        } 
+                />
+            </FormControl>
+            </GridItem>    
+
+            <GridItem colStart={3} rowStart={3} colSpan={2}>
+            <FormControl>
+                <FormLabel className="text-label">Student ID</FormLabel>
+                <Input   value={formData.id_number}
+                            className="text-box"
+                            onChange={handleChange("id_number")} />
             </FormControl>
             </GridItem>    
 
             <GridItem colStart={1} rowStart={4} colSpan={2}>
             <FormControl>
                 <FormLabel className="text-label">Program</FormLabel>
-                <select   id="program"
-                            value={selectedProgram}
-                            onChange={(e) => setSelectedProgram(e.target.value)}
-                            className="options">
-                                <option value="" disabled hidden>
-                                    Select Program
-                                </option>
-                                {listPrograms.map((program) => (  
-                                <option key={program.program_code} value={program.program_code}>
-                                    {program.program_name}
-                                </option>
-                                ))}
-                </select>
+                <ProgramsDropdown
+                    selectedCollege={formData.college_code}
+                    selectedProgram={formData.program_code}
+                    setSelectedProgram={(val) =>
+                        setFormData({ ...formData, program_code: val })
+                        }
+                />
             </FormControl>
             </GridItem>    
 
             <GridItem colStart={3} rowStart={4} colSpan={2}>
             <FormControl>
                 <FormLabel className="text-label">College</FormLabel>
-                <select   id="college"
-                            value={selectedCollege}
-                            onChange={(e) => setSelectedCollege(e.target.value)}
-                            className="options">
-                                <option value="" disabled hidden>
-                                    Select College
-                                </option>
-                                {listColleges.map((college) => (  
-                                <option key={college.college_code} value={college.college_code}>
-                                    {college.college_name}
-                                </option>
-                                ))}
-                </select>
+                <CollegesDropdown 
+                    selectedCollege={formData.college_code}
+                    setSelectedCollege={(val) =>
+                        setFormData({ ...formData, college_code: val })
+                        }
+                />
             </FormControl>
             </GridItem>    
 
             </Grid>
 
             <Box className="dialog-buttons">
-            <Button type="submit" className="submit-button" padding={"10px 60px"}>
+            <Button type="submit" className="submit-button" padding={"10px 60px"} onClick={handleSubmit}>
                 Enroll
             </Button>
             </Box>
