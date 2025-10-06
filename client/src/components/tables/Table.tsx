@@ -55,6 +55,7 @@ const Table = ({ tableName }: TableProps) => {
     }
   }
 
+//   Move to api
   const handleConfirmEdit = async (updated: any) => {
     try {
       const id = getId(updated)
@@ -64,7 +65,7 @@ const Table = ({ tableName }: TableProps) => {
       })
       const { csrf_token } = await tokenRes.json()
 
-      const res = await fetch(`${API_BASE}/api/${tableName}/${id}`, {
+      const res = await fetch(`${API_BASE}/edit/${tableName}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "X-CSRFToken": csrf_token },
         credentials: "include",
@@ -89,7 +90,7 @@ const Table = ({ tableName }: TableProps) => {
     try {
       const id = getId(deleteData)
 
-      const res = await fetch(`${API_BASE}/api/${tableName}/${id}`, {
+      const res = await fetch(`${API_BASE}/delete/${tableName}/${id}`, {
         method: "DELETE",
         credentials: "include",
       })

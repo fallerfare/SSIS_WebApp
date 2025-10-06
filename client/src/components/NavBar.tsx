@@ -13,12 +13,6 @@ function NavBar() {
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='mx-auto' id='navbar-links'>
             <Nav.Item>
-              <Nav.Link href='#home'>home</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link href='#profile'>profile</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
               <NavDropdown title='tables' id='basic-nav-dropdown'>
                 <div className='nav-dropdown'>
                 <NavDropdown.Item>
@@ -43,7 +37,20 @@ function NavBar() {
               <Nav.Link  as={Link} to="/enrollment">enrollment</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href='#establish'>establish</Nav.Link>
+              <NavDropdown title='establish' id='basic-nav-dropdown'>
+                <div className='nav-dropdown'>
+                <NavDropdown.Item>
+                  <Nav.Link as={Link} to="/table/students">
+                    create program
+                  </Nav.Link>
+                </NavDropdown.Item>
+                <NavDropdown.Item>
+                  <Nav.Link as={Link} to="/table/programs">
+                    create college
+                  </Nav.Link>
+                </NavDropdown.Item>
+                </div>
+              </NavDropdown>
             </Nav.Item>
           </Nav>
         </Navbar.Collapse>

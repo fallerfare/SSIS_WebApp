@@ -33,7 +33,7 @@ export function getActionsColumns<T extends TableName>(
  
         const handleView = async () => {
           try {
-            const res = await fetch(`${API_BASE}/api/${tableName}/${getId(original, tableName)}`)
+            const res = await fetch(`${API_BASE}/view/${tableName}/${getId(original, tableName)}`)
             const data = await res.json()
             onView(Array.isArray(data) ? data[0] : data)
             console.log("View data: ", data)
@@ -44,7 +44,7 @@ export function getActionsColumns<T extends TableName>(
 
         const handleEdit = async () => {
           try {
-            const res = await fetch(`${API_BASE}/api/${tableName}/${getId(original, tableName)}`)
+            const res = await fetch(`${API_BASE}/view/${tableName}/${getId(original, tableName)}`)
             const data = await res.json()
             onEdit(Array.isArray(data) ? data[0] : data)
             console.log("Edit response: ", data)

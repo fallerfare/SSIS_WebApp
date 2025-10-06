@@ -1,17 +1,14 @@
-from flask import Blueprint, jsonify, request, session
-from services.Functions import Update
+from flask import Blueprint, jsonify, request
 from models.students import Student
 from models.programs import Program
 from models.colleges import College
 
 editor = Blueprint("editor", __name__)
 
-updator = Update.Update()
-
 # ========================== 
 # STUDENT EDIT
 # ==========
-@editor.route("/api/students/<string:id_number>", methods = ["PUT"])
+@editor.route("/edit/students/<string:id_number>", methods = ["PUT"])
 def edit_students(id_number):
     student = Student()         
     print(id_number)
@@ -34,7 +31,7 @@ def edit_students(id_number):
 # ========================== 
 # PROGRAM EDIT
 # ==========
-@editor.route("/api/programs/<string:program_code>", methods = ["PUT"])
+@editor.route("/edit/programs/<string:program_code>", methods = ["PUT"])
 def edit_programs(program_code):
     program = Program()         
     print(program_code)
@@ -49,7 +46,7 @@ def edit_programs(program_code):
 # ========================== 
 # COLLEGE EDIT
 # ==========
-@editor.route("/api/colleges/<string:college_code>", methods = ["PUT"])
+@editor.route("/edit/colleges/<string:college_code>", methods = ["PUT"])
 def edit_colleges(college_code):
     college = College()         
     print(college_code)

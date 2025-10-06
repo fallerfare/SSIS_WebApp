@@ -53,6 +53,14 @@ class Student(Model):
         self.student["gender"] = value
 
     @property
+    def email(self):
+        return self.student.get("email")
+
+    @email.setter
+    def email(self, value):
+        self.student["email"] = value
+
+    @property
     def year_level(self):
         return self.student.get("year_level")
 
@@ -68,6 +76,14 @@ class Student(Model):
     def program_code(self, value):
         self.student["program_code"] = value
 
+    @property
+    def college_code(self):
+        return self.student.get("college_code")
+
+    @college_code.setter
+    def program_code(self, value):
+        self.student["college_code"] = value
+
     # ====================
     # ACTIONS
     # ========
@@ -82,12 +98,13 @@ class Student(Model):
         )
         return self.student
     
-    def add(self):
+    def add(self, data: dict):
+        print("Inserting...")
         self.insertor\
             .table("students")\
-            .values(self.student)\
-            .execute
-        
+            .values(data)\
+            .execute()
+         
     def edit(self, id_number, updates: dict):
         return (
             self.editor
