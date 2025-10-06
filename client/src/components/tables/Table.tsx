@@ -9,11 +9,15 @@ import prev from "../../assets/icons/prev.png"
 import nextten from "../../assets/icons/nextten.png"
 import next from "../../assets/icons/next.png"
 import { useState } from "react"
-import ViewModal from "../popups/view.tsx"
+import ViewModal from "../popups/ViewDialog.tsx"
+import DeleteModal from "../popups/DeleteDialog.tsx"
+import EditModal from "../popups/EditDialog.tsx"
 
 type TableProps = { 
     tableName: "students" | "programs" | "colleges"
 }
+
+const API_BASE = "http://localhost:8080"
 
 const Table = ({ tableName }: TableProps) => {
 
@@ -25,11 +29,81 @@ const Table = ({ tableName }: TableProps) => {
         setIsViewOpen(true)
     }
 
-    const table = getTable(tableName, handleView)
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const [editData, setEditData] = useState<any>(null)
 
-    // function handleRowClick(rowData: any) {
-        
-    // }
+    const handleEdit = (data: any) => {
+        setEditData(data)
+        setIsEditOpen(true)
+    }
+
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+    const [deleteData, setDeleteData] = useState<any>(null)
+
+    const handleDelete = (data: any) => {
+        setDeleteData(data)
+        setIsDeleteOpen(true)
+    }
+
+    const { table, reloadData } = getTable(tableName, handleView, handleEdit, handleDelete)
+
+    const getId = (row: any) => {
+    switch (tableName) {
+      case "students": return row.id_number
+      case "programs": return row.program_code
+      case "colleges": return row.college_code
+    }
+  }
+
+  const handleConfirmEdit = async (updated: any) => {
+    try {
+      const id = getId(updated)
+
+      const tokenRes = await fetch(`${API_BASE}/api/csrf-token`, {
+      credentials: "include"
+      })
+      const { csrf_token } = await tokenRes.json()
+
+      const res = await fetch(`${API_BASE}/api/${tableName}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrf_token },
+        credentials: "include",
+        body: JSON.stringify(updated),
+      })
+
+      if (!res.ok) throw new Error("Failed to update")
+
+      const data = await res.json()
+      console.log("Update success:", data)
+
+      setIsEditOpen(false)
+      reloadData()
+
+    } catch (error) {
+      console.error("Error saving edit:", error)
+    }
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteData) return
+    try {
+      const id = getId(deleteData)
+
+      const res = await fetch(`${API_BASE}/api/${tableName}/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      })
+
+      if (!res.ok) throw new Error("Failed to delete")
+
+      console.log("Delete success")
+      setIsDeleteOpen(false)
+      reloadData()
+
+    } catch (error) {
+      console.error("Error deleting:", error)
+    }
+  }
 
     return (
     
@@ -132,7 +206,7 @@ const Table = ({ tableName }: TableProps) => {
                 
 
                 {/* TODO: Numbers must be dynamic, see ssis_sql */}
-                <select className="page-drop"
+                {/* <select className="page-drop"
                     value={table.getState().pagination.pageSize}
                     onChange={e => {
                         table.setPageSize(Number(e.target.value))
@@ -143,16 +217,36 @@ const Table = ({ tableName }: TableProps) => {
                         {pageSize}
                         </option>
                     ))}
-                </select>
+                </select> */}
         
         </Box>
 
+        {/* ============ */}
+        {/* Dialog Popups */}
         <ViewModal 
         isOpen={isViewOpen} 
         onClose={() => setIsViewOpen(false)}
         viewData={viewData}
         >
         </ViewModal>
+
+         <EditModal 
+        isOpen={isEditOpen} 
+        onClose={() => setIsEditOpen(false)}
+        editData={editData}
+        onConfirm={handleConfirmEdit}
+        >
+        </EditModal>
+
+         <DeleteModal 
+        isOpen={isDeleteOpen} 
+        onClose={() => setIsDeleteOpen(false)}
+        deleteData={deleteData}
+        onConfirm={handleConfirmDelete}
+        >
+        </DeleteModal>
+        {/* Dialog Popups */}
+        {/* ============ */}
 
     </Box>
     // ========== 

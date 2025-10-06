@@ -1,15 +1,15 @@
 from flask import Blueprint, jsonify, request, session
-from services.Functions import Insert, Select
+from services.Functions import Delete
 from models.students import Student
 from models.programs import Program
 from models.colleges import College
 
-viewer = Blueprint("viewer", __name__)
+deletor = Blueprint("deletor", __name__)
 
 # ========================== 
-# STUDENT VIEW
+# STUDENT DELETE
 # ==========
-@viewer.route("/api/students/<string:id_number>", methods = ["GET"])
+@deletor.route("/api/students/<string:id_number>", methods = ["GET"])
 def view_students(id_number):
     student = Student()         
     print(id_number)
@@ -22,9 +22,9 @@ def view_students(id_number):
 
 
 # ========================== 
-# PROGRAM VIEW
+# PROGRAM DELETE
 # ==========
-@viewer.route("/api/programs/<string:program_code>", methods = ["GET"])
+@deletor.route("/api/programs/<string:program_code>", methods = ["GET"])
 def view_programs(program_code):
     program = Program()         
     print(program_code)
@@ -37,9 +37,9 @@ def view_programs(program_code):
 
 
 # ========================== 
-# COLLEGE VIEW
+# COLLEGE DELETE
 # ==========
-@viewer.route("/api/colleges/<string:college_code>", methods = ["GET"])
+@deletor.route("/api/colleges/<string:college_code>", methods = ["GET"])
 def view_colleges(college_code):
     college = College()         
     print(college_code)

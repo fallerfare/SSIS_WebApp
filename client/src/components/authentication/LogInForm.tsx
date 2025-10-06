@@ -78,7 +78,7 @@ export default function LogInForm() {
 
             <br />
 
-            <button type="submit">Log In</button>
+            <button type="submit" className="auth-button">Log In</button>
 
             <p>
                 Don’t have an account?{" "}

@@ -1,22 +1,13 @@
 from models.baseModel import Model
-from services.Functions import Insert, Select
+from services.Functions import Insert, Select, Update
 
 class Student(Model):
     def __init__(self, table="students", tag=None, key=None, limit=None, offset=None):
         super().__init__(table, tag, key, limit, offset)
         self.selector = Select.Select()
         self.insertor = Insert.Insert()
+        self.editor    = Update.Update()
         self.student = {}  
-
-    def get(self, id_number):
-        self.student = (
-            self.selector
-            .table("students")
-            .search(tag="id_number", key=id_number)
-            .execute()
-            .retDict()
-        )
-        return self.student
 
     # ====================
     # PROPERTIES
@@ -77,11 +68,32 @@ class Student(Model):
     def program_code(self, value):
         self.student["program_code"] = value
 
+    # ====================
+    # ACTIONS
+    # ========
+
+    def get(self, id_number):
+        self.student = (
+            self.selector
+            .table("students")
+            .search(tag="id_number", key=id_number)
+            .execute()
+            .retDict()
+        )
+        return self.student
+    
     def add(self):
         self.insertor\
             .table("students")\
             .values(self.student)\
             .execute
         
-    def edit(self):
-        pass
+    def edit(self, id_number, updates: dict):
+        return (
+            self.editor
+            .table("students")
+            .set(updates)
+            .where("id_number", id_number)
+            .execute()
+        )
+        
