@@ -40,7 +40,7 @@ function NavBar() {
               </NavDropdown>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href='#enrollment'>enrollment</Nav.Link>
+              <Nav.Link  as={Link} to="/enrollment">enrollment</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link href='#establish'>establish</Nav.Link>

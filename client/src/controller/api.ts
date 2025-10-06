@@ -1,3 +1,6 @@
+import type { College } from "@/models/types/colleges"
+import type { Program } from "@/models/types/programs"
+
 const API_BASE = "http://localhost:8080"
 
 export async function fetchTableData(table: string,
@@ -13,7 +16,7 @@ export async function fetchTableData(table: string,
     const response = await fetch(`${API_BASE}/table/${table}?${params}`)
     if (!response.ok) throw new Error("Failed to fetch data")
     return response.json()
-    }
+}
 
 export async function getSession(): Promise<{ isLoggedIn: boolean; user_name? : string }> {
     const response = await fetch(`${API_BASE}/api/me`, {
@@ -24,5 +27,24 @@ export async function getSession(): Promise<{ isLoggedIn: boolean; user_name? : 
         return { isLoggedIn: false }
     }
 
+    return response.json()
+}
+
+export async function getCollegeList(): Promise<College[]>{
+
+    const response = await fetch(`${API_BASE}/table/colleges`)
+    if (!response.ok) throw new Error("Failed to fetch data")
+    return response.json()
+}
+
+export async function getProgramList(college_code: string): Promise<Program[]>{
+
+     const params = new URLSearchParams({
+        tag: "college_code",
+        key: college_code,
+    })
+
+    const response = await fetch(`${API_BASE}/table/programs?${params}`)
+    if (!response.ok) throw new Error("Failed to fetch data")
     return response.json()
 }

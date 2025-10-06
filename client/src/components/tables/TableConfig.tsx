@@ -10,7 +10,10 @@ import { fetchTableData } from "../../controller/api"
 type TableName = "students" | "programs" | "colleges"
 
 export function getTable(tableName: TableName,
-                                      onView: (data:any) => void) {
+                                      onView: (data:any) => void,
+                                      onEdit: (data:any) => void,
+                                      onDelete: (data:any) => void) {
+
   const [data, setData] = useState<any[]>([])
 
   // ===============
@@ -33,23 +36,28 @@ export function getTable(tableName: TableName,
   let columns: ColumnDef<any>[] = []
   switch (tableName) {
     case "students":
-      columns = [...StudentColumns, ...getActionsColumns("students", onView)]
+      columns = [...StudentColumns, ...getActionsColumns("students", onView, onEdit, onDelete)]
       break
     case "programs":
-      columns = [...ProgramColumns, ...getActionsColumns("programs", onView)]
+      columns = [...ProgramColumns, ...getActionsColumns("programs", onView, onEdit, onDelete)]
       break
     case "colleges":
-      columns = [...CollegeColumns, ...getActionsColumns("colleges", onView)]
+      columns = [...CollegeColumns, ...getActionsColumns("colleges", onView, onEdit, onDelete)]
       break
   }
 
-  useEffect(() => {
-    fetchTableData(tableName, pagination.pageIndex, pagination.pageSize)
+  function reloadData(pageIndex = pagination.pageIndex, pageSize = pagination.pageSize) {
+    fetchTableData(tableName, pageIndex, pageSize)
       .then((result) => {
         setData(result.data)
+        console.log("API result after reload:", result)
         setPageCount(Math.ceil(result.total / pagination.pageSize))
       })
       .catch((err) => console.error(err))
+  }
+
+  useEffect(() => {
+    reloadData()
   }, [tableName, pagination.pageIndex, pagination.pageSize])
 
   const table = useReactTable({
@@ -72,5 +80,5 @@ export function getTable(tableName: TableName,
     manualFiltering: true
   })
 
-  return table
+  return { table, reloadData }
 }

@@ -75,7 +75,7 @@ export default function RegistrationForm() {
 
             <br />
 
-            <button type="submit">Register</button>
+            <button type="submit" className="auth-button">Register</button>
 
             <p>
                 Already have an account?{" "}

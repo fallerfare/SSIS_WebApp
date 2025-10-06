@@ -20,7 +20,9 @@ type TableRow<T extends TableName> =
 
 export function getActionsColumns<T extends TableName>(
   tableName: T,
-  onView: (data: any) => void
+  onView: (data: any) => void,
+  onEdit: (data:any) => void,
+  onDelete: (data:any) => void
 ): ColumnDef<TableRow<T>>[] {
   const ActionsColumns: ColumnDef<TableRow<T>>[] = [
     {
@@ -42,12 +44,9 @@ export function getActionsColumns<T extends TableName>(
 
         const handleEdit = async () => {
           try {
-            const res = await fetch(`${API_BASE}/api/${tableName}/${getId(original, tableName)}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(original), 
-            })
+            const res = await fetch(`${API_BASE}/api/${tableName}/${getId(original, tableName)}`)
             const data = await res.json()
+            onEdit(Array.isArray(data) ? data[0] : data)
             console.log("Edit response: ", data)
           } catch (error) {
             console.error("Error: ", error)
@@ -55,18 +54,7 @@ export function getActionsColumns<T extends TableName>(
         }
 
         const handleDelete = async () => {
-          if (!window.confirm("Are you sure you want to delete this?")) return
-          try {
-            const res = await fetch(`${API_BASE}/api/${tableName}/${getId(original, tableName)}`, {
-              method: "DELETE",
-            })
-            if (res.ok) {
-              console.log("Delete success!")
-              // TODO: update UI
-            }
-          } catch (err) {
-            console.error("Error deleting:", err)
-          }
+          onDelete(original)
         }
 
         return (
