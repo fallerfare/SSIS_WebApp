@@ -1,5 +1,5 @@
 from models.baseModel import Model
-from services.Functions import Insert, Select, Update
+from services.Functions import Insert, Select, Update, Delete
 
 class Student(Model):
     def __init__(self, table="students", tag=None, key=None, limit=None, offset=None):
@@ -7,6 +7,7 @@ class Student(Model):
         self.selector = Select.Select()
         self.insertor = Insert.Insert()
         self.editor    = Update.Update()
+        self.deleter   = Delete.Delete()
         self.student = {}  
 
     # ====================
@@ -114,3 +115,9 @@ class Student(Model):
             .execute()
         )
         
+    def delete(self, id_number):
+        print("Deleting...")
+        self.deleter\
+            .table("students")\
+            .where("id_number", id_number)\
+            .execute()

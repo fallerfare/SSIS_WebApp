@@ -70,6 +70,54 @@ export async function handleInsert<T>(tableName: TableName, data: T) {
 
     console.log("backed shi happend")
 
+    if (!response.ok) {
+        throw new Error(`Failed to create ${tableName}: ${response.statusText}`)
+    }
+
+    return response.json()
+    }
+
+export async function handleUpdate<T>(tableName: TableName, updated: T, id: string) {
+    console.log("Payload: ", updated)
+    console.log("function called handle")
+    const { csrf_token } = await fetchCsrf()
+    console.log("csrf fetched, validated")     
+
+    const response = await fetch(`${API_BASE}/edit/${tableName}/${id}`, {
+        method: "PUT",
+        headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrf_token,
+        },
+        credentials: "include",
+        body: JSON.stringify(updated),
+    })
+
+    console.log("backed shi happend")
+
+    if (!response.ok) {
+        throw new Error(`Failed to create ${tableName}: ${response.statusText}`)
+    }
+
+    return response.json()
+    }
+
+export async function handleDelete(tableName: TableName, id: string) {
+    console.log("Payload: ", id)
+    console.log("function called handle")
+    const { csrf_token } = await fetchCsrf()
+    console.log("csrf fetched, validated")     
+
+    const response = await fetch(`${API_BASE}/delete/${tableName}/${id}`, {
+        method: "DELETE",
+        headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrf_token,
+        },
+        credentials: "include",
+    })
+
+    console.log("backed shi happend")
 
     if (!response.ok) {
         throw new Error(`Failed to create ${tableName}: ${response.statusText}`)

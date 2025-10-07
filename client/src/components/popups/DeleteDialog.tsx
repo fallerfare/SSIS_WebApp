@@ -26,7 +26,7 @@ export default function DeleteModal<T extends Student | Program | College>(
     console.log("Student view chosen")
     content = (
       <Box>        
-        Yes No Stuff
+        Are you sure you want to delete this student?
       </Box>
     )
     header = (
@@ -61,7 +61,7 @@ export default function DeleteModal<T extends Student | Program | College>(
                 {content}
                 <Box className="dialog-buttons">
                   <Button type="submit" className="submit-button" onClick={handleConfirm}>
-                    Confirm Changes
+                    Confirm Delete
                   </Button>
                   <Button type="reset" className="auth-button" onClick={onClose}>
                     Cancel
