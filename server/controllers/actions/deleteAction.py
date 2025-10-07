@@ -1,5 +1,4 @@
-from flask import Blueprint, jsonify, request, session
-from services.Functions import Delete
+from flask import Blueprint, jsonify
 from models.students import Student
 from models.programs import Program
 from models.colleges import College
@@ -9,43 +8,31 @@ deletor = Blueprint("deletor", __name__)
 # ========================== 
 # STUDENT DELETE
 # ==========
-@deletor.route("/delete/students/<string:id_number>", methods = ["GET"])
-def view_students(id_number):
+@deletor.route("/delete/students/<string:id_number>", methods = ["DELETE"])
+def delete_students(id_number):
     student = Student()         
     print(id_number)
-    data = student.get(id_number)  
-
-    if not data:
-        return jsonify({"error": "Student not found"}), 404
-
-    return jsonify(data), 200
+    student.delete(id_number)  
+    return jsonify({"message": f"Student {id_number} deleted successfully"}), 200
 
 
 # ========================== 
 # PROGRAM DELETE
 # ==========
-@deletor.route("/delete/programs/<string:program_code>", methods = ["GET"])
-def view_programs(program_code):
+@deletor.route("/delete/programs/<string:program_code>", methods = ["DELETE"])
+def delete_programs(program_code):
     program = Program()         
     print(program_code)
-    data = program.get(program_code)  
-
-    if not data:
-        return jsonify({"error": "Program not found"}), 404
-
-    return jsonify(data), 200
+    program.delete("program_code", program_code)  
+    return jsonify({"message": f"Student {program_code} deleted successfully"}), 200
 
 
 # ========================== 
 # COLLEGE DELETE
 # ==========
-@deletor.route("/delete/colleges/<string:college_code>", methods = ["GET"])
-def view_colleges(college_code):
+@deletor.route("/delete/colleges/<string:college_code>", methods = ["DELETE"])
+def delete_colleges(college_code):
     college = College()         
     print(college_code)
-    data = college.get(college_code)  
-
-    if not data:
-        return jsonify({"error": "College not found"}), 404
-
-    return jsonify(data), 200
+    college.delete("college_code", college_code)  
+    return jsonify({"message": f"Student {college_code} deleted successfully"}), 200

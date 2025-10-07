@@ -12,19 +12,18 @@ import { useState } from "react"
 import ViewModal from "../popups/ViewDialog.tsx"
 import DeleteModal from "../popups/DeleteDialog.tsx"
 import EditModal from "../popups/EditDialog.tsx"
+import { handleUpdate, handleDelete } from "@/controller/api.ts"
 
 type TableProps = { 
     tableName: "students" | "programs" | "colleges"
 }
-
-const API_BASE = "http://localhost:8080"
 
 const Table = ({ tableName }: TableProps) => {
 
     const [isViewOpen, setIsViewOpen] = useState(false)
     const [viewData, setViewData] = useState<any>(null)
 
-    const handleView = (data: any) => {
+    const handleTableView = (data: any) => {
         setViewData(data)
         setIsViewOpen(true)
     }
@@ -32,7 +31,7 @@ const Table = ({ tableName }: TableProps) => {
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [editData, setEditData] = useState<any>(null)
 
-    const handleEdit = (data: any) => {
+    const handleTableEdit = (data: any) => {
         setEditData(data)
         setIsEditOpen(true)
     }
@@ -40,12 +39,12 @@ const Table = ({ tableName }: TableProps) => {
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [deleteData, setDeleteData] = useState<any>(null)
 
-    const handleDelete = (data: any) => {
+    const handleTableDelete = (data: any) => {
         setDeleteData(data)
         setIsDeleteOpen(true)
     }
 
-    const { table, reloadData } = getTable(tableName, handleView, handleEdit, handleDelete)
+    const { table, reloadData } = getTable(tableName, handleTableView, handleTableEdit, handleTableDelete)
 
     const getId = (row: any) => {
     switch (tableName) {
@@ -55,55 +54,18 @@ const Table = ({ tableName }: TableProps) => {
     }
   }
 
-//   Move to api
   const handleConfirmEdit = async (updated: any) => {
-    try {
-      const id = getId(updated)
-
-      const tokenRes = await fetch(`${API_BASE}/api/csrf-token`, {
-      credentials: "include"
-      })
-      const { csrf_token } = await tokenRes.json()
-
-      const res = await fetch(`${API_BASE}/edit/${tableName}/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": csrf_token },
-        credentials: "include",
-        body: JSON.stringify(updated),
-      })
-
-      if (!res.ok) throw new Error("Failed to update")
-
-      const data = await res.json()
-      console.log("Update success:", data)
-
-      setIsEditOpen(false)
-      reloadData()
-
-    } catch (error) {
-      console.error("Error saving edit:", error)
-    }
+    const id = getId(updated)
+    await handleUpdate(tableName, updated, id)
+    setIsEditOpen(false)
+    reloadData()
   }
 
   const handleConfirmDelete = async () => {
-    if (!deleteData) return
-    try {
-      const id = getId(deleteData)
-
-      const res = await fetch(`${API_BASE}/delete/${tableName}/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      })
-
-      if (!res.ok) throw new Error("Failed to delete")
-
-      console.log("Delete success")
-      setIsDeleteOpen(false)
-      reloadData()
-
-    } catch (error) {
-      console.error("Error deleting:", error)
-    }
+    const id = getId(deleteData)
+    await handleDelete(tableName, id)
+    setIsDeleteOpen(false)
+    reloadData()
   }
 
     return (
