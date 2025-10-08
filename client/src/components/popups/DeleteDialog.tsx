@@ -23,9 +23,8 @@ export default function DeleteModal<T extends Student | Program | College>(
 
   if ("id_number" in deleteData){
     const student = deleteData as Student
-    console.log("Student view chosen")
     content = (
-      <Box>        
+      <Box className="text-label">        
         Are you sure you want to delete this student?
       </Box>
     )
@@ -38,15 +37,29 @@ export default function DeleteModal<T extends Student | Program | College>(
   else if ("program_code" in deleteData){
     const program = deleteData as Program
     content = (
-      <p>Pogram Code: {program.program_code}</p>  
+      <Box className="text-label">        
+        Are you sure you want to delete this program?
+      </Box>
+    )
+    header = (
+      <Box className="view-head-card">
+          <h1>{program.program_code}</h1>
+      </Box>
     )
   }
 
    else  if ("college_name" in deleteData){
-      const college = deleteData as College
-      content = (
-        <p>College Code: {college.college_code}</p>  
-      )
+    const college= deleteData as College
+    content = (
+      <Box className="text-label">        
+        Are you sure you want to delete this college?
+      </Box>
+    )
+    header = (
+      <Box className="view-head-card">
+          <h1>{college.college_code}</h1>
+      </Box>
+    )
     }
 
   const handleConfirm = () => {

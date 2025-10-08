@@ -25,31 +25,31 @@ def add_students():
         return jsonify({"error": str(e)}), 500
 
 
-# # ========================== 
-# # PROGRAM INSERT
-# # ==========
-# @insertor.route("/create/programs/<string:program_code>", methods = ["PUT"])
-# def edit_programs(program_code):
-#     program = Program()         
-#     print(program_code)
-#     data = program.get(program_code)  
+# ========================== 
+# PROGRAM INSERT
+# ==========
+@insertier.route("/create/programs/<string:program_code>", methods = ["PUT"])
+def edit_programs(program_code):
+    program = Program()         
+    print(program_code)
+    data = program.get(program_code)  
 
-#     if not data:
-#         return jsonify({"error": "Program not found"}), 404
+    if not data:
+        return jsonify({"error": "Program not found"}), 404
 
-#     return jsonify(data), 200
+    return jsonify(data), 200
 
 
-# # ========================== 
-# # COLLEGE INSERT
-# # ==========
-# @insertor.route("/create/colleges/<string:college_code>", methods = ["PUT"])
-# def edit_colleges(college_code):
-#     college = College()         
-#     print(college_code)
-#     data = college.get(college_code)  
+# ========================== 
+# COLLEGE INSERT
+# ==========
+@insertier.route("/create/colleges/<string:college_code>", methods = ["PUT"])
+def edit_colleges(college_code):
+    college = College()         
+    print(college_code)
+    data = college.get(college_code)  
 
-#     if not data:
-#         return jsonify({"error": "College not found"}), 404
+    if not data:
+        return jsonify({"error": "College not found"}), 404
 
-#     return jsonify(data), 200
+    return jsonify(data), 200

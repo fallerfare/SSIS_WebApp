@@ -96,16 +96,61 @@ export default function ViewModal<T extends Student | Program | College>(
   }
   else if ("program_code" in viewData){
     const program = viewData as Program
+    console.log("Program view chosen")
     content = (
-      <p>Pogram Code: {program.program_code}</p>  
+      <Box>        
+        <Grid
+            templateColumns="repeat(1, 1fr)" 
+            gap={6}>
+
+        <GridItem colStart={1} rowStart={1} colSpan={1}>
+          <FormControl>
+            <FormLabel className="text-label">Program Name</FormLabel>
+            <Input value={program.program_name} readOnly  className="text-box"/>
+          </FormControl>
+        </GridItem>    
+
+        <GridItem colStart={1} rowStart={2} colSpan={1}>
+          <FormControl>
+            <FormLabel className="text-label">College</FormLabel>
+            <Input value={program.college_code} readOnly  className="text-box"/>
+          </FormControl>
+        </GridItem>    
+
+        </Grid>
+      </Box>
+    )
+    header = (
+      <Box className="view-head-card">
+          <h1>{program.program_code}</h1>
+      </Box>
     )
   }
 
    else  if ("college_name" in viewData){
-      const college = viewData as College
-      content = (
-        <p>College Code: {college.college_code}</p>  
-      )
+    const college = viewData as College
+    console.log("College view chosen")
+    content = (
+      <Box>        
+        <Grid
+            templateColumns="repeat(1, 1fr)" 
+            gap={6}>
+
+        <GridItem colStart={1} rowStart={1} colSpan={2}>
+          <FormControl>
+            <FormLabel className="text-label">College Name</FormLabel>
+            <Input value={college.college_name} readOnly  className="text-box"/>
+          </FormControl>
+        </GridItem>    
+
+        </Grid>
+      </Box>
+    )
+    header = (
+      <Box className="view-head-card">
+          <h1>{college.college_code}</h1>
+      </Box>
+    )
     }
 
   console.log("Function exited")
