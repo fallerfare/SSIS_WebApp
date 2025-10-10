@@ -20,7 +20,7 @@ def list(table):
     
     tag = request.args.get('tag', '')
     key = request.args.get('key', '')
-    sort = request.args.get('sort', def_col)
+    sort = request.args.get('sort') or def_col
     order = request.args.get('order', 'asc')
     limit = int(request.args.get('size', 10)) 
     page = int(request.args.get('page', 0))

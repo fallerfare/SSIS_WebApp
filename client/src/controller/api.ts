@@ -10,14 +10,18 @@ export async function fetchTableData(table: string,
                                                         page: number,
                                                         limit: number,
                                                         tag: string,
-                                                        key: string
+                                                        key: string,
+                                                        sort: string,
+                                                        order: string
                                                         ) {
                                                             
     const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
         tag: tag.toString(),
-        key: key.toString()
+        key: key.toString(),
+        sort: sort.toString(),
+        order: order.toString()
     })
 
     const response = await fetch(`${API_BASE}/table/${table}?${params}`)
