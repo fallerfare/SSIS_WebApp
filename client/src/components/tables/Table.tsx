@@ -13,6 +13,9 @@ import ViewModal from "../popups/ViewDialog.tsx"
 import DeleteModal from "../popups/DeleteDialog.tsx"
 import EditModal from "../popups/EditDialog.tsx"
 import { handleUpdate, handleDelete } from "@/controller/api.ts"
+import upIcon from "../../assets/icons/asc_icon.png"
+import downIcon from "../../assets/icons/desc_icon.png"
+
 
 type TableProps = { 
     tableName: "students" | "programs" | "colleges"
@@ -105,13 +108,24 @@ const Table = ({ tableName }: TableProps) => {
                                     <Box className="th-custom"
                                             key={header.id}
                                             flex={(header.column.columnDef.meta as any)?.flex ?? 1}
-                                            flexBasis={header.getSize()}>
+                                            flexBasis={header.getSize()}
+                                            onClick={header.column.getToggleSortingHandler()}
+                                            cursor="pointer">
                                         {
                                             flexRender(
                                                 header.column.columnDef.header,
                                                 header.getContext()
                                             )
                                         }
+
+                                        {header.column.getIsSorted() === "asc" && (
+                                            <img src={upIcon} alt="Ascending" className="sort-icons" />
+                                        )}
+
+                                        {header.column.getIsSorted() === "desc" && (
+                                            <img src={downIcon} alt="Descending" className="sort-icons" />
+                                        )}
+
                                         <Box className={`resizer ${
                                                                         header.column.getIsResizing()
                                                                          ? "isResizing"
@@ -181,7 +195,7 @@ const Table = ({ tableName }: TableProps) => {
                 
 
                 {/* TODO: Numbers must be dynamic, see ssis_sql */}
-                {/* <select className="page-drop"
+                <select className="page-drop"
                     value={table.getState().pagination.pageSize}
                     onChange={e => {
                         table.setPageSize(Number(e.target.value))
@@ -192,7 +206,7 @@ const Table = ({ tableName }: TableProps) => {
                         {pageSize}
                         </option>
                     ))}
-                </select> */}
+                </select>
         
         </Box>
 

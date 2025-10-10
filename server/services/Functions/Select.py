@@ -41,7 +41,10 @@ class Select():
         return self
     
     def sort(self, sort_column, sort_order):
-        self.sortquery = f"ORDER BY {sort_column} {sort_order}"
+        if sort_column == "name":
+            self.sortquery = f"ORDER BY last_name {sort_order}"
+        else:
+            self.sortquery = f"ORDER BY {sort_column} {sort_order}"
         return self
     
     def special_col(self, spec_col):

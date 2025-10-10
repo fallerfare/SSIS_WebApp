@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table"
-import type { ColumnDef, PaginationState } from "@tanstack/react-table"
+import type { ColumnDef, PaginationState, SortingState } from "@tanstack/react-table"
 import { StudentColumns } from "./StudentsTable"
 import { ProgramColumns } from "./ProgramsTable"
 import { CollegeColumns } from "./CollegesTable"
@@ -41,13 +41,17 @@ export function getTable(tableName: TableName,
       break
   }
 
+  const [sorting, setSorting] = useState<SortingState>([])
+
   function reloadData({
       pageIndex = pagination.pageIndex, 
       pageSize = pagination.pageSize, 
       search_tag = "",
-      search_key = ""} = {}) {
+      search_key = "",
+      sort = sorting[0]?.id || "",    
+      order = sorting[0]?.desc ? "desc" : "asc",} = {}) {
         
-    fetchTableData(tableName, pageIndex, pageSize, search_tag, search_key)
+    fetchTableData(tableName, pageIndex, pageSize, search_tag, search_key, sort, order)
       .then((result) => {
         setData(result.data)
         console.log("API result after reload:", result)
@@ -60,12 +64,21 @@ export function getTable(tableName: TableName,
     reloadData()
   }, [tableName, pagination.pageIndex, pagination.pageSize])
 
+  useEffect(() => {
+    reloadData()
+  }, [sorting])
+  
+
   const table = useReactTable({
     data,
     columns,
     pageCount,
+
+    // ===============
+    // States
     state: {
       pagination,
+      sorting,
     },
 
     // ===============
@@ -77,7 +90,12 @@ export function getTable(tableName: TableName,
 
     // ===============
     // Filtering
-    manualFiltering: true
+    manualFiltering: true,
+
+    // ===============
+    // Sorting
+    onSortingChange: setSorting,
+    manualSorting: true
   })
 
   return { table, reloadData }
