@@ -26,19 +26,36 @@ def list(table):
     page = int(request.args.get('page', 0))
 
     selector = Select()   
-    total       = selector\
-                        .table(table)\
-                        .search(tag, key)\
-                        .execute()\
-                        .retDict()
-    contents = selector\
-                        .table(table)\
-                        .search(tag, key)\
-                        .limit(limit)\
-                        .offset(page)\
-                        .sort(sort, order)\
-                        .execute()\
-                        .retDict()
+
+    if tag == "name":
+        total       = selector\
+                            .table(table)\
+                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key})\
+                            .execute()\
+                            .retDict()
+        contents = selector\
+                            .table(table)\
+                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key})\
+                            .limit(limit)\
+                            .offset(page)\
+                            .sort(sort, order)\
+                            .execute()\
+                            .retDict()
+
+    else:
+        total       = selector\
+                            .table(table)\
+                            .search(tag, key)\
+                            .execute()\
+                            .retDict()
+        contents = selector\
+                            .table(table)\
+                            .search(tag, key)\
+                            .limit(limit)\
+                            .offset(page)\
+                            .sort(sort, order)\
+                            .execute()\
+                            .retDict()
 
     return jsonify({
         "data": contents,
