@@ -23,21 +23,24 @@ const Table = ({ tableName }: TableProps) => {
     const [isViewOpen, setIsViewOpen] = useState(false)
     const [viewData, setViewData] = useState<any>(null)
 
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const [editData, setEditData] = useState<any>(null)
+
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+    const [deleteData, setDeleteData] = useState<any>(null)
+
+    const [selectedTag, setSelectedTag] = useState<string>("")
+    const [searchKey, setSearchKey] = useState<string>("")
+
     const handleTableView = (data: any) => {
         setViewData(data)
         setIsViewOpen(true)
     }
 
-    const [isEditOpen, setIsEditOpen] = useState(false)
-    const [editData, setEditData] = useState<any>(null)
-
     const handleTableEdit = (data: any) => {
         setEditData(data)
         setIsEditOpen(true)
     }
-
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
-    const [deleteData, setDeleteData] = useState<any>(null)
 
     const handleTableDelete = (data: any) => {
         setDeleteData(data)
@@ -68,6 +71,11 @@ const Table = ({ tableName }: TableProps) => {
     reloadData()
   }
 
+  const handleFilters = async () => {
+    reloadData({ search_tag: selectedTag, search_key: searchKey })
+    console.log("tag: ", selectedTag, "key: ", searchKey)
+  }
+
     return (
     
     // ========================== 
@@ -79,8 +87,12 @@ const Table = ({ tableName }: TableProps) => {
                 {tableName}
             </Heading>
             <Filters
-                columnFilters={table.getState().columnFilters}
-                setColumnFilters={table.setColumnFilters}
+                tableName={tableName}
+                onSearch={handleFilters}
+                selectedKey={searchKey}
+                setSelectedKey={setSearchKey}
+                selectedTag={selectedTag}
+                setSelectedTag={setSelectedTag}
             />
         </Box>
         <Box className="table-card">

@@ -7,7 +7,7 @@ import { CollegeColumns } from "./CollegesTable"
 import { getActionsColumns } from "./ActionsColumn"
 import { fetchTableData } from "../../controller/api"
 
-type TableName = "students" | "programs" | "colleges"
+export type TableName = "students" | "programs" | "colleges"
 
 export function getTable(tableName: TableName,
                                       onView: (data:any) => void,
@@ -28,11 +28,6 @@ export function getTable(tableName: TableName,
     setPagination({ pageIndex: 0, pageSize: 10 })
     }, [tableName])
 
-  // ===============
-  // Filtering
-  // const [tag, setTag] = useState(-1)
-  // const [key, setKey] = useState(-1)
-
   let columns: ColumnDef<any>[] = []
   switch (tableName) {
     case "students":
@@ -46,8 +41,13 @@ export function getTable(tableName: TableName,
       break
   }
 
-  function reloadData(pageIndex = pagination.pageIndex, pageSize = pagination.pageSize) {
-    fetchTableData(tableName, pageIndex, pageSize)
+  function reloadData({
+      pageIndex = pagination.pageIndex, 
+      pageSize = pagination.pageSize, 
+      search_tag = "",
+      search_key = ""} = {}) {
+        
+    fetchTableData(tableName, pageIndex, pageSize, search_tag, search_key)
       .then((result) => {
         setData(result.data)
         console.log("API result after reload:", result)

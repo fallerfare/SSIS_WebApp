@@ -8,12 +8,16 @@ type TableName = "students" | "programs" | "colleges"
 
 export async function fetchTableData(table: string,
                                                         page: number,
-                                                        limit: number
+                                                        limit: number,
+                                                        tag: string,
+                                                        key: string
                                                         ) {
                                                             
     const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
+        tag: tag.toString(),
+        key: key.toString()
     })
 
     const response = await fetch(`${API_BASE}/table/${table}?${params}`)

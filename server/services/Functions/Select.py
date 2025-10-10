@@ -49,7 +49,7 @@ class Select():
         self.columns = [col.split(" AS ")[-1].split(".")[-1] for col in spec_col]
         return self
     
-    def search(self, tag, key, table = None, search_mult = {}):
+    def search(self, tag = None, key = None, table = None, search_mult = {}):
         self.searchquery = ""
         self.params = []
 
@@ -59,19 +59,25 @@ class Select():
         if search_mult:
             conditions = []
             for col, val in search_mult.items():
-                tag = self.aliascolumn.get(col, f"{table}.{col}")
-                if val == "Male":  
+                search_tag = self.aliascolumn.get(col, f"{table}.{col}")
+                if col == "year_level":
+                    conditions.append(f"{search_tag} = %s")
+                    self.params.append(int(val))
+                elif val == "Male":  
                     conditions.append(f"{search_tag} = %s")
                     self.params.append(val)
                 else:
                     conditions.append(f"{search_tag} LIKE %s")
                     self.params.append(f"%{val}%")
-            self.searchquery = "WHERE " + " AND ".join(conditions)
+            self.searchquery = "WHERE " + " OR ".join(conditions)
 
         elif tag and key:
             search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
             self.searchquery = f"WHERE {search_tag} LIKE %s "
-            if key == "Male":
+            if tag == "year_level":
+                self.searchquery = f"WHERE {search_tag} = %s"
+                self.params.append(int(key))
+            elif key == "Male":
                 self.params.append(f"{key}")
             else:
                 self.params.append(f"%{key}%")
@@ -86,6 +92,9 @@ class Select():
     def execute(self, params = None):
         if params is not None:
             self.params = params
+
+        else:
+            self.params = self.params or [] 
             
         self.query = " ".join([
                     self.basequery,
@@ -99,6 +108,7 @@ class Select():
                     self.offsetquery
                     ]).strip()
         print(self.query)
+        print(self.params)
 
         conn = None
         try:
@@ -114,6 +124,7 @@ class Select():
         finally:
             if conn:
                 connection.put_conn(conn)
+                
             return self
         
     def retData(self):
