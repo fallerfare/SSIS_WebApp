@@ -15,6 +15,7 @@ import EditModal from "../popups/EditDialog.tsx"
 import { handleUpdate, handleDelete } from "@/controller/api.ts"
 import upIcon from "../../assets/icons/asc_icon.png"
 import downIcon from "../../assets/icons/desc_icon.png"
+import ErrorPopup from "../popups/ErrorsDialog.tsx"
 
 
 type TableProps = { 
@@ -34,6 +35,9 @@ const Table = ({ tableName }: TableProps) => {
 
     const [selectedTag, setSelectedTag] = useState<string>("")
     const [searchKey, setSearchKey] = useState<string>("")
+
+    const [isErrorOpen, setIsErrorOpen] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string>("")
 
     const handleTableView = (data: any) => {
         setViewData(data)
@@ -68,11 +72,30 @@ const Table = ({ tableName }: TableProps) => {
   }
 
   const handleConfirmDelete = async () => {
-    const id = getId(deleteData)
-    await handleDelete(tableName, id)
-    setIsDeleteOpen(false)
-    reloadData()
-  }
+        const id = getId(deleteData)
+        try {
+            const response = await handleDelete(tableName, id)
+
+            if (!response.success) {
+            if (response.error === "ForeignKeyViolation") {
+                console.log(response.error)
+                setErrorMessage(response.message || "Delete restricted.")
+                setIsErrorOpen(true)
+            } else {
+                setErrorMessage("An unexpected error occurred.")
+                setIsErrorOpen(true)
+            }
+            } else {
+            reloadData()
+            }
+        } catch (err) {
+            console.log(err)
+            setErrorMessage("Server connection error. Please try again.")
+            setIsErrorOpen(true)
+        } finally {
+            setIsDeleteOpen(false)
+        }
+    }
 
   const handleFilters = async () => {
     reloadData({ search_tag: selectedTag, search_key: searchKey })
@@ -234,6 +257,11 @@ const Table = ({ tableName }: TableProps) => {
         onConfirm={handleConfirmDelete}
         >
         </DeleteModal>
+        <ErrorPopup
+        isOpen={isErrorOpen}
+        message={errorMessage}
+        onClose={() => setIsErrorOpen(false)}
+        />
         {/* Dialog Popups */}
         {/* ============ */}
 

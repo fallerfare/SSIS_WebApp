@@ -125,11 +125,5 @@ export async function handleDelete(tableName: TableName, id: string) {
         credentials: "include",
     })
 
-    console.log("backed shi happend")
-
-    if (!response.ok) {
-        throw new Error(`Failed to create ${tableName}: ${response.statusText}`)
-    }
-
     return response.json()
     }
