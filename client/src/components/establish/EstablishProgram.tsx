@@ -5,14 +5,24 @@ import { useState } from "react"
 import { CollegesDropdown } from "./FieldsConfig"
 import type { Program } from "@/models/types/programs"
 import { handleInsert } from "@/controller/api"
+import ErrorPopup from "../popups/ErrorsDialog"
+import SuccessPopup from "../popups/Success"
 
 const EnrollmentForm = () => {
     
-    const [formData, setFormData] = useState<Program>({
+    const defaultFormData: Program = {
         program_code: "", 
         program_name: "",
         college_code: ""
-    })
+    }
+
+    const [formData, setFormData] = useState<Program>(defaultFormData)
+
+    const [isErrorOpen, setIsErrorOpen] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string>("")
+
+    const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+    const [successMessage, setSuccessMessage] = useState<string>("")
 
     const handleChange = (field: keyof Program) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,11 +34,16 @@ const EnrollmentForm = () => {
         console.log("Clicked!")
         try {
             const response = await handleInsert<Program>("programs", formData)
+
+            setSuccessMessage("Successfully established new program!")
+            setIsSuccessOpen(true)
             console.log("Inserted:", response)
-            alert("Establishment successful!")
         } catch (err) {
             console.error(err)
-            alert("Failed to establish program.")
+            setErrorMessage("Server connection error. Please try again.")
+            setIsErrorOpen(true)        
+        } finally {
+            setFormData(defaultFormData)
         }
     }
 
@@ -85,6 +100,18 @@ const EnrollmentForm = () => {
             </Button>
             </Box>
         </Box>
+        
+        <ErrorPopup
+            isOpen={isErrorOpen}
+            message={errorMessage}
+            onClose={() => setIsErrorOpen(false)}
+        />
+
+        <SuccessPopup
+            isOpen={isSuccessOpen} 
+            message={successMessage}
+            onClose={() => setIsSuccessOpen(false)}
+        />
     </Box>
     // ========== 
     // FORM

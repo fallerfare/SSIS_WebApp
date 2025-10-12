@@ -39,8 +39,16 @@ def edit_programs(program_code):
 
     if not data:
         return jsonify({"error": "Program not found"}), 404
+    
+    updates = request.json
+    if not updates: 
+        return jsonify({"error": "No data provided"})
 
-    return jsonify(data), 200
+    try:
+        program.edit(program_code, updates)
+        return jsonify({"message": "Program updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # ========================== 
@@ -55,4 +63,12 @@ def edit_colleges(college_code):
     if not data:
         return jsonify({"error": "College not found"}), 404
 
-    return jsonify(data), 200
+    updates = request.json
+    if not updates: 
+        return jsonify({"error": "No data provided"})
+
+    try:
+        college.edit(college_code, updates)
+        return jsonify({"message": "College updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

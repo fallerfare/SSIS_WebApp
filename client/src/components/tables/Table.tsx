@@ -16,6 +16,7 @@ import { handleUpdate, handleDelete } from "@/controller/api.ts"
 import upIcon from "../../assets/icons/asc_icon.png"
 import downIcon from "../../assets/icons/desc_icon.png"
 import ErrorPopup from "../popups/ErrorsDialog.tsx"
+import SuccessPopup from "../popups/Success.tsx"
 
 
 type TableProps = { 
@@ -38,6 +39,9 @@ const Table = ({ tableName }: TableProps) => {
 
     const [isErrorOpen, setIsErrorOpen] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string>("")
+
+    const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+    const [successMessage, setSuccessMessage] = useState<string>("")
 
     const handleTableView = (data: any) => {
         setViewData(data)
@@ -68,6 +72,8 @@ const Table = ({ tableName }: TableProps) => {
     const id = getId(updated)
     await handleUpdate(tableName, updated, id)
     setIsEditOpen(false)
+    setSuccessMessage(`Succesfully edited ${tableName}`)
+    setIsSuccessOpen(true)
     reloadData()
   }
 
@@ -86,6 +92,8 @@ const Table = ({ tableName }: TableProps) => {
                 setIsErrorOpen(true)
             }
             } else {
+            setSuccessMessage(`Succesfully deleted ${tableName}`)
+            setIsSuccessOpen(true)
             reloadData()
             }
         } catch (err) {
@@ -261,6 +269,12 @@ const Table = ({ tableName }: TableProps) => {
         isOpen={isErrorOpen}
         message={errorMessage}
         onClose={() => setIsErrorOpen(false)}
+        />
+
+        <SuccessPopup
+            isOpen={isSuccessOpen} 
+            message={successMessage}
+            onClose={() => setIsSuccessOpen(false)}
         />
         {/* Dialog Popups */}
         {/* ============ */}

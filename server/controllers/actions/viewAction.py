@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from services.Functions.Select import Select
 from models.students import Student
 from models.programs import Program
 from models.colleges import College
@@ -18,6 +19,34 @@ def view_students(id_number):
         return jsonify({"error": "Student not found"}), 404
 
     return jsonify(data), 200
+
+@viewer.route("/view/students/programName/<string:program_code>", methods = ["GET"])
+def view_students_program_name(program_code):
+    selector = Select()
+    program_name = selector\
+                                .table("programs")\
+                                .search("program_code", program_code)\
+                                .special_col(["program_name"])\
+                                .execute()\
+                                .retDict()
+
+    return jsonify({
+        "program_name":program_name[0]["program_name"]
+    })
+
+@viewer.route("/view/students/collegeName/<string:college_code>", methods = ["GET"])
+def view_students_college_name(college_code):
+    selector = Select()
+    college_name = selector\
+                                .table("colleges")\
+                                .search("college_code", college_code)\
+                                .special_col(["college_name"])\
+                                .execute()\
+                                .retDict()
+
+    return jsonify({
+        "college_name":college_name[0]["college_name"]
+    })
 
 
 # ========================== 

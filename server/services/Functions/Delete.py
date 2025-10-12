@@ -1,4 +1,6 @@
+import psycopg2
 from controllers.dbconnection import connection
+from psycopg2 import errors
 
 class Delete():
     def __init__(self):
@@ -36,10 +38,16 @@ class Delete():
             with conn.cursor() as cursor:
                 cursor.execute(self.query, self.params)
                 conn.commit()
-        except Exception as exception:
-            print(f"Error selecting : {exception}")
+        except errors.ForeignKeyViolation as fke:
+            print(f"Error selecting : {fke}")
             if conn:
                 conn.rollback()
+            raise fke
+        except psycopg2.Error as pge:
+            print(f"Error selecting : {pge}")
+            if conn:
+                conn.rollback()
+            raise pge
         finally:
             if conn:
                 connection.put_conn(conn)
