@@ -41,6 +41,18 @@ export async function getSession(): Promise<{ isLoggedIn: boolean; user_name? : 
     return response.json()
 }
 
+export async function getCollegeName(college_code: string) {
+    const response = await fetch(`${API_BASE}/view/students/collegeName/${college_code}`)
+    if (!response.ok) throw new Error("Failed to fetch data")
+    return response.json()
+}
+
+export async function getProgramName(program_code: string) {
+    const response = await fetch(`${API_BASE}/view/students/programName/${program_code}`)
+    if (!response.ok) throw new Error("Failed to fetch data")
+    return response.json()
+}
+
 export async function getCollegeList(): Promise<{ data: College[] }>{
 
     const response = await fetch(`${API_BASE}/table/colleges`)

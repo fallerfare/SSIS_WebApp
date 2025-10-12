@@ -3,6 +3,8 @@ import { FormControl, FormLabel } from "@chakra-ui/form-control"
 import type { Student } from "@/models/types/students"
 import type { Program } from "@/models/types/programs"
 import type { College } from "@/models/types/colleges"
+import { getCollegeName, getProgramName } from "@/controller/api"
+import { useEffect, useState } from "react"
 
 type ViewModalProps<T> = {
   isOpen: boolean
@@ -23,6 +25,17 @@ export default function ViewModal<T extends Student | Program | College>(
 
   if ("id_number" in viewData){
     const student = viewData as Student
+
+    const [programName, setProgramName] = useState("")
+    const [collegeName, setCollegeName] = useState("")
+
+    useEffect(() => {
+      getProgramName(student.program_code)
+        .then(({ program_name }) => setProgramName(program_name ?? ""))
+      getCollegeName(student.college_code)
+        .then(({ college_name }) => setCollegeName(college_name ?? ""))
+    }, [])
+
     console.log("Student view chosen")
     content = (
       <Box>        
@@ -71,17 +84,17 @@ export default function ViewModal<T extends Student | Program | College>(
           </FormControl>
         </GridItem>    
 
-        <GridItem colStart={1} rowStart={4} colSpan={2}>
+        <GridItem colStart={1} rowStart={4} colSpan={4}>
           <FormControl>
             <FormLabel className="text-label">Program</FormLabel>
-            <Input value={student.program_code} readOnly  className="text-box"/>
+            <Input value={programName} readOnly  className="text-box"/>
           </FormControl>
         </GridItem>    
 
-        <GridItem colStart={3} rowStart={4} colSpan={2}>
+        <GridItem colStart={1} rowStart={5} colSpan={4}>
           <FormControl>
             <FormLabel className="text-label">College</FormLabel>
-            <Input value={student.college_code} readOnly  className="text-box"/>
+            <Input value={collegeName} readOnly  className="text-box"/>
           </FormControl>
         </GridItem>    
 
@@ -96,6 +109,14 @@ export default function ViewModal<T extends Student | Program | College>(
   }
   else if ("program_code" in viewData){
     const program = viewData as Program
+
+    const [collegeName, setCollegeName] = useState("")
+
+    useEffect(() => {
+      getCollegeName(program.college_code)
+        .then(({ college_name }) => setCollegeName(college_name ?? ""))
+    }, [])
+
     console.log("Program view chosen")
     content = (
       <Box>        
@@ -113,7 +134,7 @@ export default function ViewModal<T extends Student | Program | College>(
         <GridItem colStart={1} rowStart={2} colSpan={1}>
           <FormControl>
             <FormLabel className="text-label">College</FormLabel>
-            <Input value={program.college_code} readOnly  className="text-box"/>
+            <Input value={collegeName} readOnly  className="text-box"/>
           </FormControl>
         </GridItem>    
 

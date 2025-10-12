@@ -5,20 +5,31 @@ import { useState } from "react"
 import { GenderDropdown, YearLevelDropdown, ProgramsDropdown, CollegesDropdown } from "./FieldsConfig"
 import type { Student } from "@/models/types/students"
 import { handleInsert } from "@/controller/api"
+import SuccessPopup from "../popups/Success"
+import ErrorPopup from "../popups/ErrorsDialog"
 
 const EnrollmentForm = () => {
+
+    const defaultFormData: Student = {
+    id_number: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    email: "",
+    gender: "",
+    year_level: 1,
+    college_code: "",
+    program_code: "",
+    }
+
+    const [formData, setFormData] = useState<Student>(defaultFormData)
+
     
-    const [formData, setFormData] = useState<Student>({
-        id_number: "",
-        first_name: "",
-        middle_name: "",
-        last_name: "",
-        email: "",
-        gender: "",
-        year_level: 1,
-        college_code: "",
-        program_code: "",
-    })
+    const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+    const [successMessage, setSuccessMessage] = useState<string>("")
+
+    const [isErrorOpen, setIsErrorOpen] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string>("")
 
     const handleChange = (field: keyof Student) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,11 +41,16 @@ const EnrollmentForm = () => {
         console.log("Clicked!")
         try {
             const response = await handleInsert<Student>("students", formData)
+
+            setSuccessMessage("Successfully enrolled new student!")
+            setIsSuccessOpen(true)
             console.log("Inserted:", response)
-            alert("Enrollment successful!")
         } catch (err) {
             console.error(err)
-            alert("Failed to enroll student.")
+            setErrorMessage("Server connection error. Please try again.")
+            setIsErrorOpen(true)
+        } finally {
+            setFormData(defaultFormData)
         }
     }
 
@@ -154,6 +170,18 @@ const EnrollmentForm = () => {
             </Button>
             </Box>
         </Box>
+
+        <ErrorPopup
+            isOpen={isErrorOpen}
+            message={errorMessage}
+            onClose={() => setIsErrorOpen(false)}
+        />
+
+        <SuccessPopup
+            isOpen={isSuccessOpen} 
+            message={successMessage}
+            onClose={() => setIsSuccessOpen(false)}
+        />
     </Box>
     // ========== 
     // FORM
