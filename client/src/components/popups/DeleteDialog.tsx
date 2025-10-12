@@ -62,9 +62,10 @@ export default function DeleteModal<T extends Student | Program | College>(
     )
     }
 
-  const handleConfirm = () => {
-      if (onConfirm) onConfirm(deleteData)
-      onClose()
+  const handleConfirm = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (onConfirm) onConfirm(deleteData)
+    onClose()
   }
 
   return (

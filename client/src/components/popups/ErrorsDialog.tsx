@@ -16,7 +16,7 @@ export default function ErrorPopup({ isOpen, onClose, message }: ErrorPopupProps
         <Box className="view-head-card">
           <h1>ERROR ERROR ERROR</h1>
         </Box>
-        <Box className="text-label">        
+        <Box className="text-label" whiteSpace="pre-line">        
           {message || "An unexpected database error occurred."}        
         </Box>
 

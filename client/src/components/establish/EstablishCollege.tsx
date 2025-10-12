@@ -30,20 +30,18 @@ const EnrollmentForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("Clicked!")
         try {
             const response = await handleInsert<College>("colleges", formData)
 
             setSuccessMessage("Successfully established new college!")
             setIsSuccessOpen(true)
             console.log("Inserted:", response)
-        } catch (err) {
-            console.error(err)
-            setErrorMessage("Server connection error. Please try again.")
-            setIsErrorOpen(true)
-        } finally {
             setFormData(defaultFormData)
-        }
+        } catch (err: any) {
+            console.error(err)
+            setErrorMessage(err.message)
+            setIsErrorOpen(true)
+        } 
     }
 
     return (
@@ -56,37 +54,37 @@ const EnrollmentForm = () => {
         <Box className="add-head-card">
             <h1>Establish College</h1>
         </Box>
-        <Box className="add-card">
-            <Grid
-                templateColumns="repeat(1, 1fr)" 
-                gap={6}>
-
-            <GridItem colStart={1} rowStart={1} colSpan={1}>
-            <FormControl>
-                <FormLabel className="text-label">College Name</FormLabel>
-                <Input   value={formData.college_code}
-                            className="text-box"
-                            onChange={handleChange("college_code")} />
-            </FormControl>
-            </GridItem>    
-
-            <GridItem colStart={1} rowStart={2} colSpan={1}>
-            <FormControl>
-                <FormLabel className="text-label">College</FormLabel>
-                <Input   value={formData.college_name}
-                            className="text-box"
-                            onChange={handleChange("college_name")} />
-            </FormControl>
-            </GridItem>    
-
-            </Grid>
-
-            <Box className="dialog-buttons">
-            <Button type="submit" className="submit-button" padding={"10px 60px"} onClick={handleSubmit}>
-                Establish
-            </Button>
+        <form onSubmit={handleSubmit}>
+            <Box className="add-card">
+                <Grid
+                    templateColumns="repeat(1, 1fr)"
+                    gap={6}>
+                <GridItem colStart={1} rowStart={1} colSpan={1}>
+                <FormControl>
+                    <FormLabel className="text-label">College Name</FormLabel>
+                    <Input   value={formData.college_code}
+                                className="text-box"
+                                onChange={handleChange("college_code")}
+                                required/>
+                </FormControl>
+                </GridItem>
+                <GridItem colStart={1} rowStart={2} colSpan={1}>
+                <FormControl>
+                    <FormLabel className="text-label">College</FormLabel>
+                    <Input   value={formData.college_name}
+                                className="text-box"
+                                onChange={handleChange("college_name")}
+                                required/>
+                </FormControl>
+                </GridItem>
+                </Grid>
+                <Box className="dialog-buttons">
+                <Button type="submit" className="submit-button" padding={"10px 60px"}>
+                    Establish
+                </Button>
+                </Box>
             </Box>
-        </Box>
+        </form>
         
         <ErrorPopup
             isOpen={isErrorOpen}
