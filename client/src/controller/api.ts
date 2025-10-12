@@ -73,10 +73,8 @@ export async function getProgramList(college_code: string): Promise<{ data: Prog
 }
 
 export async function handleInsert<T>(tableName: TableName, data: T) {
-    console.log("Payload: ", data)
-    console.log("function called handle")
+    
     const { csrf_token } = await fetchCsrf()
-    console.log("csrf fetched, validated")     
 
     const response = await fetch(`${API_BASE}/create/${tableName}`, {
         method: "POST",
@@ -88,20 +86,25 @@ export async function handleInsert<T>(tableName: TableName, data: T) {
         body: JSON.stringify(data),
     })
 
-    console.log("backed shi happend")
-
     if (!response.ok) {
-        throw new Error(`Failed to create ${tableName}: ${response.statusText}`)
-    }
+    const errorData = await response.json();
+    if (response.status === 400 && errorData.details) {
+        const details = errorData.details as Record<string, string[]>
+        const allMessages = Object.values(details)
+            .flat()                    
+            .join("\n");               
 
-    return response.json()
+        throw new Error(allMessages);
     }
+    throw new Error(errorData.error || "Server error occurred");
+  }
+
+  return response.json();
+}
 
 export async function handleUpdate<T>(tableName: TableName, updated: T, id: string) {
-    console.log("Payload: ", updated)
-    console.log("function called handle")
+
     const { csrf_token } = await fetchCsrf()
-    console.log("csrf fetched, validated")     
 
     const response = await fetch(`${API_BASE}/edit/${tableName}/${id}`, {
         method: "PUT",
@@ -113,14 +116,22 @@ export async function handleUpdate<T>(tableName: TableName, updated: T, id: stri
         body: JSON.stringify(updated),
     })
 
-    console.log("backed shi happend")
 
     if (!response.ok) {
-        throw new Error(`Failed to create ${tableName}: ${response.statusText}`)
-    }
+    const errorData = await response.json();
+    if (response.status === 400 && errorData.details) {
+        const details = errorData.details as Record<string, string[]>
+        const allMessages = Object.values(details)
+            .flat()                    
+            .join("\n");               
 
-    return response.json()
+        throw new Error(allMessages);
     }
+    throw new Error(errorData.error || "Server error occurred");
+  }
+
+  return response.json();
+}
 
 export async function handleDelete(tableName: TableName, id: string) {
     console.log("Payload: ", id)
@@ -138,4 +149,4 @@ export async function handleDelete(tableName: TableName, id: string) {
     })
 
     return response.json()
-    }
+}

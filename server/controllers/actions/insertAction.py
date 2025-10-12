@@ -1,7 +1,11 @@
 from flask import Blueprint, jsonify, request
+from marshmallow import ValidationError
 from models.students import Student
 from models.programs import Program
 from models.colleges import College
+from models.schema import studentForm
+from models.schema import programForm
+from models.schema import collegeForm
 
 insertier = Blueprint("insertier", __name__)
 
@@ -11,45 +15,85 @@ insertier = Blueprint("insertier", __name__)
 @insertier.route("/create/students", methods = ["POST"])
 def add_students():
     student = Student()   
-   
     data = request.json
+    schema = studentForm.StudentSchema()
 
-    print("Backedn received data: ", data)
     if not data: 
         return jsonify({"error": "No data provided"})
 
     try: 
-        student.add(data)
-        return jsonify({"message": "Student added successfully"}), 200
+        validated_data = schema.load(data)
+        student.add(validated_data)
+        return jsonify({"message": "Student added successfully"}), 201
+    
+    except ValidationError as err:
+        return jsonify({
+            "error": "Validation failed",
+            "details": err.messages
+        }), 400
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Server error: {e}")
+        return jsonify({
+            "error": "Server error. Please try again later."
+        }), 500
 
 
 # ========================== 
 # PROGRAM INSERT
 # ==========
-@insertier.route("/create/programs/<string:program_code>", methods = ["PUT"])
-def edit_programs(program_code):
+@insertier.route("/create/programs", methods = ["POST"])
+def edit_programs():
     program = Program()         
-    print(program_code)
-    data = program.get(program_code)  
+    data = request.json
+    schema = programForm.ProgramSchema()
 
     if not data:
-        return jsonify({"error": "Program not found"}), 404
+        return jsonify({"error": "No data proided"}), 404
 
-    return jsonify(data), 200
+    try: 
+        validated_data = schema.load(data)
+        program.add(validated_data)
+        return jsonify({"message": "Program established successfully"}), 201
+    
+    except ValidationError as err:
+        return jsonify({
+            "error": "Validation failed",
+            "details": err.messages
+        }), 400
+
+    except Exception as e:
+        print(f"Server error: {e}")
+        return jsonify({
+            "error": "Server error. Please try again later."
+        }), 500
 
 
 # ========================== 
 # COLLEGE INSERT
 # ==========
-@insertier.route("/create/colleges/<string:college_code>", methods = ["PUT"])
-def edit_colleges(college_code):
+@insertier.route("/create/colleges", methods = ["POST"])
+def edit_colleges():
     college = College()         
-    print(college_code)
-    data = college.get(college_code)  
+    data = request.json
+    schema = collegeForm.CollegeSchema()
 
     if not data:
-        return jsonify({"error": "College not found"}), 404
+        return jsonify({"error": "No data proided"}), 404
 
-    return jsonify(data), 200
+    try: 
+        validated_data = schema.load(data)
+        college.add(validated_data)
+        return jsonify({"message": "College established successfully"}), 201
+    
+    except ValidationError as err:
+        return jsonify({
+            "error": "Validation failed",
+            "details": err.messages
+        }), 400
+
+    except Exception as e:
+        print(f"Server error: {e}")
+        return jsonify({
+            "error": "Server error. Please try again later."
+        }), 500

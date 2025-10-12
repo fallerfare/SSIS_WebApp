@@ -21,6 +21,7 @@ export const GenderDropdown = ({
       value={selectedGender}
       onChange={(e) => setSelectedGender(e.target.value)}
       className="options"
+      required
     >
       <option value="" disabled hidden>
         Select Gender
@@ -52,6 +53,7 @@ export const YearLevelDropdown = ({
       value={selectedYear}                   
       onChange={(e) => setSelectedYear(Number(e.target.value))}
       className="options"
+      required
     >
 
       <option value="" disabled hidden>
@@ -97,6 +99,7 @@ export const CollegesDropdown = ({
       value={selectedCollege}
       onChange={(e) => setSelectedCollege(e.target.value)}
       className="options"
+      required
     >
       <option value="" disabled hidden>
         Select College
@@ -146,7 +149,8 @@ export const ProgramsDropdown = ({
       value={selectedProgram}
       onChange={(e) => setSelectedProgram(e.target.value)}
       className="options"
-      disabled={!selectedCollege} // disabled until college is picked
+      disabled={!selectedCollege}
+      required
     >
       <option value="" disabled hidden>
         Select Program
@@ -159,3 +163,4 @@ export const ProgramsDropdown = ({
     </select>
   )
 }
+

@@ -68,13 +68,24 @@ const Table = ({ tableName }: TableProps) => {
     }
   }
 
-  const handleConfirmEdit = async (updated: any) => {
+   const handleConfirmEdit = async (updated: any) => {
     const id = getId(updated)
-    await handleUpdate(tableName, updated, id)
+    try {
+        const response = await handleUpdate(tableName, updated, id)
+        setSuccessMessage(`Succesfully edited ${tableName}`)
+        setIsSuccessOpen(true)
+        reloadData()
+        console.log("Update:", response)
+
+    } catch (err: any) {
+            console.log(err)
+            setErrorMessage(err.message)
+            setIsErrorOpen(true)
+    } finally {
+        setIsDeleteOpen(false)
+    }
     setIsEditOpen(false)
-    setSuccessMessage(`Succesfully edited ${tableName}`)
-    setIsSuccessOpen(true)
-    reloadData()
+    
   }
 
   const handleConfirmDelete = async () => {
@@ -83,14 +94,14 @@ const Table = ({ tableName }: TableProps) => {
             const response = await handleDelete(tableName, id)
 
             if (!response.success) {
-            if (response.error === "ForeignKeyViolation") {
-                console.log(response.error)
-                setErrorMessage(response.message || "Delete restricted.")
-                setIsErrorOpen(true)
-            } else {
-                setErrorMessage("An unexpected error occurred.")
-                setIsErrorOpen(true)
-            }
+                if (response.error === "ForeignKeyViolation") {
+                    console.log(response.error)
+                    setErrorMessage(response.message || "Delete restricted.")
+                    setIsErrorOpen(true)
+                } else {
+                    setErrorMessage(response.message || "An unexpected error occurred.")
+                    setIsErrorOpen(true)
+                }
             } else {
             setSuccessMessage(`Succesfully deleted ${tableName}`)
             setIsSuccessOpen(true)
