@@ -82,7 +82,7 @@ export function getTable(tableName: TableName,
     },
 
     // ===============
-    // Pagination
+    // Pagination 
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: "onChange",

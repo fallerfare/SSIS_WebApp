@@ -130,14 +130,15 @@ html, body {
   border: 5px solid #000000; 
   border-radius: 0.5rem;     
   box-shadow: 2px 3px 5px #490000;
-  overflow: hidden;
+  /* overflow: scroll; */
   width: 80%;
   margin: 0rem auto 0rem auto;
 }
 
-.table-scroll {
+/* .table-scroll {
   width: 100%;
-}
+  overflow-y: scroll;
+} */
 
 .table {
   width: 100%;
@@ -289,13 +290,12 @@ html, body {
   border-radius: 0.5rem;     
   box-shadow: 2px 3px 5px #664400;
   overflow: hidden;
-  width: 60%;
+  width: 75%;
   padding: 20px;
   margin: 20px auto 50px auto;
   display: flex;
   justify-content: center;  
   align-items: center;
-  
 }
 
 .pages-card button {
@@ -319,7 +319,42 @@ html, body {
   border-width: 3px;
   border-color: #000000;
   background-color: #ffc561;
-  margin: 1rem
+  margin: 1rem;
+  width: 100px;
+}
+
+.number-buttons {
+  font-family: 'NavFont';
+  border-radius: 9px;
+  border-width: 3px;
+  border-color: #000000;
+  background: #ffc561 !important;
+  color:#000000 !important;
+  margin: 0.5px;
+  font-size: 15px;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.ellipsis {
+  font-family: 'NavFont';
+  color:#000000 !important;
+  margin: 2px;
+  font-size: 15px;
+  width: 9px;
+}
+
+.current-page-button {
+  font-family: 'NavFont';
+  border-radius: 9px;
+  border-width: 3px;
+  border-color: #000000;
+  background: #b32d2d !important;
+  color:#ffc561 !important;
+  margin: 0.5px;
+  font-size: 15px;
+  width: 60px !important;
+  height: 60px !important;
 }
 
 /* ===== */

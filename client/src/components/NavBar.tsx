@@ -16,10 +16,7 @@ function NavBar() {
               <Nav.Link  as={Link} to="/home">home</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link  as={Link} to="/profile">profile</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <NavDropdown title='tables' id='basic-nav-dropdown'>
+              <NavDropdown title='records' id='basic-nav-dropdown'>
                 <div className='nav-dropdown'>
                 <NavDropdown.Item>
                   <Nav.Link as={Link} to="/table/students">
@@ -40,11 +37,13 @@ function NavBar() {
               </NavDropdown>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link  as={Link} to="/enrollment">enrollment</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <NavDropdown title='establish' id='basic-nav-dropdown'>
+              <NavDropdown title='academic affairs' id='basic-nav-dropdown'>
                 <div className='nav-dropdown'>
+                <NavDropdown.Item>
+                  <Nav.Link as={Link} to="/enrollment">
+                    admission
+                  </Nav.Link>
+                </NavDropdown.Item>
                 <NavDropdown.Item>
                   <Nav.Link as={Link} to="/establish/programs">
                     create program
