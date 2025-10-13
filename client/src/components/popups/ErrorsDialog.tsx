@@ -1,4 +1,5 @@
 import { Box, Button } from "@chakra-ui/react"
+import ReactDOM from "react-dom"
 
 type ErrorPopupProps = {
   isOpen: boolean
@@ -10,7 +11,7 @@ export default function ErrorPopup({ isOpen, onClose, message }: ErrorPopupProps
   
   if (!isOpen) return null
   
-  return (
+  return ReactDOM.createPortal(
     <Box className="viewpopup-overlay">
       <Box className="viewpopup-content">
         <Box className="view-head-card">
@@ -33,6 +34,7 @@ export default function ErrorPopup({ isOpen, onClose, message }: ErrorPopupProps
             ✕
         </button>
       </Box>
-    </Box>
+    </Box>,
+    document.body
   )
 }
