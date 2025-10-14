@@ -1,4 +1,4 @@
-from Functions.Select import Select
+from services.Functions.Select import Select
 
 class Model:
     def __init__(self, table, tag = None, key = None, limit = None, offset = None):

@@ -8,6 +8,10 @@ import os
 from dotenv import load_dotenv
 from controllers.authentication import auth
 from controllers.tableList import tableList
+from controllers.actions.viewAction import viewer
+from controllers.actions.editAction import editor
+from controllers.actions.deleteAction import deletor
+from controllers.actions.insertAction import insertier
 
 load_dotenv()
 
@@ -19,6 +23,10 @@ app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('WTF_CSRF_SECRET_KEY')
 
 app.register_blueprint(tableList)
 app.register_blueprint(auth)
+app.register_blueprint(viewer)
+app.register_blueprint(editor)
+app.register_blueprint(deletor)
+app.register_blueprint(insertier)
 
 csrf = CSRFProtect(app)
 

@@ -13,3 +13,4 @@ class RegistrationForm(Schema):
         required=True,
         validate=validate.Length(min=3, error="Password must be at least 6 characters")
     )
+ 

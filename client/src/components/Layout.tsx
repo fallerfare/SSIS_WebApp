@@ -5,6 +5,9 @@ import { getSession } from '../controller/api'
 import { useEffect, useState } from 'react'
 import LogInForm from './authentication/LogInForm'
 import TableLayout from './TableLayout'
+import EnrollmentForm from './enrollment/EnrollmentForm'
+import EstablishProgram from './establish/EstablishProgram'
+import EstablishCollege from './establish/EstablishCollege'
 
 function Layout() {
 
@@ -26,18 +29,25 @@ function Layout() {
     return (
         <>
             {!hideNavBar && <NavBar />}    
-            <Routes>
-                <Route path="/" element={
-                    isLoggedIn ? <Navigate to="/table/students" replace /> : <LogInForm />
-                }/> 
-
-                <Route path="/register" element={<RegistrationForm />} />
-                <Route path="/login" element={<LogInForm />} />
-
-                <Route path="/table/*" element={<TableLayout />} />
-                
-                <Route path="*" element = {<Navigate to="/login" replace />}/>
-            </Routes>
+            <div>
+                <Routes>
+        
+                    <Route path="/register" element={<RegistrationForm />} />
+                    <Route path="/login" element={<LogInForm />} />
+                    <Route path="/table/*" element={<TableLayout />} />
+                    <Route path="/enrollment" element={<EnrollmentForm />} />
+                    <Route path="/establish/programs" element={<EstablishProgram />} />
+                    <Route path="/establish/colleges" element={<EstablishCollege />} />
+                    <Route
+                        path="*"
+                        element={
+                            isLoggedIn
+                            ? <Navigate to="/table/students" replace />
+                            : <Navigate to="/login" replace />
+                        }   
+                    />
+                </Routes>
+            </div>
         </>
     )
 }

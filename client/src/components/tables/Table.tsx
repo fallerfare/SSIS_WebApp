@@ -1,20 +1,137 @@
-import { Box, Button, Heading } from "@chakra-ui/react"
+import { Box, Heading } from "@chakra-ui/react"
 import { flexRender } from "@tanstack/react-table"
 import '../../style/App.css'
 import './TableConfig.tsx'
 import { getTable } from "./TableConfig.tsx"
 import Filters from "../Filters.tsx"
-import prevten from "../../assets/icons/prevten.png"
-import prev from "../../assets/icons/prev.png"
-import nextten from "../../assets/icons/nextten.png"
-import next from "../../assets/icons/next.png"
+import { useEffect, useState } from "react"
+import ViewModal from "../popups/ViewDialog.tsx"
+import DeleteModal from "../popups/DeleteDialog.tsx"
+import EditModal from "../popups/EditDialog.tsx"
+import { handleUpdate, handleDelete } from "@/controller/api.ts"
+import upIcon from "../../assets/icons/asc_icon.png"
+import downIcon from "../../assets/icons/desc_icon.png"
+import ErrorPopup from "../popups/ErrorsDialog.tsx"
+import SuccessPopup from "../popups/Success.tsx"
+import PaginationButtons from "./Pagination.tsx"
 
-type TableProps = {
+
+type TableProps = { 
     tableName: "students" | "programs" | "colleges"
 }
 
 const Table = ({ tableName }: TableProps) => {
-    const table = getTable(tableName)
+
+    const [isViewOpen, setIsViewOpen] = useState(false)
+    const [viewData, setViewData] = useState<any>(null)
+
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const [editData, setEditData] = useState<any>(null)
+
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+    const [deleteData, setDeleteData] = useState<any>(null)
+
+    const [selectedTag, setSelectedTag] = useState<string>("")
+    const [searchKey, setSearchKey] = useState<string>("")
+
+    const [isErrorOpen, setIsErrorOpen] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string>("")
+
+    const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+    const [successMessage, setSuccessMessage] = useState<string>("")
+
+    const handleTableView = (data: any) => {
+        setViewData(data)
+        setIsViewOpen(true)
+    }
+
+    const handleTableEdit = (data: any) => {
+        setEditData(data)
+        setIsEditOpen(true)
+    }
+
+    const handleTableDelete = (data: any) => {
+        setDeleteData(data)
+        setIsDeleteOpen(true)
+    }
+ 
+    const { table, reloadData } = getTable(tableName, handleTableView, handleTableEdit, handleTableDelete, selectedTag, searchKey)
+
+    const getId = (row: any) => {
+    switch (tableName) {
+      case "students": return row.id_number
+      case "programs": return row.program_code
+      case "colleges": return row.college_code
+    }
+  }
+
+   const handleConfirmEdit = async (updated: any) => {
+    const id = getId(updated)
+    try {
+        const response = await handleUpdate(tableName, updated, id)
+        setSuccessMessage(`Succesfully edited ${tableName}`)
+        setIsSuccessOpen(true)
+        reloadData()
+        console.log("Update:", response)
+        setIsEditOpen(false)
+
+    } catch (err: any) {
+            console.log(err)
+            setErrorMessage(err.message)
+            setIsErrorOpen(true)
+    } 
+  }
+
+  const handleConfirmDelete = async () => {
+        const id = getId(deleteData)
+        try {
+            const response = await handleDelete(tableName, id)
+
+            if (!response.success) {
+                if (response.error === "ForeignKeyViolation") {
+                    console.log(response.error)
+                    setErrorMessage(response.message || "Delete restricted.")
+                    setIsErrorOpen(true)
+                } else {
+                    setErrorMessage(response.message || "An unexpected error occurred.")
+                    setIsErrorOpen(true)
+                }
+            } else {
+            setSuccessMessage(`Succesfully deleted ${tableName}`)
+            setIsSuccessOpen(true)
+            reloadData()
+            }
+        } catch (err) {
+            console.log(err)
+            setErrorMessage("Server connection error. Please try again.")
+            setIsErrorOpen(true)
+        } finally {
+            setIsDeleteOpen(false)
+        }
+    }
+
+  const handleFilters = async () => {
+    table.setPageIndex(0)
+    reloadData({ search_tag: selectedTag, search_key: searchKey })
+    console.log("tag: ", selectedTag, "key: ", searchKey)
+  }
+
+  useEffect(() => {
+      setSelectedTag("")
+      setSearchKey("")
+  
+      table.setPageIndex(0)
+      table.resetSorting()
+  
+      reloadData({
+        pageIndex: 0,
+        pageSize: 10,
+        search_tag: "",
+        search_key: "",
+        sort: "",
+        order: "asc"
+      })
+    }, [tableName])
 
     return (
     
@@ -27,33 +144,42 @@ const Table = ({ tableName }: TableProps) => {
                 {tableName}
             </Heading>
             <Filters
-                columnFilters={table.getState().columnFilters}
-                setColumnFilters={table.setColumnFilters}
+                tableName={tableName}
+                onSearch={handleFilters}
+                selectedKey={searchKey}
+                setSelectedKey={setSearchKey}
+                selectedTag={selectedTag}
+                setSelectedTag={setSelectedTag}
             />
         </Box>
         <Box className="table-card">
-            <Box className="table-scroll">
-                <Box as="table"
-                        className="table"
-                        width="100%">
-        
                     {/* ============ */}
                     {/* Headers */}
-                    <Box as="thead">
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <Box className="tr"
+                            <Box className="tr-custom"
                                     key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <Box className="th"
+                                    <Box className="th-custom"
                                             key={header.id}
                                             flex={(header.column.columnDef.meta as any)?.flex ?? 1}
-                                            flexBasis={header.getSize()}>
+                                            flexBasis={header.getSize()}
+                                            onClick={header.column.getToggleSortingHandler()}
+                                            cursor="pointer">
                                         {
                                             flexRender(
                                                 header.column.columnDef.header,
                                                 header.getContext()
                                             )
                                         }
+
+                                        {header.column.getIsSorted() === "asc" && (
+                                            <img src={upIcon} alt="Ascending" className="sort-icons" />
+                                        )}
+
+                                        {header.column.getIsSorted() === "desc" && (
+                                            <img src={downIcon} alt="Descending" className="sort-icons" />
+                                        )}
+
                                         <Box className={`resizer ${
                                                                         header.column.getIsResizing()
                                                                          ? "isResizing"
@@ -64,20 +190,16 @@ const Table = ({ tableName }: TableProps) => {
                                 ))}
                             </Box>
                         ))}
-                    </Box>
                      {/* Headers */}
                     {/* ============ */}
         
                     {/* ============ */}
                     {/* Rows */}
-                    <Box as="tbody">
                         {table.getRowModel().rows.map((row) => (
-                                <Box as="tr"
-                                        className="tr-rows"
+                                <Box className="tr-rows"
                                         key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <Box as="td"
-                                                className="td"
+                                        <Box className="td-custom"
                                                 key={(cell.id)}
                                                 flex={(cell.column.columnDef.meta as any)?.flex ?? 1}
                                                 flexBasis={cell.column.getSize()}>
@@ -92,58 +214,49 @@ const Table = ({ tableName }: TableProps) => {
                                 </Box>
                             ))
                         }
-                    </Box>
                     {/* Rows */}
                     {/* ============ */}
-                </Box>
-            </Box>
         </Box>
-        <Box className="pages-card">
-                            
-                <Button
-                    onClick={() => table.firstPage()}
-                    disabled={!table.getCanPreviousPage()}
-                    >
-                    <img src={prevten}/>
-                </Button>
+        <PaginationButtons table={table}/>
 
-                <Button
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                    >
-                    <img src={prev}/>
-                </Button>
+        {/* ============ */}
+        {/* Dialog Popups */}
+        <ViewModal 
+        isOpen={isViewOpen} 
+        onClose={() => setIsViewOpen(false)}
+        viewData={viewData}
+        >
+        </ViewModal>
 
-                <Button
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                    >
-                    <img src={next}/>
-                </Button>
-                
-                <Button
-                    onClick={() => table.lastPage()}
-                    disabled={!table.getCanNextPage()}
-                    >
-                    <img src={nextten}/>
-                </Button>
-                
+         <EditModal 
+        isOpen={isEditOpen} 
+        onClose={() => setIsEditOpen(false)}
+        editData={editData}
+        onConfirm={handleConfirmEdit}
+        >
+        </EditModal>
 
-                {/* TODO: Numbers must be dynamic, see ssis_sql */}
-                <select className="page-drop"
-                    value={table.getState().pagination.pageSize}
-                    onChange={e => {
-                        table.setPageSize(Number(e.target.value))
-                    }}
-                    >
-                    {[10, 20, 30, 40, 50].map(pageSize => (
-                        <option key={pageSize} value={pageSize}>
-                        {pageSize}
-                        </option>
-                    ))}
-                </select>
-        
-        </Box>
+         <DeleteModal 
+        isOpen={isDeleteOpen} 
+        onClose={() => setIsDeleteOpen(false)}
+        deleteData={deleteData}
+        onConfirm={handleConfirmDelete}
+        >
+        </DeleteModal>
+        <ErrorPopup
+        isOpen={isErrorOpen}
+        message={errorMessage}
+        onClose={() => setIsErrorOpen(false)}
+        />
+
+        <SuccessPopup
+            isOpen={isSuccessOpen} 
+            message={successMessage}
+            onClose={() => setIsSuccessOpen(false)}
+        />
+        {/* Dialog Popups */}
+        {/* ============ */}
+
     </Box>
     // ========== 
     // TABLE

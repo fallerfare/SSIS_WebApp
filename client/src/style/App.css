@@ -33,6 +33,10 @@ html, body {
     width: 200px;
 }
 
+.main-content {
+  padding-top: 80px;
+}
+
 /* ================ */
 /* NAVBAR */
 /* ===== */
@@ -40,7 +44,7 @@ html, body {
 .navbar-custom {
   background-color: #b32d2d !important; 
   top: 0 !important;
-  z-index: 3 !important;
+  z-index: 10 !important;
   position: sticky !important;
 }
 .navbar-custom .nav-link {
@@ -61,11 +65,6 @@ html, body {
     width: 200px;
 }
 
-/* .navbar-logo {
-  background-size: 40px;
-  display: block;
-} */
-
 #navbar-links {
   font-family: 'NavFont';
 }
@@ -83,7 +82,6 @@ html, body {
   margin-left: 17px !important;
 }
 
-/* for compressed, no line */
 @media (max-width: 767.98px) {
   .navbar-nav .nav-item + .nav-item {
     border-left: none !important;
@@ -132,14 +130,15 @@ html, body {
   border: 5px solid #000000; 
   border-radius: 0.5rem;     
   box-shadow: 2px 3px 5px #490000;
-  overflow: hidden;
+  /* overflow: scroll; */
   width: 80%;
   margin: 0rem auto 0rem auto;
 }
 
-.table-scroll {
+/* .table-scroll {
   width: 100%;
-}
+  overflow-y: scroll;
+} */
 
 .table {
   width: 100%;
@@ -147,7 +146,7 @@ html, body {
 /* Base Table Properties */
 
 /* tbody */
-.tr, .tr-rows {
+.tr-custom, .tr-rows {
    display: flex;           
   justify-content: center;    
   align-items: center;        
@@ -155,7 +154,7 @@ html, body {
   border: none;
 }
 
-.th, .td {       
+.th-custom, .td-custom {       
   min-width: 10px;        
   overflow: hidden;
   text-overflow: ellipsis;
@@ -171,11 +170,8 @@ html, body {
 /* tbody */
 
 /* thead */
-thead {
-  display: table-header-group !important;
-}
 
-thead .tr, .th{
+.tr-custom, .th-custom{
   padding: 7px;
   position: sticky !important;
   top: 0;
@@ -273,6 +269,13 @@ thead .tr, .th{
 }
 
 
+.sort-icons {
+  width: 25px;
+  height: 25px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
 /* ===== */
 /* ICONS */
 /* ================ */
@@ -287,13 +290,12 @@ thead .tr, .th{
   border-radius: 0.5rem;     
   box-shadow: 2px 3px 5px #664400;
   overflow: hidden;
-  width: 60%;
+  width: 75%;
   padding: 20px;
   margin: 20px auto 50px auto;
   display: flex;
   justify-content: center;  
   align-items: center;
-  
 }
 
 .pages-card button {
@@ -317,7 +319,42 @@ thead .tr, .th{
   border-width: 3px;
   border-color: #000000;
   background-color: #ffc561;
-  margin: 1rem
+  margin: 1rem;
+  width: 100px;
+}
+
+.number-buttons {
+  font-family: 'NavFont';
+  border-radius: 9px;
+  border-width: 3px;
+  border-color: #000000;
+  background: #ffc561 !important;
+  color:#000000 !important;
+  margin: 0.5px;
+  font-size: 15px;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.ellipsis {
+  font-family: 'NavFont';
+  color:#000000 !important;
+  margin: 2px;
+  font-size: 15px;
+  width: 9px;
+}
+
+.current-page-button {
+  font-family: 'NavFont';
+  border-radius: 9px;
+  border-width: 3px;
+  border-color: #000000;
+  background: #b32d2d !important;
+  color:#ffc561 !important;
+  margin: 0.5px;
+  font-size: 15px;
+  width: 60px !important;
+  height: 60px !important;
 }
 
 /* ===== */
@@ -389,7 +426,7 @@ thead .tr, .th{
   width: 45%;
 }
 
-.auth-card button{
+.auth-button{
   border-radius: 5px;
   margin: 7px ;
   padding: 6px;
@@ -402,4 +439,182 @@ thead .tr, .th{
 
 /* ===== */
 /* AUTH */
+/* ================ */
+
+
+/* ================ */
+/* VIEWPOPUP */
+/* ===== */
+
+.viewpopup-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+}
+
+.viewpopup-content {
+  background: #ffa722;
+  border: 5px solid #000000; 
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 30px;
+  width: 60%;
+  position: relative;
+  display:run-in;
+  justify-content: center;  
+  align-items: center;
+}
+
+.viewpopup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #ff4848;
+  cursor: pointer;
+}
+
+.viewpopup-close:hover {
+  color: #000;
+}
+
+.text-label {
+  color: #000000;
+  font-family: "NavFont";
+}
+
+.text-box {
+  color: #7a7a7a;
+  background-color: #9df7f7;
+  border: 2px solid #000000;
+  border-radius: 7px;
+  width: 100%
+}
+
+.text-box:hover{
+  color: #ff4848;
+  background-color: #ffffff;
+  font-weight: bold;
+}
+
+.view-head-card {
+  background: #b32d2d;
+  border: 5px solid #000000; 
+  border-radius: 0.5rem;     
+  box-shadow: 2px 3px 5px #664400;
+  overflow: hidden;
+  width: 60%;
+  padding: 18px 30px;
+  margin: -7% auto 5% auto;
+  display: flex;
+  justify-content: center;  
+  align-items: center;
+}
+
+.view-head-card h1 {
+  text-align: center;
+  font-family: "NavFont";
+  font-weight: bolder;
+  color: #ffc561;
+}
+
+.submit-button{
+  border-radius: 5px;
+  margin: 7px ;
+  padding: 6px;
+  background-color: #67ffbb;
+  border-color: #000000;
+  border-width: 3px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.dialog-buttons {
+  display: flex;
+  margin-top: 20px;
+}
+
+/* ===== */
+/* VIEWPOPUP */
+/* ================ */
+
+/* ================ */
+/* ENROLLMENT */
+/* ===== */
+
+.add-card {
+  background: #a47b44;
+  border: 5px solid #000000; 
+  border-radius: 0.5rem;     
+  box-shadow: 2px 3px 5px #490000;
+  overflow: hidden;
+  width: 80%;
+  margin: 0rem auto 5rem auto;
+  padding: 8% 3% 3% 3%;
+  position: relative;
+  z-index: 1;
+}
+
+.add-logo {
+    background-image: url("../assets/images/addformlogo.png");
+    background-repeat: no-repeat;
+    background-size: contain;  
+    background-position: center;
+    display: flex;   
+    height: 300px;
+    max-width: 35%;
+    min-width: 10%;
+    margin: 5px auto -5% auto;
+    padding: 5px;
+    position: relative;
+    z-index: 3
+}
+
+.add-head-card {
+  background: #ffa722;
+  border: 5px solid #000000; 
+  border-radius: 0.5rem;     
+  box-shadow: 2px 3px 5px #664400;
+  overflow: hidden;
+  width: 60%;
+  padding: 30px 30px;
+  margin: -7% auto -5% auto;
+  display: flex;
+  justify-content: center;  
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.add-head-card h1 {
+  text-align: center;
+  font-family: "NavFont";
+  font-weight: bolder;
+  margin-top: 5%;
+  color: #b32d2d;
+}
+
+.options {
+  color: #7a7a7a;
+  background-color: #9df7f7;
+  border: 2px solid #000000;
+  border-radius: 7px;
+  width: 100%;
+  height: 40px;
+}
+
+.options:hover{
+  color: #ff4848;
+  background-color: #ffffff;
+  font-weight: bold;
+}
+
+/* ===== */
+/* ENROLLMENT */
 /* ================ */
