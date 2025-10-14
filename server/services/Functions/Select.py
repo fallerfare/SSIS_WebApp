@@ -29,7 +29,7 @@ class Select():
         return self
     
     def offset(self, offset):
-        self.offsetquery = f"OFFSET {offset}"
+        self.offsetquery = f"OFFSET {offset*10}"
         return self
 
     def group(self, group):

@@ -47,7 +47,7 @@ const EnrollmentForm = () => {
             setFormData(defaultFormData)
         } catch (err: any) {
             console.error(err)
-            setErrorMessage(err.message)
+            setErrorMessage(err.details || err.error || err.message)
             setIsErrorOpen(true)
         } 
     }

@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
+from psycopg2 import IntegrityError
 from models.students import Student
 from models.programs import Program
 from models.colleges import College
@@ -26,11 +27,24 @@ def add_students():
         student.add(validated_data)
         return jsonify({"message": "Student added successfully"}), 201
     
-    except ValidationError as err:
+    except ValidationError as ve:
         return jsonify({
             "error": "Validation failed",
-            "details": err.messages
+            "details": ve.messages
         }), 400
+    
+    except IntegrityError as ie:
+        err_msg =  str(ie).split('\n')[0]
+        id_number = validated_data.get('id_number')
+        print(err_msg)
+
+        if "students_pkey" in err_msg:
+            err_msg = f"Student of ID Number: {id_number} already exists."
+
+        return jsonify({
+            "error": "Integrity failed",
+            "details": err_msg
+        }), 409
 
     except Exception as e:
         print(f"Server error: {e}")
@@ -56,11 +70,24 @@ def edit_programs():
         program.add(validated_data)
         return jsonify({"message": "Program established successfully"}), 201
     
-    except ValidationError as err:
+    except ValidationError as ve:
         return jsonify({
             "error": "Validation failed",
-            "details": err.messages
+            "details": ve.messages
         }), 400
+    
+    except IntegrityError as ie:
+        err_msg =  str(ie).split('\n')[0]
+        program_code = validated_data.get('program_code')
+        print(err_msg)
+
+        if "students_pkey" in err_msg:
+            err_msg = f"Program of Code: {program_code} already exists."
+
+        return jsonify({
+            "error": "Integrity failed",
+            "details": err_msg
+        }), 409
 
     except Exception as e:
         print(f"Server error: {e}")
@@ -86,11 +113,24 @@ def edit_colleges():
         college.add(validated_data)
         return jsonify({"message": "College established successfully"}), 201
     
-    except ValidationError as err:
+    except ValidationError as ve:
         return jsonify({
             "error": "Validation failed",
-            "details": err.messages
+            "details": ve.messages
         }), 400
+    
+    except IntegrityError as ie:
+        err_msg =  str(ie).split('\n')[0]
+        college_code = validated_data.get('college_code')
+        print(err_msg)
+
+        if "students_pkey" in err_msg:
+            err_msg = f"College of Code: {college_code} already exists."
+
+        return jsonify({
+            "error": "Integrity failed",
+            "details": err_msg
+        }), 409
 
     except Exception as e:
         print(f"Server error: {e}")
