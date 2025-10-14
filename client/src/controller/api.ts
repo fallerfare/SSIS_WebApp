@@ -87,17 +87,25 @@ export async function handleInsert<T>(tableName: TableName, data: T) {
     })
 
     if (!response.ok) {
-    const errorData = await response.json();
-    if (response.status === 400 && errorData.details) {
-        const details = errorData.details as Record<string, string[]>
-        const allMessages = Object.values(details)
-            .flat()                    
-            .join("\n");               
 
-        throw new Error(allMessages);
+        const errorData = await response.json()
+        let message = ""
+        console.log(response)
+        
+        if (response.status === 400 && errorData.details && typeof errorData.details === "object") {
+            const details = errorData.details as Record<string, string[]>
+            const allMessages = Object.values(details)
+                .flat()                    
+                .join("\n")   
+
+            throw new Error(allMessages)
+        }
+
+        else if (response.status === 409 && errorData.details && typeof errorData.details === "string"){
+            message = errorData.details
+            throw new Error(message)
+        }
     }
-    throw new Error(errorData.error || "Server error occurred");
-  }
 
   return response.json();
 }

@@ -4,7 +4,7 @@ import '../../style/App.css'
 import './TableConfig.tsx'
 import { getTable } from "./TableConfig.tsx"
 import Filters from "../Filters.tsx"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ViewModal from "../popups/ViewDialog.tsx"
 import DeleteModal from "../popups/DeleteDialog.tsx"
 import EditModal from "../popups/EditDialog.tsx"
@@ -55,7 +55,7 @@ const Table = ({ tableName }: TableProps) => {
         setIsDeleteOpen(true)
     }
  
-    const { table, reloadData } = getTable(tableName, handleTableView, handleTableEdit, handleTableDelete)
+    const { table, reloadData } = getTable(tableName, handleTableView, handleTableEdit, handleTableDelete, selectedTag, searchKey)
 
     const getId = (row: any) => {
     switch (tableName) {
@@ -111,9 +111,27 @@ const Table = ({ tableName }: TableProps) => {
     }
 
   const handleFilters = async () => {
+    table.setPageIndex(0)
     reloadData({ search_tag: selectedTag, search_key: searchKey })
     console.log("tag: ", selectedTag, "key: ", searchKey)
   }
+
+  useEffect(() => {
+      setSelectedTag("")
+      setSearchKey("")
+  
+      table.setPageIndex(0)
+      table.resetSorting()
+  
+      reloadData({
+        pageIndex: 0,
+        pageSize: 10,
+        search_tag: "",
+        search_key: "",
+        sort: "",
+        order: "asc"
+      })
+    }, [tableName])
 
     return (
     

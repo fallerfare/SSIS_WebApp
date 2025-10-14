@@ -1,4 +1,6 @@
+from psycopg2 import IntegrityError
 from controllers.dbconnection import connection
+# from ...controllers.dbconnection import connection
 
 class Insert():
     def __init__(self):
@@ -51,10 +53,15 @@ class Insert():
             with conn.cursor() as cursor:
                 cursor.execute(self.query, self.params)
                 conn.commit()
+        except IntegrityError as ie:
+            if conn:
+                conn.rollback()
+            raise ie
         except Exception as exception:
             print(f"Error selecting : {exception}")
             if conn:
                 conn.rollback()
+            raise exception
         finally:
             if conn:
                 connection.put_conn(conn)

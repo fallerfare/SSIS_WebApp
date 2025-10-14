@@ -12,7 +12,9 @@ export type TableName = "students" | "programs" | "colleges"
 export function getTable(tableName: TableName,
                                       onView: (data:any) => void,
                                       onEdit: (data:any) => void,
-                                      onDelete: (data:any) => void) {
+                                      onDelete: (data:any) => void,
+                                      selectedTag: string,
+                                      searchKey: string) {
 
   const [data, setData] = useState<any[]>([])
 
@@ -43,11 +45,12 @@ export function getTable(tableName: TableName,
 
   const [sorting, setSorting] = useState<SortingState>([])
 
+
   function reloadData({
       pageIndex = pagination.pageIndex, 
       pageSize = pagination.pageSize, 
-      search_tag = "",
-      search_key = "",
+      search_tag = selectedTag,
+      search_key = searchKey,
       sort = sorting[0]?.id || "",    
       order = sorting[0]?.desc ? "desc" : "asc",} = {}) {
         
@@ -62,11 +65,7 @@ export function getTable(tableName: TableName,
 
   useEffect(() => {
     reloadData()
-  }, [tableName, pagination.pageIndex, pagination.pageSize])
-
-  useEffect(() => {
-    reloadData()
-  }, [sorting])
+  }, [pagination.pageIndex, pagination.pageSize, sorting])
   
 
   const table = useReactTable({
