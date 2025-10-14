@@ -5,30 +5,57 @@ import math
 tableList = Blueprint("tableList", __name__)
 
 # ========================== 
-# LIST
+# PAGINATED LIST
 # ==========
 @tableList.route("/table/<string:table>")
 def list(table): 
+
+    match table:
+        case "students":
+            def_col = "id_number"
+        case "programs":
+            def_col = "program_code"
+        case "colleges":
+            def_col = "college_code"
+    
     tag = request.args.get('tag', '')
     key = request.args.get('key', '')
-    # sort = request.args.get('sort', '')
-    # order = request.args.get('order', 'asc')
+    sort = request.args.get('sort') or def_col
+    order = request.args.get('order', 'asc')
     limit = int(request.args.get('size', 10)) 
     page = int(request.args.get('page', 0))
 
     selector = Select()   
-    total       = selector\
-                        .table(table)\
-                        .search(tag, key)\
-                        .execute()\
-                        .retDict()
-    contents = selector\
-                        .table(table)\
-                        .search(tag, key)\
-                        .limit(limit)\
-                        .offset(page)\
-                        .execute()\
-                        .retDict()
+
+    if tag == "name":
+        total       = selector\
+                            .table(table)\
+                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key})\
+                            .execute()\
+                            .retDict()
+        contents = selector\
+                            .table(table)\
+                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key})\
+                            .limit(limit)\
+                            .offset(page)\
+                            .sort(sort, order)\
+                            .execute()\
+                            .retDict()
+
+    else:
+        total       = selector\
+                            .table(table)\
+                            .search(tag, key)\
+                            .execute()\
+                            .retDict()
+        contents = selector\
+                            .table(table)\
+                            .search(tag, key)\
+                            .limit(limit)\
+                            .offset(page)\
+                            .sort(sort, order)\
+                            .execute()\
+                            .retDict()
 
     return jsonify({
         "data": contents,
