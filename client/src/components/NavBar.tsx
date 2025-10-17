@@ -13,9 +13,6 @@ function NavBar() {
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='mx-auto' id='navbar-links'>
             <Nav.Item>
-              <Nav.Link  as={Link} to="/home">home</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
               <NavDropdown title='records' id='basic-nav-dropdown'>
                 <div className='nav-dropdown'>
                 <NavDropdown.Item>
