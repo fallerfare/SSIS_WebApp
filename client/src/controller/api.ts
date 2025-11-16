@@ -1,160 +1,74 @@
-import type { College } from "@/models/types/colleges"
-import type { Program } from "@/models/types/programs"
-import { fetchCsrf } from "./fetchCsrf"
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
-const API_BASE = "http://localhost:8080"
+export function useApi() {
+    const axiosPrivate = useAxiosPrivate();
 
-type TableName = "students" | "programs" | "colleges"
-
-export async function fetchTableData(table: string,
-                                                        page: number,
-                                                        limit: number,
-                                                        tag: string,
-                                                        key: string,
-                                                        sort: string,
-                                                        order: string
-                                                        ) {
-                                                            
-    const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        tag: tag.toString(),
-        key: key.toString(),
-        sort: sort.toString(),
-        order: order.toString()
-    })
-
-    const response = await fetch(`${API_BASE}/table/${table}?${params}`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
-}
-
-export async function getSession(): Promise<{ isLoggedIn: boolean; user_name? : string }> {
-    const response = await fetch(`${API_BASE}/api/me`, {
-        credentials: "include",
-    })
-
-    if (!response.ok) {
-        return { isLoggedIn: false }
+    // =============
+    // AUTH
+    // =============
+    async function getSession() {
+        const res = await axiosPrivate.get("/api/auth/me", {
+            withCredentials: true,
+        });
+        return res.data;
     }
 
-    return response.json()
-}
+    // =============
+    // TABLES
+    // =============
+    async function fetchTableData(
+        table: string,
+        page: number,
+        limit: number,
+        tag: string,
+        key: string,
+        sort: string,
+        order: string
+    ) {
+        const res = await axiosPrivate.get(`/table/${table}`, {
+            params: { page, limit, tag, key, sort, order },
+        });
 
-export async function getCollegeName(college_code: string) {
-    const response = await fetch(`${API_BASE}/view/students/collegeName/${college_code}`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
-}
-
-export async function getProgramName(program_code: string) {
-    const response = await fetch(`${API_BASE}/view/students/programName/${program_code}`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
-}
-
-export async function getCollegeList(): Promise<{ data: College[] }>{
-
-    const response = await fetch(`${API_BASE}/table/colleges`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
-}
-
-export async function getProgramList(college_code: string): Promise<{ data: Program[] }>{
-
-     const params = new URLSearchParams({
-        tag: "college_code",
-        key: college_code,
-    })
-
-    const response = await fetch(`${API_BASE}/table/programs?${params}`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
-}
-
-export async function handleInsert<T>(tableName: TableName, data: T) {
-    
-    const { csrf_token } = await fetchCsrf()
-
-    const response = await fetch(`${API_BASE}/create/${tableName}`, {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token,
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-
-        const errorData = await response.json()
-        let message = ""
-        console.log(response)
-        
-        if (response.status === 400 && errorData.details && typeof errorData.details === "object") {
-            const details = errorData.details as Record<string, string[]>
-            const allMessages = Object.values(details)
-                .flat()                    
-                .join("\n")   
-
-            throw new Error(allMessages)
-        }
-
-        else if (response.status === 409 && errorData.details && typeof errorData.details === "string"){
-            message = errorData.details
-            throw new Error(message)
-        }
+        return res.data;
     }
 
-  return response.json();
-}
-
-export async function handleUpdate<T>(tableName: TableName, updated: T, id: string) {
-
-    const { csrf_token } = await fetchCsrf()
-
-    const response = await fetch(`${API_BASE}/edit/${tableName}/${id}`, {
-        method: "PUT",
-        headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token,
-        },
-        credentials: "include",
-        body: JSON.stringify(updated),
-    })
-
-
-    if (!response.ok) {
-    const errorData = await response.json();
-    if (response.status === 400 && errorData.details) {
-        const details = errorData.details as Record<string, string[]>
-        const allMessages = Object.values(details)
-            .flat()                    
-            .join("\n");               
-
-        throw new Error(allMessages);
+    async function getCollegeList() {
+        const res = await axiosPrivate.get(`/table/colleges`);
+        return res.data;
     }
-    throw new Error(errorData.error || "Server error occurred");
-  }
 
-  return response.json();
-}
+    async function getProgramList(college_code: string) {
+        const res = await axiosPrivate.get(`/table/programs`, {
+            params: { tag: "college_code", key: college_code },
+        });
+        return res.data;
+    }
 
-export async function handleDelete(tableName: TableName, id: string) {
-    console.log("Payload: ", id)
-    console.log("function called handle")
-    const { csrf_token } = await fetchCsrf()
-    console.log("csrf fetched, validated")     
+    // =============
+    // CRUD
+    // =============
+    async function handleInsert<T>(tableName: string, data: T) {
+        const res = await axiosPrivate.post(`/create/${tableName}`, data);
+        return res.data;
+    }
 
-    const response = await fetch(`${API_BASE}/delete/${tableName}/${id}`, {
-        method: "DELETE",
-        headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token,
-        },
-        credentials: "include",
-    })
+    async function handleUpdate<T>(tableName: string, updated: T, id: string) {
+        const res = await axiosPrivate.put(`/edit/${tableName}/${id}`, updated);
+        return res.data;
+    }
 
-    return response.json()
+    async function handleDelete(tableName: string, id: string) {
+        const res = await axiosPrivate.delete(`/delete/${tableName}/${id}`);
+        return res.data;
+    }
+
+    return {
+        getSession,
+        fetchTableData,
+        getCollegeList,
+        getProgramList,
+        handleInsert,
+        handleUpdate,
+        handleDelete,
+    };
 }

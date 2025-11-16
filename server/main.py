@@ -6,20 +6,25 @@ from controllers.dbconnection.connection import connection_pool
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
-from controllers.authentication import auth
+from controllers.auth.authentication import auth
 from controllers.tableList import tableList
 from controllers.actions.viewAction import viewer
 from controllers.actions.editAction import editor
 from controllers.actions.deleteAction import deletor
 from controllers.actions.insertAction import insertier
+from flask_jwt_extended import JWTManager
 
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('WTF_CSRF_SECRET_KEY')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+
+jwt = JWTManager(app)
 
 app.register_blueprint(tableList)
 app.register_blueprint(auth)
