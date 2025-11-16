@@ -1,29 +1,20 @@
-import { useState, useEffect, type ChangeEvent, type FormEvent } from "react"
-import type { UserData } from "../../models/types/UserData"
-import { fetchCsrf, sendCsrf } from "../../controller/fetchCsrf"
+import { useState, type ChangeEvent, type FormEvent } from "react"
 import { Box } from "@chakra-ui/react"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
+import useLogin from "../../hooks/useLogin";
 
 export default function LogInForm() {
     
     const navigate = useNavigate()
+    const login = useLogin();
 
-    const [form, setForm] = useState<UserData>({
-        user_name: "",
+    const [form, setForm] = useState({
+        identity: "",
         user_password: "",
     })
 
     const [message, setMessage] = useState<string>("")
-    const [csrf_token, setCsrfToken] =useState<string>("")
-
-    // ============
-    // Fetch CSRF Token
-    useEffect(() => {
-        fetchCsrf()
-            .then((data) => setCsrfToken(data.csrf_token))
-            .catch((err) => console.error("CSRF fetch error: ", err))
-    })
 
     // ============
     // Form event handlers (change in input, submit)
@@ -34,17 +25,18 @@ export default function LogInForm() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         try {
-            const data = await sendCsrf(form, csrf_token, "login")
-            if(data.success){
-              setMessage(data.message || "Logged In successfully!")
-              setTimeout(() => navigate("/table/students"), 1500) // TO DO: to home
-            } else {
-              setMessage(data.message || "Logged In failed!")
-            }
-        } catch (err: any){
-            setMessage("Error: " + err.message)
-        }
-    }
+          await login(
+              form.identity,
+              form.user_password
+          );
+
+          setMessage("Logged in!");
+          setTimeout(() => navigate("/table/students"), 1000);
+
+      } catch (err: any) {
+          setMessage(err.response?.data?.message || "Login failed");
+      }
+  };
 
     return (
       
@@ -58,9 +50,9 @@ export default function LogInForm() {
 
             <input
               type="text"
-              name="user_name"
-              placeholder=" Username "
-              value={form.user_name}
+              name="identity"
+              placeholder=" Username or Email"
+              value={form.identity}
               onChange={handleChange}
               required
             />
