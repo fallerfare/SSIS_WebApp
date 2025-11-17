@@ -173,3 +173,22 @@ export async function fetchStudent(id: string) {
 
     return response.json()
 }
+
+export async function uploadImage(image: File, student_id: string) {
+    const { csrf_token } = await fetchCsrf()
+
+    const formData = new FormData()
+    formData.append("image", image) 
+    formData.append("student", student_id)
+
+    const response = await fetch(`${API_BASE}/api/upload`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrf_token
+        },
+        body: formData,
+        credentials: "include",
+    })
+
+    return response.json()
+}

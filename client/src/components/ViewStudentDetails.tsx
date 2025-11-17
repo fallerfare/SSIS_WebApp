@@ -2,7 +2,7 @@ import type { Student } from "../models/types/students";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom"
-import { fetchStudent, getCollegeName, getProgramName, handleDelete, handleUpdate } from "../controller/api";
+import { fetchStudent, getCollegeName, getProgramName, handleDelete, handleUpdate, uploadImage } from "../controller/api";
 import "../style/App.css"
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import EditModal from "./popups/EditDialog";
@@ -13,6 +13,7 @@ import EditIcon from "../assets/icons/edit-idle.png"
 import DeleteIcon from "../assets/icons/trash-bin_close.png"
 
 const StudentDetailsPage = () => {
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -36,13 +37,17 @@ const StudentDetailsPage = () => {
     const [programName, setProgramName] = useState("")
     const [collegeName, setCollegeName] = useState("")
 
+    const [refresh, setRefresh] = useState(false)
+
+    const [preview, setPreview] = useState<string | null>(null);
+
     useEffect(() => {
         if(!student) return
         getProgramName(student.program_code)
         .then(({ program_name }) => setProgramName(program_name ?? ""))
         getCollegeName(student.college_code)
         .then(({ college_name }) => setCollegeName(college_name ?? ""))
-    }, [])
+    }, [refresh])
 
 
     useEffect(() => {
@@ -62,6 +67,19 @@ const StudentDetailsPage = () => {
         populateData();
     }, [id_number, passedStudent]);
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if(!student) return;
+
+        setPreview(URL.createObjectURL(file));
+        console.log(student.id_number)
+
+        const result = await uploadImage(file, student.id_number);
+
+        console.log("Uploaded image:", result);
+    };
+
     const handleDetailsEdit = () => {
         setIsEditOpen(true)
     }
@@ -76,7 +94,7 @@ const StudentDetailsPage = () => {
             const response = await handleUpdate("students", updated, id)
             setSuccessMessage(`Succesfully edited ${"students"}`)
             setIsSuccessOpen(true)
-            // reloadData()
+            setRefresh(prev => !prev)
             console.log("Update:", response)
             setIsEditOpen(false)
     
@@ -105,7 +123,7 @@ const StudentDetailsPage = () => {
             } else {
             setSuccessMessage(`Succesfully deleted ${"students"}`)
             setIsSuccessOpen(true)
-            // reloadData()
+            setRefresh(prev => !prev)
             }
         } catch (err) {
             console.log(err)
@@ -137,9 +155,24 @@ const StudentDetailsPage = () => {
                     <div className="card basic-card">
                     <div className="card-flex">
                         {/* PROFILE PIC */}
-                        <div className="profile-pic">
-                        <i className="bi bi-person profile-icon"></i>
+                        <div className="profile-pic-wrapper">
+                            <input
+                                type="file"
+                                id="profileUpload"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                style={{ display: "none" }}
+                            />
+
+                            <label htmlFor="profileUpload" className="profile-pic">
+                                {preview ? (
+                                    <img src={preview} alt="Profile" className="profile-img" />
+                                ) : (
+                                    <i className="bi bi-person profile-icon"></i>
+                                )}
+                            </label>
                         </div>
+
 
                         {/* INFO */}
                         <div className="info-section">
