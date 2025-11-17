@@ -162,7 +162,7 @@ export async function handleDelete(tableName: TableName, id: string) {
 export async function fetchStudent(id: string) {
     const { csrf_token } = await fetchCsrf()
 
-    const response = await fetch(`${API_BASE}/table/students/${id}`, {
+    const response = await fetch(`${API_BASE}/view/students/${id}`, {
         method: "GET",
         headers: {
         "Content-Type": "application/json",
@@ -181,7 +181,7 @@ export async function uploadImage(image: File, student_id: string) {
     formData.append("image", image) 
     formData.append("student", student_id)
 
-    const response = await fetch(`${API_BASE}/api/upload`, {
+    const response = await fetch(`${API_BASE}/api/files/upload`, {
         method: "POST",
         headers: {
             "X-CSRFToken": csrf_token

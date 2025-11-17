@@ -39,8 +39,6 @@ const StudentDetailsPage = () => {
 
     const [refresh, setRefresh] = useState(false)
 
-    const [preview, setPreview] = useState<string | null>(null);
-
     useEffect(() => {
         if(!student) return
         getProgramName(student.program_code)
@@ -49,35 +47,33 @@ const StudentDetailsPage = () => {
         .then(({ college_name }) => setCollegeName(college_name ?? ""))
     }, [refresh])
 
+    const populateData = async () => {
+        try {
+            const fetch = await fetchStudent(`${id_number}`)
+            const data = fetch[0]
+            setStudent(prev => ({ ...prev, ...data.student }))
+        } catch (err) {
+            if (!student) setErrorMessage("Failed to load student data.");
+        } finally {
+            setLoading(false);
+        }
+    }
 
     useEffect(() => {
         if (passedStudent) return; 
         
-        const populateData = async () => {
-            try {
-                const data = await fetchStudent(`${id_number}`)
-                setStudent(data.student)
-            } catch (err) {
-                setErrorMessage("Failed to load student data.");
-            } finally {
-                setLoading(false);
-            }
-        }
-
         populateData();
-    }, [id_number, passedStudent]);
+    }, [id_number, passedStudent, refresh]);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
         if(!student) return;
 
-        setPreview(URL.createObjectURL(file));
-        console.log(student.id_number)
-
         const result = await uploadImage(file, student.id_number);
+        setRefresh(prev => !prev)
 
-        console.log("Uploaded image:", result);
+        setStudent(prev => prev ? { ...prev, id_picture: result.url } : null)
     };
 
     const handleDetailsEdit = () => {
@@ -165,8 +161,8 @@ const StudentDetailsPage = () => {
                             />
 
                             <label htmlFor="profileUpload" className="profile-pic">
-                                {preview ? (
-                                    <img src={preview} alt="Profile" className="profile-img" />
+                                {student.id_picture ? (
+                                    <img src={student.id_picture} alt="Profile" className="profile-img" />
                                 ) : (
                                     <i className="bi bi-person profile-icon"></i>
                                 )}
