@@ -4,7 +4,7 @@ import { fetchCsrf } from "./fetchCsrf"
 
 const API_BASE = "http://localhost:8080"
 
-type TableName = "students" | "programs" | "colleges"
+type TableName = "students" | "programs" | "colleges" | "users"
 
 export async function fetchTableData(table: string,
                                                         page: number,
@@ -109,7 +109,7 @@ export async function handleInsert<T>(tableName: TableName, data: T) {
   return response.json();
 }
 
-export async function handleUpdate<T>(tableName: TableName, updated: T, id: string) {
+export async function handleUpdate<T>(tableName: TableName, updated: T, id: string | number) {
 
     const { csrf_token } = await fetchCsrf()
 
@@ -140,7 +140,7 @@ export async function handleUpdate<T>(tableName: TableName, updated: T, id: stri
   return response.json();
 }
 
-export async function handleDelete(tableName: TableName, id: string) {
+export async function handleDelete(tableName: TableName, id: string | number) {
     const { csrf_token } = await fetchCsrf()
 
     const response = await fetch(`${API_BASE}/delete/${tableName}/${id}`, {
@@ -155,10 +155,10 @@ export async function handleDelete(tableName: TableName, id: string) {
     return response.json()
 }
 
-export async function fetchStudent(id: string) {
+export async function fetchObject(object: TableName, id: string | number) {
     const { csrf_token } = await fetchCsrf()
 
-    const response = await fetch(`${API_BASE}/view/students/${id}`, {
+    const response = await fetch(`${API_BASE}/view/${object}/${id}`, {
         method: "GET",
         headers: {
         "Content-Type": "application/json",
@@ -170,12 +170,13 @@ export async function fetchStudent(id: string) {
     return response.json()
 }
 
-export async function uploadImage(image: File, student_id: string) {
+export async function uploadImage(object: TableName, image: File, id: string | number) {
     const { csrf_token } = await fetchCsrf()
 
     const formData = new FormData()
+    formData.append("object", object)
     formData.append("image", image) 
-    formData.append("student", student_id)
+    formData.append("id", id.toString())
 
     const response = await fetch(`${API_BASE}/api/files/upload`, {
         method: "POST",

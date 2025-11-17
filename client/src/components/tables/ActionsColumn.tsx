@@ -7,15 +7,17 @@ import EditIcon from "../../assets/icons/edit-idle.png"
 import DeleteIcon from "../../assets/icons/trash-bin_close.png"
 import ViewIcon from "../../assets/icons/view-idle.png"
 import '../../style/App.css'
+import type { UserData } from "@/models/types/UserData"
 
 const API_BASE = "http://localhost:8080"
 
-type TableName = "students" | "programs" | "colleges"
+type TableName = "students" | "programs" | "colleges" | "users"
 
 type TableRow<T extends TableName> =
   T extends "students" ? Student :
   T extends "programs" ? Program :
   T extends "colleges" ? College :
+  T extends "users" ? UserData :
   never
 
 export function getActionsColumns<T extends TableName>(
@@ -71,10 +73,11 @@ export function getActionsColumns<T extends TableName>(
   return ActionsColumns
 }
 
-function getId<T extends TableName>(row: TableRow<T>, tableName: T): string {
+function getId<T extends TableName>(row: TableRow<T>, tableName: T): string | number{
   switch (tableName) {
     case "students": return (row as Student).id_number
     case "programs": return (row as Program).program_code
     case "colleges": return (row as College).college_code
+    case "users": return (row as UserData).user_id
   }
 }

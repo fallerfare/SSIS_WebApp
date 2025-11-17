@@ -3,6 +3,7 @@ from services.Functions.Select import Select
 from models.students import Student
 from models.programs import Program
 from models.colleges import College
+from models.users import User
 
 viewer = Blueprint("viewer", __name__)
 
@@ -12,7 +13,6 @@ viewer = Blueprint("viewer", __name__)
 @viewer.route("/view/students/<string:id_number>", methods = ["GET"])
 def view_students(id_number):
     student = Student()         
-    print(id_number)
     data = student.get(id_number)  
 
     if not data:
@@ -55,7 +55,6 @@ def view_students_college_name(college_code):
 @viewer.route("/view/programs/<string:program_code>", methods = ["GET"])
 def view_programs(program_code):
     program = Program()         
-    print(program_code)
     data = program.get(program_code)  
 
     if not data:
@@ -70,10 +69,23 @@ def view_programs(program_code):
 @viewer.route("/view/colleges/<string:college_code>", methods = ["GET"])
 def view_colleges(college_code):
     college = College()         
-    print(college_code)
     data = college.get(college_code)  
 
     if not data:
         return jsonify({"error": "College not found"}), 404
+
+    return jsonify(data), 200
+
+
+# ========================== 
+# USER VIEW
+# ==========
+@viewer.route("/view/users/<int:user_id>", methods = ["GET"])
+def viewusers(user_id):
+    user = User()         
+    data = user.get(user_id)  
+
+    if not data:
+        return jsonify({"error": "User not found"}), 404
 
     return jsonify(data), 200

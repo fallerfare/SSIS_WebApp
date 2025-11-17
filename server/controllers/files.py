@@ -10,8 +10,9 @@ selector = Select.Select()
 
 @handleFiles.route("/upload", methods=["POST"])
 def upload():
+    object = request.form.get("object")
     file = request.files.get("image")
-    student = request.form.get("student")
+    id = request.form.get("id")
 
     if file is None:
         return jsonify({"error": "No file uploaded"}), 400
@@ -19,14 +20,12 @@ def upload():
     result = cloudinary.uploader.upload(file)
     url = result["secure_url"]
 
-    print(url)
-    print(student)
 
-    updator.table("students")\
+    updator.table(object)\
                 .set({
                     "id_picture":url
                 })\
-                .where(whereCol="id_number", whereVal=student)\
+                .where(whereCol="id_number", whereVal=id)\
                 .execute()
     
     return jsonify({"success": True, "url": url})

@@ -2,7 +2,7 @@ import type { Student } from "../models/types/students";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom"
-import { fetchStudent, getCollegeName, getProgramName, handleDelete, handleUpdate, uploadImage } from "../controller/api";
+import { fetchObject, getCollegeName, getProgramName, handleDelete, handleUpdate, uploadImage } from "../controller/api";
 import "../style/App.css"
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import EditModal from "./popups/EditDialog";
@@ -51,7 +51,7 @@ const StudentDetailsPage = () => {
 
     const populateData = async () => {
         try {
-            const fetch = await fetchStudent(`${id_number}`)
+            const fetch = await fetchObject("students", `${id_number}`)
             const data = fetch[0]
             setStudent(prev => ({ ...prev, ...data.student }))
         } catch (err) {
@@ -78,7 +78,7 @@ const StudentDetailsPage = () => {
 
         try{
             setUploading(true)
-            const result = await uploadImage(selectedFile, student.id_number);
+            const result = await uploadImage("students", selectedFile, student.id_number);
             setStudent(prev => prev ? { ...prev, id_picture: result.url } : null)
             setSuccessMessage("Successfully uploaded Image!")
             setIsSuccessOpen(true)
