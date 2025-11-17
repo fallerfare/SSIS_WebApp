@@ -31,6 +31,7 @@ export function getActionsColumns<T extends TableName>(
       cell: ({ row }) => {
         const original = row.original
  
+        //REDIRECT
         const handleView = async () => {
           try {
             const res = await fetch(`${API_BASE}/view/${tableName}/${getId(original, tableName)}`)

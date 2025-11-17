@@ -14,7 +14,7 @@ import downIcon from "../../assets/icons/desc_icon.png"
 import ErrorPopup from "../popups/ErrorsDialog.tsx"
 import SuccessPopup from "../popups/Success.tsx"
 import PaginationButtons from "./Pagination.tsx"
-
+import { useNavigate } from "react-router-dom"
 
 type TableProps = { 
     tableName: "students" | "programs" | "colleges"
@@ -40,9 +40,20 @@ const Table = ({ tableName }: TableProps) => {
     const [isSuccessOpen, setIsSuccessOpen] = useState(false)
     const [successMessage, setSuccessMessage] = useState<string>("")
 
+    const navigate = useNavigate()
+
+    // REDIRECT
     const handleTableView = (data: any) => {
-        setViewData(data)
-        setIsViewOpen(true)
+
+        if (tableName === "students") {
+            navigate(`/table/students/${data.id_number}`, {state: {student: data}})
+            return
+        }
+        
+        else{
+            setViewData(data)
+            setIsViewOpen(true)
+        }
     }
 
     const handleTableEdit = (data: any) => {
@@ -54,7 +65,8 @@ const Table = ({ tableName }: TableProps) => {
         setDeleteData(data)
         setIsDeleteOpen(true)
     }
- 
+    
+    // REDIRECT
     const { table, reloadData } = getTable(tableName, handleTableView, handleTableEdit, handleTableDelete, selectedTag, searchKey)
 
     const getId = (row: any) => {
@@ -228,25 +240,25 @@ const Table = ({ tableName }: TableProps) => {
         >
         </ViewModal>
 
-         <EditModal 
-        isOpen={isEditOpen} 
-        onClose={() => setIsEditOpen(false)}
-        editData={editData}
-        onConfirm={handleConfirmEdit}
+        <EditModal 
+            isOpen={isEditOpen} 
+            onClose={() => setIsEditOpen(false)}
+            editData={editData}
+            onConfirm={handleConfirmEdit}
         >
         </EditModal>
 
-         <DeleteModal 
-        isOpen={isDeleteOpen} 
-        onClose={() => setIsDeleteOpen(false)}
-        deleteData={deleteData}
-        onConfirm={handleConfirmDelete}
+        <DeleteModal 
+            isOpen={isDeleteOpen} 
+            onClose={() => setIsDeleteOpen(false)}
+            deleteData={deleteData}
+            onConfirm={handleConfirmDelete}
         >
         </DeleteModal>
         <ErrorPopup
-        isOpen={isErrorOpen}
-        message={errorMessage}
-        onClose={() => setIsErrorOpen(false)}
+            isOpen={isErrorOpen}
+            message={errorMessage}
+            onClose={() => setIsErrorOpen(false)}
         />
 
         <SuccessPopup
