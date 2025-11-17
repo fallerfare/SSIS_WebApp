@@ -59,7 +59,10 @@ def login():
     if not bcrypt.checkpw(auth_password.encode("utf-8"), stored_hash):
         return jsonify({"success": False, "message": "Incorrect Password."}), 401
 
-    session["user"] = {"user_name": valid_auth["user_name"]}
+    session["user"] = {
+        "user_name": valid_auth["user_name"]
+        # "role": (valid_auth["role"] or "user")
+        }
     return jsonify({"success": True, "message": "Successfully Logged In!"}), 200
 
 

@@ -158,3 +158,18 @@ export async function handleDelete(tableName: TableName, id: string) {
 
     return response.json()
 }
+
+export async function fetchStudent(id: string) {
+    const { csrf_token } = await fetchCsrf()
+
+    const response = await fetch(`${API_BASE}/table/students/${id}`, {
+        method: "GET",
+        headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrf_token,
+        },
+        credentials: "include",
+    })
+
+    return response.json()
+}
