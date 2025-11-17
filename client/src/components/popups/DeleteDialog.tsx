@@ -2,6 +2,7 @@ import { Box, Button } from "@chakra-ui/react"
 import type { Student } from "@/models/types/students"
 import type { Program } from "@/models/types/programs"
 import type { College } from "@/models/types/colleges"
+import type { UserData } from "@/models/types/UserData"
 
 type DeleteModalProps<T> = {
   isOpen: boolean
@@ -11,7 +12,7 @@ type DeleteModalProps<T> = {
   onConfirm?: (data: T) => void
 }
 
-export default function DeleteModal<T extends Student | Program | College>(
+export default function DeleteModal<T extends Student | Program | College | UserData>(
                                                 { isOpen, onClose, deleteData, onConfirm }:
                                                 DeleteModalProps<T> ) {
 

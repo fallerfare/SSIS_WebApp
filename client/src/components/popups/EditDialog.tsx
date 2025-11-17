@@ -5,6 +5,7 @@ import type { Program } from "@/models/types/programs"
 import type { College } from "@/models/types/colleges"
 import { useState } from "react"
 import { YearLevelDropdown, GenderDropdown, ProgramsDropdown, CollegesDropdown } from "../FieldsConfig"
+import type { UserData } from "@/models/types/UserData"
 
 type EditModalProps<T> = {
   isOpen: boolean
@@ -14,7 +15,7 @@ type EditModalProps<T> = {
   onConfirm?: (updated: T) => void
 }
 
-export default function EditModal<T extends Student | Program | College>(
+export default function EditModal<T extends Student | Program | College | UserData>(
                                                 { isOpen, onClose, editData, onConfirm }:
                                                 EditModalProps<T> ) {
 
