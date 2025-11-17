@@ -20,6 +20,7 @@ const EnrollmentForm = () => {
     year_level: 1,
     college_code: "",
     program_code: "",
+    id_picture: ""
     }
 
     const [formData, setFormData] = useState<Student>(defaultFormData)
@@ -39,14 +40,12 @@ const EnrollmentForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
-            const response = await handleInsert<Student>("students", formData)
+            await handleInsert<Student>("students", formData)
 
             setSuccessMessage("Successfully enrolled new student!")
             setIsSuccessOpen(true)
-            console.log("Inserted:", response)
             setFormData(defaultFormData)
         } catch (err: any) {
-            console.error(err)
             setErrorMessage(err.details || err.error || err.message)
             setIsErrorOpen(true)
         } 

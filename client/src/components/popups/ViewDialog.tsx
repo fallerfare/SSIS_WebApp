@@ -16,7 +16,6 @@ type ViewModalProps<T> = {
 export default function ViewModal<T extends Student | Program | College>(
                                                 { isOpen, onClose, viewData }:
                                                 ViewModalProps<T> ) {
-  console.log(viewData)
 
   if (!isOpen || !viewData) return null
 
@@ -36,7 +35,6 @@ export default function ViewModal<T extends Student | Program | College>(
         .then(({ college_name }) => setCollegeName(college_name ?? ""))
     }, [])
 
-    console.log("Student view chosen")
     content = (
       <Box>        
         <Grid
@@ -117,7 +115,6 @@ export default function ViewModal<T extends Student | Program | College>(
         .then(({ college_name }) => setCollegeName(college_name ?? ""))
     }, [])
 
-    console.log("Program view chosen")
     content = (
       <Box>        
         <Grid
@@ -150,7 +147,6 @@ export default function ViewModal<T extends Student | Program | College>(
 
    else  if ("college_name" in viewData){
     const college = viewData as College
-    console.log("College view chosen")
     content = (
       <Box>        
         <Grid
@@ -174,7 +170,6 @@ export default function ViewModal<T extends Student | Program | College>(
     )
     }
 
-  console.log("Function exited")
 
   return (
         <Box className="viewpopup-overlay">

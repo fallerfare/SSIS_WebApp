@@ -80,15 +80,13 @@ const Table = ({ tableName }: TableProps) => {
    const handleConfirmEdit = async (updated: any) => {
     const id = getId(updated)
     try {
-        const response = await handleUpdate(tableName, updated, id)
+        await handleUpdate(tableName, updated, id)
         setSuccessMessage(`Succesfully edited ${tableName}`)
         setIsSuccessOpen(true)
         reloadData()
-        console.log("Update:", response)
         setIsEditOpen(false)
 
     } catch (err: any) {
-            console.log(err)
             setErrorMessage(err.message)
             setIsErrorOpen(true)
     } 
@@ -101,7 +99,6 @@ const Table = ({ tableName }: TableProps) => {
 
             if (!response.success) {
                 if (response.error === "ForeignKeyViolation") {
-                    console.log(response.error)
                     setErrorMessage(response.message || "Delete restricted.")
                     setIsErrorOpen(true)
                 } else {
@@ -114,7 +111,6 @@ const Table = ({ tableName }: TableProps) => {
             reloadData()
             }
         } catch (err) {
-            console.log(err)
             setErrorMessage("Server connection error. Please try again.")
             setIsErrorOpen(true)
         } finally {
@@ -125,7 +121,6 @@ const Table = ({ tableName }: TableProps) => {
   const handleFilters = async () => {
     table.setPageIndex(0)
     reloadData({ search_tag: selectedTag, search_key: searchKey })
-    console.log("tag: ", selectedTag, "key: ", searchKey)
   }
 
   useEffect(() => {

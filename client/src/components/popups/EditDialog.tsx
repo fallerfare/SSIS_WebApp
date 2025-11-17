@@ -17,7 +17,6 @@ type EditModalProps<T> = {
 export default function EditModal<T extends Student | Program | College>(
                                                 { isOpen, onClose, editData, onConfirm }:
                                                 EditModalProps<T> ) {
-  console.log(editData)
 
   if (!isOpen || !editData) return null
 
@@ -259,7 +258,6 @@ export default function EditModal<T extends Student | Program | College>(
     )
     }
 
-  console.log("Function exited")
 
   return (
         <Box>

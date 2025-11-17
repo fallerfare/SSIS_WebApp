@@ -57,7 +57,6 @@ export function getTable(tableName: TableName,
     fetchTableData(tableName, pageIndex, pageSize, search_tag, search_key, sort, order)
       .then((result) => {
         setData(result.data)
-        console.log("API result after reload:", result)
         setPageCount(Math.ceil(result.total / pagination.pageSize))
       })
       .catch((err) => console.error(err))

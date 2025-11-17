@@ -19,10 +19,8 @@ const StudentDetailsPage = () => {
 
     const {id_number} = useParams();
     const passedStudent = location.state?.student as Student | undefined;
-
     const [student, setStudent] = useState<Student | null>(passedStudent ?? null);
-    const [loading, setLoading] = useState(!passedStudent); 
-
+    
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
@@ -38,6 +36,10 @@ const StudentDetailsPage = () => {
     const [collegeName, setCollegeName] = useState("")
 
     const [refresh, setRefresh] = useState(false)
+    const [loading, setLoading] = useState(!passedStudent); 
+    const [uploading, setUploading] = useState(false); 
+
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     useEffect(() => {
         if(!student) return
@@ -65,16 +67,30 @@ const StudentDetailsPage = () => {
         populateData();
     }, [id_number, passedStudent, refresh]);
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        if(!student) return;
-
-        const result = await uploadImage(file, student.id_number);
-        setRefresh(prev => !prev)
-
-        setStudent(prev => prev ? { ...prev, id_picture: result.url } : null)
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] ?? null;
+        setSelectedFile(file);
     };
+
+
+    const handleImageUpload = async () => {
+        if (!selectedFile || !student) return
+
+        try{
+            setUploading(true)
+            const result = await uploadImage(selectedFile, student.id_number);
+            setStudent(prev => prev ? { ...prev, id_picture: result.url } : null)
+            setSuccessMessage("Successfully uploaded Image!")
+            setIsSuccessOpen(true)
+            setRefresh(prev => !prev)
+        } catch (err) {
+            setErrorMessage("Failed to upload Image!")
+            setIsErrorOpen(true)
+        } finally {
+            setUploading(false)
+            setSelectedFile(null)
+        }
+    }
 
     const handleDetailsEdit = () => {
         setIsEditOpen(true)
@@ -87,15 +103,13 @@ const StudentDetailsPage = () => {
     const handleConfirmEdit = async (updated: any) => {
         const id = updated.id_number
         try {
-            const response = await handleUpdate("students", updated, id)
+            await handleUpdate("students", updated, id)
             setSuccessMessage(`Succesfully edited ${"students"}`)
             setIsSuccessOpen(true)
             setRefresh(prev => !prev)
-            console.log("Update:", response)
             setIsEditOpen(false)
     
         } catch (err: any) {
-                console.log(err)
                 setErrorMessage(err.message)
                 setIsErrorOpen(true)
         } 
@@ -109,7 +123,6 @@ const StudentDetailsPage = () => {
 
             if (!response.success) {
                 if (response.error === "ForeignKeyViolation") {
-                    console.log(response.error)
                     setErrorMessage(response.message || "Delete restricted.")
                     setIsErrorOpen(true)
                 } else {
@@ -122,7 +135,6 @@ const StudentDetailsPage = () => {
             setRefresh(prev => !prev)
             }
         } catch (err) {
-            console.log(err)
             setErrorMessage("Server connection error. Please try again.")
             setIsErrorOpen(true)
         } finally {
@@ -156,17 +168,25 @@ const StudentDetailsPage = () => {
                                 type="file"
                                 id="profileUpload"
                                 accept="image/*"
-                                onChange={handleImageUpload}
+                                onChange={handleFileChange}
                                 style={{ display: "none" }}
                             />
 
                             <label htmlFor="profileUpload" className="profile-pic">
-                                {student.id_picture ? (
+                                {uploading ? (
+                                    <p className="loading-text">Loading...</p> 
+                                ) : student.id_picture ? (
                                     <img src={student.id_picture} alt="Profile" className="profile-img" />
                                 ) : (
                                     <i className="bi bi-person profile-icon"></i>
                                 )}
                             </label>
+
+                            {selectedFile && !uploading && (
+                                <button className="button-upload" onClick={handleImageUpload}>
+                                    Upload
+                                </button>
+                            )}
                         </div>
 
 

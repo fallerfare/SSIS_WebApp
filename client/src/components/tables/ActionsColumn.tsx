@@ -37,7 +37,6 @@ export function getActionsColumns<T extends TableName>(
             const res = await fetch(`${API_BASE}/view/${tableName}/${getId(original, tableName)}`)
             const data = await res.json()
             onView(Array.isArray(data) ? data[0] : data)
-            console.log("View data: ", data)
           } catch (error) {
             console.error("Error: ", error)
           }
@@ -48,7 +47,6 @@ export function getActionsColumns<T extends TableName>(
             const res = await fetch(`${API_BASE}/view/${tableName}/${getId(original, tableName)}`)
             const data = await res.json()
             onEdit(Array.isArray(data) ? data[0] : data)
-            console.log("Edit response: ", data)
           } catch (error) {
             console.error("Error: ", error)
           }
