@@ -1,13 +1,14 @@
 import cloudinary
 import cloudinary.uploader
 from flask import Blueprint, jsonify, request
-from services.Functions import Update
+from services.Functions import Update, Select
 
-uploadFiles = Blueprint("uploadFiles", __name__)
+handleFiles = Blueprint("handleFiles", __name__, url_prefix="/api/files")
 
 updator = Update.Update()
+selector = Select.Select()
 
-@uploadFiles.route("/api/upload", methods=["POST"])
+@handleFiles.route("/upload", methods=["POST"])
 def upload():
     file = request.files.get("image")
     student = request.form.get("student")

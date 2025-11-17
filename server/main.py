@@ -12,7 +12,7 @@ from controllers.actions.viewAction import viewer
 from controllers.actions.editAction import editor
 from controllers.actions.deleteAction import deletor
 from controllers.actions.insertAction import insertier
-from controllers.files import uploadFiles
+from controllers.files import handleFiles
 import cloudinary
 
 load_dotenv()
@@ -36,7 +36,7 @@ app.register_blueprint(viewer)
 app.register_blueprint(editor)
 app.register_blueprint(deletor)
 app.register_blueprint(insertier)
-app.register_blueprint(uploadFiles)
+app.register_blueprint(handleFiles)
 
 csrf = CSRFProtect(app)
 
