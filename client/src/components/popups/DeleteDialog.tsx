@@ -14,7 +14,6 @@ type DeleteModalProps<T> = {
 export default function DeleteModal<T extends Student | Program | College>(
                                                 { isOpen, onClose, deleteData, onConfirm }:
                                                 DeleteModalProps<T> ) {
-  console.log(deleteData)
 
   if (!isOpen || !deleteData) return null
 

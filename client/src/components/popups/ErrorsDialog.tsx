@@ -11,7 +11,6 @@ export default function ErrorPopup({ isOpen, onClose, message }: ErrorPopupProps
   
   if (!isOpen) return null
 
-  console.log(message)
   
   return ReactDOM.createPortal(
     <Box className="viewpopup-overlay">

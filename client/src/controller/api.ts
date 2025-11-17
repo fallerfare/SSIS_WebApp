@@ -90,7 +90,6 @@ export async function handleInsert<T>(tableName: TableName, data: T) {
 
         const errorData = await response.json()
         let message = ""
-        console.log(response)
         
         if (response.status === 400 && errorData.details && typeof errorData.details === "object") {
             const details = errorData.details as Record<string, string[]>
@@ -142,10 +141,7 @@ export async function handleUpdate<T>(tableName: TableName, updated: T, id: stri
 }
 
 export async function handleDelete(tableName: TableName, id: string) {
-    console.log("Payload: ", id)
-    console.log("function called handle")
     const { csrf_token } = await fetchCsrf()
-    console.log("csrf fetched, validated")     
 
     const response = await fetch(`${API_BASE}/delete/${tableName}/${id}`, {
         method: "DELETE",
