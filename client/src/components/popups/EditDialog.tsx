@@ -27,7 +27,7 @@ export default function EditModal<T extends Student | Program | College | UserDa
   if ("id_number" in editData){
     const student = editData as Student
 
-    const [formData, setFormData] = useState<Student>(editData)
+    const [formData, setFormData] = useState<Student>(student)
 
     const handleChange = (field: keyof Student) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,7 +149,7 @@ export default function EditModal<T extends Student | Program | College | UserDa
   else if ("program_code" in editData){
     const program = editData as Program
 
-    const [formData, setFormData] = useState<Program>(editData)
+    const [formData, setFormData] = useState<Program>(program)
 
     const handleChange = (field: keyof Program) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,7 +211,7 @@ export default function EditModal<T extends Student | Program | College | UserDa
    else  if ("college_code" in editData){
     const college = editData as College
 
-    const [formData, setFormData] = useState<College>(editData)
+    const [formData, setFormData] = useState<College>(college)
 
     const handleChange = (field: keyof College) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
