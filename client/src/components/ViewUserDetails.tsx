@@ -3,22 +3,22 @@ import { useNavigate } from "react-router-dom";
 import "../style/App.css"
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import EditModal from "./popups/EditDialog";
-import DeleteModal from "./popups/DeleteDialog";
 import ErrorPopup from "./popups/ErrorsDialog";
 import SuccessPopup from "./popups/Success";
 import EditIcon from "../assets/icons/edit-idle.png"
 import DeleteIcon from "../assets/icons/trash-bin_close.png"
 import type { UserData } from "@/models/types/UserData";
-import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controller/api";
+import { fetchMe, handleLogout, handleUpdate, uploadImage } from "@/controller/api";
+import LogOutModal from "./popups/LogOutDialog";
 
     const userDetailsPage = () => {
 
         const navigate = useNavigate();
 
-        const [user, setUser] = useState<UserData | null>();
+        const [user, setUser] = useState<UserData | null>(null);
         
         const [isEditOpen, setIsEditOpen] = useState(false)
-        const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+        const [isLogOutOpen, SetIsLogOutOpen] = useState(false)
 
         const [isErrorOpen, setIsErrorOpen] = useState(false)
         const [errorMessage, setErrorMessage] = useState<string>("")
@@ -26,7 +26,7 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
         const [isSuccessOpen, setIsSuccessOpen] = useState(false)
         const [successMessage, setSuccessMessage] = useState<string>("")
 
-        const [isDeleted, setIsDeleted] = useState(false)
+        const [isLoggedOut, setIsLoggedOut] = useState(false)
 
         const [refresh, setRefresh] = useState(false)
         const [loading, setLoading] = useState(!user); 
@@ -35,21 +35,25 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
         const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
         const populateData = async () => {
-            if (!user) return
             try {
-                const fetch = await fetchObject("users", `${user.user_id}`)
-                const data = fetch[0]
-                setUser(prev => ({ ...prev, ...data.user }))
+                const res = await fetchMe()
+
+                if (res.error) {
+                    setErrorMessage(res.error)
+                    return
+                }
+
+                setUser(res.user) 
             } catch (err) {
-                if (!user) setErrorMessage("Failed to load user data.");
+                setErrorMessage("Failed to load user session data")
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
         }
 
         useEffect(() => {
             populateData();
-        }, [user, refresh]);
+        }, [refresh]);
 
         const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0] ?? null;
@@ -62,7 +66,7 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
 
             try{
                 setUploading(true)
-                const result = await uploadImage("users", selectedFile, user.user_id);
+                const result = await uploadImage("users", selectedFile, user.id_number);
                 setUser(prev => prev ? { ...prev, id_picture: result.url } : null)
                 setSuccessMessage("Successfully uploaded Image!")
                 setIsSuccessOpen(true)
@@ -81,7 +85,7 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
         }
 
         const handleDetailsDelete = () => {
-            setIsDeleteOpen(true)
+            SetIsLogOutOpen(true)
         }
 
         const handleConfirmEdit = async (updated: any) => {
@@ -99,31 +103,18 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
             } 
         }
         
-        const handleConfirmDelete = async () => {
-            const id = user?.user_id
-            if (!id) return
+        const handleConfirmLogOut = async () => {
             try {
-                const response = await handleDelete("users", id)
-
-                if (!response.success) {
-                    if (response.error === "ForeignKeyViolation") {
-                        setErrorMessage(response.message || "Delete restricted.")
-                        setIsErrorOpen(true)
-                    } else {
-                        setErrorMessage(response.message || "An unexpected error occurred.")
-                        setIsErrorOpen(true)
-                    }
-                } else {
-                setSuccessMessage(`Succesfully deleted ${"users"}`)
-                setIsSuccessOpen(true)
-                setRefresh(prev => !prev)
+                const response = await handleLogout()
+                if (response.success) {
+                    setIsLoggedOut(true)
+                    setSuccessMessage(response.message)
+                    setIsSuccessOpen(true)
                 }
-            } catch (err) {
-                setErrorMessage("Server connection error. Please try again.")
-                setIsErrorOpen(true)
-            } finally {
-                setIsDeleted(true)
-                setIsDeleteOpen(false)
+        
+            } catch (err: any) {
+                    setErrorMessage(err.message)
+                    setIsErrorOpen(true)
             }
         }
 
@@ -151,8 +142,8 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
                                 <label htmlFor="profileUpload" className="profile-pic">
                                     {uploading ? (
                                         <p className="loading-text">Loading...</p> 
-                                    ) : user.user_picture ? (
-                                        <img src={user.user_picture} alt="Profile" className="profile-img" />
+                                    ) : user.id_picture ? (
+                                        <img src={user.id_picture} alt="Profile" className="profile-img" />
                                     ) : (
                                         <i className="bi bi-person profile-icon"></i>
                                     )}
@@ -177,7 +168,7 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
                                         Edit Details
                                     </button>
                                 </div>
-                                <p className="user-maininfo">ID: {user.user_id}</p>
+                                <p className="user-maininfo">ID: {user.id_number}</p>
                                 </div>
                             </div>
                         </div>
@@ -195,7 +186,7 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
                         {/* ACTION BUTTONS */}
                         <button className="button-remove" onClick={handleDetailsDelete}>
                             <img src={DeleteIcon} alt="Delete" className="delete-button-details"/>
-                            Unenroll
+                            Log out
                         </button>
                     </div>
                 </div>
@@ -207,14 +198,12 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
                     onConfirm={handleConfirmEdit}
                 >
                 </EditModal>
-        
-                <DeleteModal 
-                    isOpen={isDeleteOpen} 
-                    onClose={() => setIsDeleteOpen(false)}
-                    deleteData={user}
-                    onConfirm={handleConfirmDelete}
-                >
-                </DeleteModal>
+
+                <LogOutModal
+                    isOpen={isLogOutOpen}
+                    onClose={() => SetIsLogOutOpen(false)}
+                    onConfirm={handleConfirmLogOut}
+                ></LogOutModal>
 
                 <ErrorPopup
                     isOpen={isErrorOpen}
@@ -227,8 +216,9 @@ import { fetchObject, handleDelete, handleUpdate, uploadImage } from "@/controll
                     message={successMessage}
                     onClose={() => {
                         setIsSuccessOpen(false);
-                        if (isDeleted) {
-                        navigate(-1);
+                        if (isLoggedOut) {
+                            setIsLoggedOut(false)
+                            navigate("/login");
                         }
                     }}
                 />

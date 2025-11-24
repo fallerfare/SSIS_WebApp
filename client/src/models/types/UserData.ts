@@ -1,7 +1,7 @@
 export type UserData = {
   user_name: string;
   user_password: string;
-  user_id: number;
-  user_picture: string;
+  id_number: number;
+  id_picture: string;
   user_email: string;
 }
