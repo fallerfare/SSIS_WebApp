@@ -62,7 +62,7 @@ import LogOutModal from "./popups/LogOutDialog";
 
 
         const handleImageUpload = async () => {
-            if (!selectedFile || !user) return
+            if (!selectedFile || !user || !user.id_number) return
 
             try{
                 setUploading(true)

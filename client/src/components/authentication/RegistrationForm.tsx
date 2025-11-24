@@ -9,6 +9,7 @@ export default function RegistrationForm() {
     const navigate = useNavigate()
     const [form, setForm] = useState<UserData>({
         user_name: "",
+        user_email: "",
         user_password: "",
     })
 
@@ -58,6 +59,17 @@ export default function RegistrationForm() {
               name="user_name"
               placeholder=" Username "
               value={form.user_name}
+              onChange={handleChange}
+              required
+            />
+
+            <br />
+
+            <input
+              type="text"
+              name="user_email"
+              placeholder=" Email "
+              value={form.user_email}
               onChange={handleChange}
               required
             />
