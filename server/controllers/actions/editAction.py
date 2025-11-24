@@ -22,6 +22,9 @@ def edit_students(id_number):
     updates = request.json
     if not updates: 
         return jsonify({"error": "No data provided"})
+    
+    print("Request JSON:", updates)
+
 
     try:
         validated_data = schema.load(updates)
@@ -31,7 +34,8 @@ def edit_students(id_number):
     except ValidationError as err:
         return jsonify({
             "error": "Validation failed",
-            "details": err.messages
+            "details": err.messages,  
+            "unknown_fields": [k for k, v in err.messages.items() if 'Unknown field' in v]
         }), 400
 
     except Exception as e:
