@@ -15,12 +15,12 @@ class User(Model):
     # =========
 
     @property
-    def user_id(self):
-        return self.user.get("user_id")
+    def id_number(self):
+        return self.user.get("id_number")
 
-    @user_id.setter
-    def user_id(self, value):
-        self.user["user_id"] = value
+    @id_number.setter
+    def id_number(self, value):
+        self.user["id_number"] = value
 
     @property
     def user_name(self):
@@ -47,22 +47,22 @@ class User(Model):
         self.user["user_email"] = value
 
     @property
-    def user_picture(self):
-        return self.user.get("user_picture")
+    def id_picture(self):
+        return self.user.get("id_picture")
 
-    @user_picture.setter
-    def user_picture(self, value):
-        self.user["user_picture"] = value
+    @id_picture.setter
+    def id_picture(self, value):
+        self.user["id_picture"] = value
 
     # =================
     # ACTIONS
     # =========
 
-    def get(self, user_id):
+    def get(self, id_number):
         self.user = (
             self.selector
                 .table("users")
-                .search(tag="user_id", key=user_id)
+                .search(tag="id_number", key=id_number)
                 .execute()
                 .retDict()
         )
@@ -75,18 +75,18 @@ class User(Model):
             .values(data) \
             .execute()
 
-    def edit(self, user_id, updates: dict):
+    def edit(self, id_number, updates: dict):
         return (
             self.editor
                 .table("users")
                 .set(updates)
-                .where("user_id", user_id)
+                .where("id_number", id_number)
                 .execute()
         )
 
-    def delete(self, user_id):
+    def delete(self, id_number):
         print("Deleting user...")
         self.deleter \
             .table("users") \
-            .where("user_id", user_id) \
+            .where("id_number", id_number) \
             .execute()

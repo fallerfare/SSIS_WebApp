@@ -189,3 +189,32 @@ export async function uploadImage(object: TableName, image: File, id: string | n
 
     return response.json()
 }
+
+export async function fetchMe() {
+    const { csrf_token } = await fetchCsrf()
+
+    const res = await fetch(`${API_BASE}/api/me`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "X-CSRFToken": csrf_token,
+        }
+    })
+
+    return res.json()
+}
+
+export async function handleLogout() {
+    const { csrf_token } = await fetchCsrf()
+
+    const res = await fetch(`${API_BASE}/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "X-CSRFToken": csrf_token,
+        } 
+    });
+
+    return res.json()
+}
+

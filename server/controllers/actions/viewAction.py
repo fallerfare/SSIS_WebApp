@@ -80,10 +80,10 @@ def view_colleges(college_code):
 # ========================== 
 # USER VIEW
 # ==========
-@viewer.route("/view/users/<int:user_id>", methods = ["GET"])
-def viewusers(user_id):
+@viewer.route("/view/users/<int:id_number>", methods = ["GET"])
+def viewusers(id_number):
     user = User()         
-    data = user.get(user_id)  
+    data = user.get(id_number)  
 
     if not data:
         return jsonify({"error": "User not found"}), 404

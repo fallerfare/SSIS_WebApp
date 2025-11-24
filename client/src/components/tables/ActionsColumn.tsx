@@ -78,6 +78,6 @@ function getId<T extends TableName>(row: TableRow<T>, tableName: T): string | nu
     case "students": return (row as Student).id_number
     case "programs": return (row as Program).program_code
     case "colleges": return (row as College).college_code
-    case "users": return (row as UserData).user_id
+    case "users": return (row as UserData).id_number
   }
 }
