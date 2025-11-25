@@ -10,7 +10,7 @@ import { fetchTableData } from "../../controller/api"
 export type TableName = "students" | "programs" | "colleges"
 
 export function getTable(tableName: TableName,
-                                      onView: (data:any) => void, // REDIRECT
+                                      onView: (data:any) => void, 
                                       onEdit: (data:any) => void,
                                       onDelete: (data:any) => void,
                                       selectedTag: string,
@@ -33,7 +33,7 @@ export function getTable(tableName: TableName,
   let columns: ColumnDef<any>[] = []
   switch (tableName) {
     case "students":
-      columns = [...StudentColumns, ...getActionsColumns("students", onView, onEdit, onDelete)] //REDIRECT
+      columns = [...StudentColumns, ...getActionsColumns("students", onView, onEdit, onDelete)] 
       break
     case "programs":
       columns = [...ProgramColumns, ...getActionsColumns("programs", onView, onEdit, onDelete)]

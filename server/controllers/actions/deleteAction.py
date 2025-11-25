@@ -4,12 +4,12 @@ from models.programs import Program
 from models.colleges import College
 from psycopg2 import errors
 
-deletor = Blueprint("deletor", __name__)
+deletor = Blueprint("deletor", __name__, url_prefix="/api/delete")
 
 # ========================== 
 # STUDENT DELETE
 # ==========
-@deletor.route("/delete/students/<string:id_number>", methods = ["DELETE"])
+@deletor.route("/students/<string:id_number>", methods = ["DELETE"])
 def delete_students(id_number):
   
     student = Student()         
@@ -25,7 +25,7 @@ def delete_students(id_number):
 # ========================== 
 # PROGRAM DELETE
 # ==========
-@deletor.route("/delete/programs/<string:program_code>", methods = ["DELETE"])
+@deletor.route("/programs/<string:program_code>", methods = ["DELETE"])
 def delete_programs(program_code):
    
     program = Program()         
@@ -58,7 +58,7 @@ def delete_programs(program_code):
 # ========================== 
 # COLLEGE DELETE
 # ==========
-@deletor.route("/delete/colleges/<string:college_code>", methods = ["DELETE"])
+@deletor.route("/colleges/<string:college_code>", methods = ["DELETE"])
 def delete_colleges(college_code):
    
     college = College()         

@@ -90,13 +90,14 @@ class Student(Model):
     # ========
 
     def get(self, id_number):
-        self.student = (
+        get = (
             self.selector
             .table("students")
             .search(tag="id_number", key=id_number)
             .execute()
             .retDict()
         )
+        self.student = get[0]
         return self.student
     
     def add(self, data: dict):
