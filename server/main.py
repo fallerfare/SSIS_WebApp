@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 import atexit
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import generate_csrf
@@ -14,11 +14,18 @@ from controllers.actions.deleteAction import deletor
 from controllers.actions.insertAction import insertier
 from controllers.files import handleFiles
 import cloudinary
+from frontend import frontend
 
 load_dotenv()
 
-app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+app = Flask(
+    __name__,
+    static_folder=os.path.join(os.path.dirname(__file__), "static"),
+    static_url_path="/static"
+)
+
+
+CORS(app, supports_credentials=True)
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('WTF_CSRF_SECRET_KEY')
@@ -37,6 +44,16 @@ app.register_blueprint(editor)
 app.register_blueprint(deletor)
 app.register_blueprint(insertier)
 app.register_blueprint(handleFiles)
+
+
+
+
+
+
+
+
+
+app.register_blueprint(frontend)
 
 csrf = CSRFProtect(app)
 

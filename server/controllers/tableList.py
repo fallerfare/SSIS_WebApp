@@ -2,12 +2,12 @@ from flask import Blueprint, request, jsonify
 from services.Functions.Select import Select
 import math
 
-tableList = Blueprint("tableList", __name__)
+tableList = Blueprint("tableList", __name__, url_prefix="/api/table")
 
 # ========================== 
 # PAGINATED LIST
 # ==========
-@tableList.route("/table/<string:table>")
+@tableList.route("/<string:table>")
 def list(table): 
 
     match table:

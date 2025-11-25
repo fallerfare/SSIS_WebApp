@@ -5,22 +5,24 @@ from models.programs import Program
 from models.colleges import College
 from models.users import User
 
-viewer = Blueprint("viewer", __name__)
+viewer = Blueprint("viewer", __name__, url_prefix="/api/view")
 
 # ========================== 
 # STUDENT VIEW
 # ==========
-@viewer.route("/view/students/<string:id_number>", methods = ["GET"])
+@viewer.route("/students/<string:id_number>", methods = ["GET"])
 def view_students(id_number):
     student = Student()         
     data = student.get(id_number)  
 
     if not data:
         return jsonify({"error": "Student not found"}), 404
+    
+    print("view route RETURN:", type(data), data)
 
     return jsonify(data), 200
 
-@viewer.route("/view/students/programName/<string:program_code>", methods = ["GET"])
+@viewer.route("/students/programName/<string:program_code>", methods = ["GET"])
 def view_students_program_name(program_code):
     selector = Select()
     program_name = selector\
@@ -34,7 +36,7 @@ def view_students_program_name(program_code):
         "program_name":program_name[0]["program_name"]
     })
 
-@viewer.route("/view/students/collegeName/<string:college_code>", methods = ["GET"])
+@viewer.route("/students/collegeName/<string:college_code>", methods = ["GET"])
 def view_students_college_name(college_code):
     selector = Select()
     college_name = selector\
@@ -52,7 +54,7 @@ def view_students_college_name(college_code):
 # ========================== 
 # PROGRAM VIEW
 # ==========
-@viewer.route("/view/programs/<string:program_code>", methods = ["GET"])
+@viewer.route("/programs/<string:program_code>", methods = ["GET"])
 def view_programs(program_code):
     program = Program()         
     data = program.get(program_code)  
@@ -66,7 +68,7 @@ def view_programs(program_code):
 # ========================== 
 # COLLEGE VIEW
 # ==========
-@viewer.route("/view/colleges/<string:college_code>", methods = ["GET"])
+@viewer.route("/colleges/<string:college_code>", methods = ["GET"])
 def view_colleges(college_code):
     college = College()         
     data = college.get(college_code)  
@@ -80,7 +82,7 @@ def view_colleges(college_code):
 # ========================== 
 # USER VIEW
 # ==========
-@viewer.route("/view/users/<int:id_number>", methods = ["GET"])
+@viewer.route("/users/<int:id_number>", methods = ["GET"])
 def viewusers(id_number):
     user = User()         
     data = user.get(id_number)  

@@ -8,12 +8,12 @@ from models.schema import studentForm
 from models.schema import programForm
 from models.schema import collegeForm
 
-insertier = Blueprint("insertier", __name__)
+insertier = Blueprint("insertier", __name__, url_prefix="/api/create")
 
 # ========================== 
 # STUDENT INSERT
 # ==========
-@insertier.route("/create/students", methods = ["POST"])
+@insertier.route("/students", methods = ["POST"])
 def add_students():
     student = Student()   
     data = request.json
@@ -56,7 +56,7 @@ def add_students():
 # ========================== 
 # PROGRAM INSERT
 # ==========
-@insertier.route("/create/programs", methods = ["POST"])
+@insertier.route("/programs", methods = ["POST"])
 def edit_programs():
     program = Program()         
     data = request.json
@@ -99,7 +99,7 @@ def edit_programs():
 # ========================== 
 # COLLEGE INSERT
 # ==========
-@insertier.route("/create/colleges", methods = ["POST"])
+@insertier.route("/colleges", methods = ["POST"])
 def edit_colleges():
     college = College()         
     data = request.json
