@@ -63,7 +63,7 @@ class Select():
             conditions = []
             for col, val in search_mult.items():
                 search_tag = self.aliascolumn.get(col, f"{table}.{col}")
-                if col == "year_level":
+                if col == "year_level" or (col == "id_number" and self.table_name == "users"):
                     conditions.append(f"{search_tag} = %s")
                     self.params.append(int(val))
                 elif val == "Male":  
@@ -77,7 +77,7 @@ class Select():
         elif tag and key:
             search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
             self.searchquery = f"WHERE {search_tag} LIKE %s "
-            if tag == "year_level":
+            if tag == "year_level" or (tag == "id_number" and self.table_name == "users"):
                 self.searchquery = f"WHERE {search_tag} = %s"
                 self.params.append(int(key))
             elif key == "Male":

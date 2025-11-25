@@ -1,27 +1,19 @@
-import { useState, useEffect, type ChangeEvent, type FormEvent } from "react"
+import { useState, type ChangeEvent, type FormEvent } from "react"
 import type { UserData } from "../../models/types/UserData"
-import { fetchCsrf, sendCsrf } from "../../controller/fetchCsrf"
 import { Box } from "@chakra-ui/react"
 import { Link, useNavigate } from "react-router-dom"
+import { registerUser } from "@/controller/api"
 
 export default function RegistrationForm() {
 
     const navigate = useNavigate()
     const [form, setForm] = useState<UserData>({
         user_name: "",
+        user_email: "",
         user_password: "",
     })
 
     const [message, setMessage] = useState<string>("")
-    const [csrf_token, setCsrfToken] =useState<string>("")
-
-    // ============
-    // Fetch CSRF Token
-    useEffect(() => {
-        fetchCsrf()
-            .then((data) => setCsrfToken(data.csrf_token))
-            .catch((err) => console.error("CSRF fetch error: ", err))
-    })
 
     // ============
     // Form event handlers (change in input, submit)
@@ -32,16 +24,14 @@ export default function RegistrationForm() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         try {
-            const data = await sendCsrf(form, csrf_token, "register")
-            if(data.success){
-              setMessage(data.message || "Registered successfully!")
-              setTimeout(() => navigate("/login"), 1500)
-            } else {
-              setMessage(data.message || "Registered failed!")
-            }        } catch (err: any){
+            const data = await registerUser(form)
+            setMessage(data.message || "Registered successfully!")
+            setTimeout(() => navigate("/login"), 1500)
+        } catch (err: any) {
             setMessage("Error: " + err.message)
         }
     }
+
 
     return (
 
@@ -58,6 +48,17 @@ export default function RegistrationForm() {
               name="user_name"
               placeholder=" Username "
               value={form.user_name}
+              onChange={handleChange}
+              required
+            />
+
+            <br />
+
+            <input
+              type="text"
+              name="user_email"
+              placeholder=" Email "
+              value={form.user_email}
               onChange={handleChange}
               required
             />

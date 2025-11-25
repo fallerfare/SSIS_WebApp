@@ -5,6 +5,7 @@ import type { Program } from "@/models/types/programs"
 import type { College } from "@/models/types/colleges"
 import { useState } from "react"
 import { YearLevelDropdown, GenderDropdown, ProgramsDropdown, CollegesDropdown } from "../FieldsConfig"
+import type { UserData } from "@/models/types/UserData"
 
 type EditModalProps<T> = {
   isOpen: boolean
@@ -14,20 +15,79 @@ type EditModalProps<T> = {
   onConfirm?: (updated: T) => void
 }
 
-export default function EditModal<T extends Student | Program | College>(
+export default function EditModal<T extends Student | Program | College | UserData>(
                                                 { isOpen, onClose, editData, onConfirm }:
                                                 EditModalProps<T> ) {
-  console.log(editData)
 
   if (!isOpen || !editData) return null
 
   let content: React.ReactNode = null
   let header: React.ReactNode = null
 
-  if ("id_number" in editData){
+  if ("user_name" in editData){
+    const user = editData as UserData
+
+    const [formData, setFormData] = useState<UserData>(user)
+
+    const handleChange = (field: keyof UserData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, [field]: e.target.value})
+    }
+
+    const handleConfirm = () => {
+      if (onConfirm) {
+        onConfirm(formData as T)
+      }
+        onClose()
+    }
+
+    content = (
+      <form  onSubmit={handleConfirm}>
+        <Box>
+          <Grid
+              templateColumns="repeat(1, 1fr)"
+              gap={6}>
+            <GridItem colStart={1} rowStart={1} colSpan={1}>
+            <FormControl>
+              <FormLabel className="text-label">Username</FormLabel>
+              <Input value={formData.user_name}
+                        className="text-box"
+                        onChange={handleChange("user_name")}
+                        required/>
+            </FormControl>
+          </GridItem>
+          <GridItem colStart={1} rowStart={2} colSpan={1}>
+            <FormControl>
+              <FormLabel className="text-label">Email</FormLabel>
+              <Input value={formData.user_email}
+                        className="text-box"
+                        onChange={handleChange("user_email")}
+                        required/>
+            </FormControl>
+          </GridItem>
+          </Grid> 
+          <Box className="dialog-buttons">
+            <Button type="submit" className="submit-button" >
+              Confirm Changes
+            </Button>
+            <Button type="reset" className="auth-button" onClick={onClose}>
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </form>
+    )
+    header = (
+      <Box className="view-head-card">
+          <h1>{user.user_name}</h1>
+      </Box>
+    )
+  }
+
+  else if ("id_number" in editData){
     const student = editData as Student
 
-    const [formData, setFormData] = useState<Student>(editData)
+    const [formData, setFormData] = useState<Student>(student)
 
     const handleChange = (field: keyof Student) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,7 +209,7 @@ export default function EditModal<T extends Student | Program | College>(
   else if ("program_code" in editData){
     const program = editData as Program
 
-    const [formData, setFormData] = useState<Program>(editData)
+    const [formData, setFormData] = useState<Program>(program)
 
     const handleChange = (field: keyof Program) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,7 +271,7 @@ export default function EditModal<T extends Student | Program | College>(
    else  if ("college_code" in editData){
     const college = editData as College
 
-    const [formData, setFormData] = useState<College>(editData)
+    const [formData, setFormData] = useState<College>(college)
 
     const handleChange = (field: keyof College) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -259,7 +319,6 @@ export default function EditModal<T extends Student | Program | College>(
     )
     }
 
-  console.log("Function exited")
 
   return (
         <Box>

@@ -10,7 +10,7 @@ import { fetchTableData } from "../../controller/api"
 export type TableName = "students" | "programs" | "colleges"
 
 export function getTable(tableName: TableName,
-                                      onView: (data:any) => void,
+                                      onView: (data:any) => void, // REDIRECT
                                       onEdit: (data:any) => void,
                                       onDelete: (data:any) => void,
                                       selectedTag: string,
@@ -33,7 +33,7 @@ export function getTable(tableName: TableName,
   let columns: ColumnDef<any>[] = []
   switch (tableName) {
     case "students":
-      columns = [...StudentColumns, ...getActionsColumns("students", onView, onEdit, onDelete)]
+      columns = [...StudentColumns, ...getActionsColumns("students", onView, onEdit, onDelete)] //REDIRECT
       break
     case "programs":
       columns = [...ProgramColumns, ...getActionsColumns("programs", onView, onEdit, onDelete)]
@@ -57,7 +57,6 @@ export function getTable(tableName: TableName,
     fetchTableData(tableName, pageIndex, pageSize, search_tag, search_key, sort, order)
       .then((result) => {
         setData(result.data)
-        console.log("API result after reload:", result)
         setPageCount(Math.ceil(result.total / pagination.pageSize))
       })
       .catch((err) => console.error(err))
