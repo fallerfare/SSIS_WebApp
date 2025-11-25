@@ -13,11 +13,6 @@ function NavBar() {
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='mx-auto' id='navbar-links'>
             <Nav.Item>
-              <Nav.Link as={Link} to="/home">
-                home
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
               <Nav.Link as={Link} to="/profile">
                 profile
               </Nav.Link>

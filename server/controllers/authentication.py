@@ -5,7 +5,7 @@ from models.schema.loginForm import LoginForm
 from services.Functions import Insert, Select
 import bcrypt
 
-auth = Blueprint("auth", __name__)
+auth = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 selector = Select.Select()
 insertor = Insert.Insert()
@@ -75,7 +75,7 @@ def logout():
 # ========================== 
 # CURRENTLY LOGGED IN
 # ==========
-@auth.route("/api/me", methods=["GET"])
+@auth.route("/me", methods=["GET"])
 def me():
     session_user = session.get("user")
     if not session_user:

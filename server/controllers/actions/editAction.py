@@ -6,12 +6,12 @@ from models.colleges import College
 from models.schema import studentForm, collegeForm, programForm, userForm
 from models.users import User
 
-editor = Blueprint("editor", __name__)
+editor = Blueprint("editor", __name__, url_prefix="/api/edit")
 
 # ========================== 
 # USER EDIT
 # ==========
-@editor.route("/edit/users/<string:id_number>", methods = ["PUT"])
+@editor.route("/users/<string:id_number>", methods = ["PUT"])
 def edit_users(id_number):
     user = User()         
     data = user.get(id_number)  
@@ -44,7 +44,7 @@ def edit_users(id_number):
 # ========================== 
 # STUDENT EDIT
 # ==========
-@editor.route("/edit/students/<string:id_number>", methods = ["PUT"])
+@editor.route("/students/<string:id_number>", methods = ["PUT"])
 def edit_students(id_number):
     student = Student()         
     data = student.get(id_number)  
@@ -78,7 +78,7 @@ def edit_students(id_number):
 # ========================== 
 # PROGRAM EDIT
 # ==========
-@editor.route("/edit/programs/<string:program_code>", methods = ["PUT"])
+@editor.route("/programs/<string:program_code>", methods = ["PUT"])
 def edit_programs(program_code):
     program = Program()         
     data = program.get(program_code)  
@@ -112,7 +112,7 @@ def edit_programs(program_code):
 # ========================== 
 # COLLEGE EDIT
 # ==========
-@editor.route("/edit/colleges/<string:college_code>", methods = ["PUT"])
+@editor.route("/colleges/<string:college_code>", methods = ["PUT"])
 def edit_colleges(college_code):
     college = College()         
     data = college.get(college_code)  
