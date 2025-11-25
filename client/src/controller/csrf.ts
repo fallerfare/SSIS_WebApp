@@ -1,7 +1,5 @@
-const API_BASE = "http://localhost:8080";
-
 async function getCsrfToken() {
-    const res = await fetch(`${API_BASE}/api/csrf-token`, {
+    const res = await fetch(`/api/csrf-token`, {
         credentials: "include",
     });
 
@@ -23,7 +21,7 @@ async function apiFetch(
         headers["X-CSRFToken"] = csrf;
     }
 
-    const response = await fetch(`${API_BASE}${url}`, {
+    const response = await fetch(`${url}`, {
         ...options,
         headers,
         credentials: "include",
