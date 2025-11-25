@@ -24,7 +24,67 @@ export default function EditModal<T extends Student | Program | College | UserDa
   let content: React.ReactNode = null
   let header: React.ReactNode = null
 
-  if ("id_number" in editData){
+  if ("user_name" in editData){
+    const user = editData as UserData
+
+    const [formData, setFormData] = useState<UserData>(user)
+
+    const handleChange = (field: keyof UserData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, [field]: e.target.value})
+    }
+
+    const handleConfirm = () => {
+      if (onConfirm) {
+        onConfirm(formData as T)
+      }
+        onClose()
+    }
+
+    content = (
+      <form  onSubmit={handleConfirm}>
+        <Box>
+          <Grid
+              templateColumns="repeat(1, 1fr)"
+              gap={6}>
+            <GridItem colStart={1} rowStart={1} colSpan={1}>
+            <FormControl>
+              <FormLabel className="text-label">Username</FormLabel>
+              <Input value={formData.user_name}
+                        className="text-box"
+                        onChange={handleChange("user_name")}
+                        required/>
+            </FormControl>
+          </GridItem>
+          <GridItem colStart={1} rowStart={2} colSpan={1}>
+            <FormControl>
+              <FormLabel className="text-label">Email</FormLabel>
+              <Input value={formData.user_email}
+                        className="text-box"
+                        onChange={handleChange("user_email")}
+                        required/>
+            </FormControl>
+          </GridItem>
+          </Grid> 
+          <Box className="dialog-buttons">
+            <Button type="submit" className="submit-button" >
+              Confirm Changes
+            </Button>
+            <Button type="reset" className="auth-button" onClick={onClose}>
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </form>
+    )
+    header = (
+      <Box className="view-head-card">
+          <h1>{user.user_name}</h1>
+      </Box>
+    )
+  }
+
+  else if ("id_number" in editData){
     const student = editData as Student
 
     const [formData, setFormData] = useState<Student>(student)
