@@ -3,10 +3,44 @@ from marshmallow import ValidationError
 from models.students import Student
 from models.programs import Program
 from models.colleges import College
-from models.schema import studentForm, collegeForm, programForm
+from models.schema import studentForm, collegeForm, programForm, userForm
+from models.users import User
 
 editor = Blueprint("editor", __name__)
 
+# ========================== 
+# USER EDIT
+# ==========
+@editor.route("/edit/users/<string:id_number>", methods = ["PUT"])
+def edit_users(id_number):
+    user = User()         
+    data = user.get(id_number)  
+    schema = userForm.UserSchema()
+    
+    if not data:
+        return jsonify({"error": "User not found"}), 404
+    
+    updates = request.json
+    if not updates: 
+        return jsonify({"error": "No data provided"})
+
+    try:
+        validated_data = schema.load(updates)
+        user.edit(id_number, validated_data)
+        return jsonify({"message": "User updated successfully"}), 200
+    
+    except ValidationError as err:
+        return jsonify({
+            "error": "Validation failed",
+            "details": err.messages,  
+        }), 400
+
+    except Exception as e:
+        print(f"Server error: {e}")
+        return jsonify({
+            "error": "Server error. Please try again later."
+        }), 500
+    
 # ========================== 
 # STUDENT EDIT
 # ==========
@@ -31,7 +65,7 @@ def edit_students(id_number):
     except ValidationError as err:
         return jsonify({
             "error": "Validation failed",
-            "details": err.messages
+            "details": err.messages,  
         }), 400
 
     except Exception as e:

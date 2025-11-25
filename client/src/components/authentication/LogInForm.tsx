@@ -1,9 +1,9 @@
-import { useState, useEffect, type ChangeEvent, type FormEvent } from "react"
+import { useState, type ChangeEvent, type FormEvent } from "react"
 import type { UserData } from "../../models/types/UserData"
-import { fetchCsrf, sendCsrf } from "../../controller/fetchCsrf"
 import { Box } from "@chakra-ui/react"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
+import { loginUser } from "@/controller/api"
 
 export default function LogInForm() {
     
@@ -15,15 +15,6 @@ export default function LogInForm() {
     })
 
     const [message, setMessage] = useState<string>("")
-    const [csrf_token, setCsrfToken] =useState<string>("")
-
-    // ============
-    // Fetch CSRF Token
-    useEffect(() => {
-        fetchCsrf()
-            .then((data) => setCsrfToken(data.csrf_token))
-            .catch((err) => console.error("CSRF fetch error: ", err))
-    })
 
     // ============
     // Form event handlers (change in input, submit)
@@ -34,14 +25,10 @@ export default function LogInForm() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         try {
-            const data = await sendCsrf(form, csrf_token, "login")
-            if(data.success){
-              setMessage(data.message || "Logged In successfully!")
-              setTimeout(() => navigate("/table/students"), 1500) // TO DO: to home
-            } else {
-              setMessage(data.message || "Logged In failed!")
-            }
-        } catch (err: any){
+            const data = await loginUser(form)
+            setMessage(data.message || "Logged in successfully!")
+            setTimeout(() => navigate("/table/students"), 1500)
+        } catch (err: any) {
             setMessage("Error: " + err.message)
         }
     }

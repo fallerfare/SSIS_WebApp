@@ -8,6 +8,7 @@ import TableLayout from './TableLayout'
 import EnrollmentForm from './enrollment/EnrollmentForm'
 import EstablishProgram from './establish/EstablishProgram'
 import EstablishCollege from './establish/EstablishCollege'
+import ViewUserDetails from './ViewUserDetails'
 
 function Layout() {
 
@@ -38,6 +39,7 @@ function Layout() {
                     <Route path="/enrollment" element={<EnrollmentForm />} />
                     <Route path="/establish/programs" element={<EstablishProgram />} />
                     <Route path="/establish/colleges" element={<EstablishCollege />} />
+                    <Route path="/profile" element={<ViewUserDetails />} />
                     <Route
                         path="*"
                         element={

@@ -5,10 +5,10 @@ class RegistrationForm(Schema):
         required=True,
         validate=validate.Length(min=3, max=20, error="Username must be 3–20 characters")
     )
-    # email = fields.Email(
-    #     required=True,
-    #     error_messages={"required": "Email is required", "invalid": "Invalid email address"}
-    # )
+    user_email = fields.Email(
+        required=True,
+        error_messages={"required": "Email is required", "invalid": "Invalid email address"}
+    )
     user_password = fields.Str(
         required=True,
         validate=validate.Length(min=3, error="Password must be at least 6 characters")

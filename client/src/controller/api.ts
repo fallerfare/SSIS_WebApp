@@ -1,10 +1,24 @@
 import type { College } from "@/models/types/colleges"
 import type { Program } from "@/models/types/programs"
-import { fetchCsrf } from "./fetchCsrf"
+import { api } from "./csrf"
+import type { UserData } from "@/models/types/UserData";
 
-const API_BASE = "http://localhost:8080"
+type TableName = "students" | "programs" | "colleges" | "users"
 
-type TableName = "students" | "programs" | "colleges"
+function parseApiError(errorData: any, status: number): string {
+    if (typeof errorData === "string") return errorData;
+
+    if (status === 400 && errorData.details && typeof errorData.details === "object") {
+        const details = errorData.details as Record<string, string[]>;
+        return Object.values(details).flat().join("\n");
+    }
+
+    if (status === 409 && errorData.details && typeof errorData.details === "string") {
+        return errorData.details;
+    }
+
+    return errorData.error || "Server error occurred";
+}
 
 export async function fetchTableData(table: string,
                                                         page: number,
@@ -24,137 +38,102 @@ export async function fetchTableData(table: string,
         order: order.toString()
     })
 
-    const response = await fetch(`${API_BASE}/table/${table}?${params}`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
+    return api.get(`/table/${table}?${params.toString()}`);
 }
 
 export async function getSession(): Promise<{ isLoggedIn: boolean; user_name? : string }> {
-    const response = await fetch(`${API_BASE}/api/me`, {
-        credentials: "include",
-    })
-
-    if (!response.ok) {
-        return { isLoggedIn: false }
+    try {
+        const data = await api.get("/api/me");
+        return { isLoggedIn: true, user_name: data.user_name };
+    } catch {
+        return { isLoggedIn: false };
     }
-
-    return response.json()
 }
 
 export async function getCollegeName(college_code: string) {
-    const response = await fetch(`${API_BASE}/view/students/collegeName/${college_code}`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
+  return api.get(`/view/students/collegeName/${college_code}`, false);
 }
 
 export async function getProgramName(program_code: string) {
-    const response = await fetch(`${API_BASE}/view/students/programName/${program_code}`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
+  return api.get(`/view/students/programName/${program_code}`, false);
 }
 
-export async function getCollegeList(): Promise<{ data: College[] }>{
-
-    const response = await fetch(`${API_BASE}/table/colleges`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
+export async function getCollegeList(): Promise<{ data: College[] }> {
+  return api.get("/table/colleges", false);
 }
 
-export async function getProgramList(college_code: string): Promise<{ data: Program[] }>{
-
-     const params = new URLSearchParams({
-        tag: "college_code",
-        key: college_code,
-    })
-
-    const response = await fetch(`${API_BASE}/table/programs?${params}`)
-    if (!response.ok) throw new Error("Failed to fetch data")
-    return response.json()
+export async function getProgramList(college_code: string): Promise<{ data: Program[] }> {
+  const params = new URLSearchParams({ tag: "college_code", key: college_code });
+  return api.get(`/table/programs?${params.toString()}`, false);
 }
 
 export async function handleInsert<T>(tableName: TableName, data: T) {
-    
-    const { csrf_token } = await fetchCsrf()
-
-    const response = await fetch(`${API_BASE}/create/${tableName}`, {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token,
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-
-        const errorData = await response.json()
-        let message = ""
-        console.log(response)
-        
-        if (response.status === 400 && errorData.details && typeof errorData.details === "object") {
-            const details = errorData.details as Record<string, string[]>
-            const allMessages = Object.values(details)
-                .flat()                    
-                .join("\n")   
-
-            throw new Error(allMessages)
-        }
-
-        else if (response.status === 409 && errorData.details && typeof errorData.details === "string"){
-            message = errorData.details
-            throw new Error(message)
-        }
+    try {
+        return await api.post(`/create/${tableName}`, data);
+    } catch (err: any) {
+        const parsed = JSON.parse(err.message || "{}");
+        throw new Error(parseApiError(parsed, parsed.status || 0));
     }
-
-  return response.json();
 }
 
-export async function handleUpdate<T>(tableName: TableName, updated: T, id: string) {
-
-    const { csrf_token } = await fetchCsrf()
-
-    const response = await fetch(`${API_BASE}/edit/${tableName}/${id}`, {
-        method: "PUT",
-        headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token,
-        },
-        credentials: "include",
-        body: JSON.stringify(updated),
-    })
-
-
-    if (!response.ok) {
-    const errorData = await response.json();
-    if (response.status === 400 && errorData.details) {
-        const details = errorData.details as Record<string, string[]>
-        const allMessages = Object.values(details)
-            .flat()                    
-            .join("\n");               
-
-        throw new Error(allMessages);
+export async function handleUpdate<T>(tableName: TableName, updated: T, id: string | number) {
+    try {
+        return await api.put(`/edit/${tableName}/${id}`, updated);
+    } catch (err: any) {
+        const parsed = JSON.parse(err.message || "{}");
+        throw new Error(parseApiError(parsed, parsed.status || 0));
     }
-    throw new Error(errorData.error || "Server error occurred");
-  }
-
-  return response.json();
 }
 
-export async function handleDelete(tableName: TableName, id: string) {
-    console.log("Payload: ", id)
-    console.log("function called handle")
-    const { csrf_token } = await fetchCsrf()
-    console.log("csrf fetched, validated")     
+export async function handleDelete(tableName: TableName, id: string | number) {
+    try {
+        return await api.delete(`/delete/${tableName}/${id}`);
+    } catch (err: any) {
+        const parsed = JSON.parse(err.message || "{}");
+        throw new Error(parseApiError(parsed, parsed.status || 0));
+    }
+}
 
-    const response = await fetch(`${API_BASE}/delete/${tableName}/${id}`, {
-        method: "DELETE",
-        headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token,
-        },
-        credentials: "include",
-    })
+export async function fetchObject(object: TableName, id: string | number) {
+    return api.get(`/view/${object}/${id}`);
+}
 
-    return response.json()
+export async function uploadImage(object: TableName, image: File, id: string | number) {
+    const formData = new FormData()
+    formData.append("object", object)
+    formData.append("image", image) 
+    formData.append("id", id.toString())
+
+    try {
+        return await api.upload("/api/files/upload", formData);
+    } catch (err: any) {
+        const parsed = JSON.parse(err.message || "{}");
+        throw new Error(parseApiError(parsed, parsed.status || 0));
+    }
+}
+
+export async function fetchMe() {
+    return api.get("/api/me");
+}
+
+export async function handleLogout() {
+    return api.post("/logout", {});
+}
+
+export async function loginUser(data: UserData) {
+    try {
+        return await api.post("/login", data)
+    } catch (err: any) {
+        const parsed = JSON.parse(err.message || "{}")
+        throw new Error(parseApiError(parsed, parsed.status || 0))
+    }
+}
+
+export async function registerUser(data: UserData) {
+    try {
+        return await api.post("/register", data)
+    } catch (err: any) {
+        const parsed = JSON.parse(err.message || "{}")
+        throw new Error(parseApiError(parsed, parsed.status || 0))
+    }
 }

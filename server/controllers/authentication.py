@@ -59,17 +59,17 @@ def login():
     if not bcrypt.checkpw(auth_password.encode("utf-8"), stored_hash):
         return jsonify({"success": False, "message": "Incorrect Password."}), 401
 
-    session["user"] = {"user_name": valid_auth["user_name"]}
+    session["user"] = valid_auth
     return jsonify({"success": True, "message": "Successfully Logged In!"}), 200
 
 
 # ========================== 
 # LOG OUT
 # ==========
-@auth.route("/api/logout", methods = ["POST"])
+@auth.route("/logout", methods = ["POST"])
 def logout():
-    session.pop("user", None)
-    return jsonify({"success": True, "message": "Logged out"})
+    session.clear()
+    return jsonify({"success": True, "message": "Successfully Logged out"})
 
 
 # ========================== 
@@ -77,7 +77,20 @@ def logout():
 # ==========
 @auth.route("/api/me", methods=["GET"])
 def me():
-    user = session.get("user")
-    if user:
-        return jsonify({"isLoggedIn": True, "user": user})
-    return jsonify({"isLoggedIn": False})
+    session_user = session.get("user")
+    if not session_user:
+        return jsonify({"isLoggedIn": False})
+
+    user_id = session_user["id_number"]
+
+    user = selector.table("users")\
+            .search(tag="id_number", key=user_id)\
+            .execute()\
+            .retDict()
+
+    if not user:
+        return jsonify({"isLoggedIn": False})
+
+    session["user"] = user[0]
+
+    return jsonify({"isLoggedIn": True, "user": user[0]})
