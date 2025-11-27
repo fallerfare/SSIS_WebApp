@@ -9,7 +9,7 @@ import ViewIcon from "../../assets/icons/view-idle.png"
 import '../../style/App.css'
 import type { UserData } from "@/models/types/UserData"
 
-const API_BASE = "http://localhost:8080"
+import { fetchObject } from "@/controller/api"
 
 type TableName = "students" | "programs" | "colleges" | "users"
 
@@ -32,12 +32,13 @@ export function getActionsColumns<T extends TableName>(
       accessorKey: "actions",
       cell: ({ row }) => {
         const original = row.original
+
+        const id = getId(original, tableName)
  
         //REDIRECT
         const handleView = async () => {
           try {
-            const res = await fetch(`${API_BASE}/view/${tableName}/${getId(original, tableName)}`)
-            const data = await res.json()
+            const data = await fetchObject(tableName, id)
             onView(Array.isArray(data) ? data[0] : data)
           } catch (error) {
             console.error("Error: ", error)
@@ -46,8 +47,7 @@ export function getActionsColumns<T extends TableName>(
 
         const handleEdit = async () => {
           try {
-            const res = await fetch(`${API_BASE}/view/${tableName}/${getId(original, tableName)}`)
-            const data = await res.json()
+            const data = await fetchObject(tableName, id)
             onEdit(Array.isArray(data) ? data[0] : data)
           } catch (error) {
             console.error("Error: ", error)
@@ -73,7 +73,7 @@ export function getActionsColumns<T extends TableName>(
   return ActionsColumns
 }
 
-function getId<T extends TableName>(row: TableRow<T>, tableName: T): string | number{
+function getId<T extends TableName>(row: TableRow<T>, tableName: T): string | number | undefined{
   switch (tableName) {
     case "students": return (row as Student).id_number
     case "programs": return (row as Program).program_code

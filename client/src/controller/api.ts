@@ -38,12 +38,12 @@ export async function fetchTableData(table: string,
         order: order.toString()
     })
 
-    return api.get(`/table/${table}?${params.toString()}`);
+    return api.get(`/api/table/${table}?${params.toString()}`);
 }
 
 export async function getSession(): Promise<{ isLoggedIn: boolean; user_name? : string }> {
     try {
-        const data = await api.get("/api/me");
+        const data = await api.get("/api/auth/me");
         return { isLoggedIn: true, user_name: data.user_name };
     } catch {
         return { isLoggedIn: false };
@@ -51,25 +51,25 @@ export async function getSession(): Promise<{ isLoggedIn: boolean; user_name? : 
 }
 
 export async function getCollegeName(college_code: string) {
-  return api.get(`/view/students/collegeName/${college_code}`, false);
+  return api.get(`/api/view/students/collegeName/${college_code}`, false);
 }
 
 export async function getProgramName(program_code: string) {
-  return api.get(`/view/students/programName/${program_code}`, false);
+  return api.get(`/api/view/students/programName/${program_code}`, false);
 }
 
 export async function getCollegeList(): Promise<{ data: College[] }> {
-  return api.get("/table/colleges", false);
+  return api.get("/api/table/colleges", false);
 }
 
 export async function getProgramList(college_code: string): Promise<{ data: Program[] }> {
   const params = new URLSearchParams({ tag: "college_code", key: college_code });
-  return api.get(`/table/programs?${params.toString()}`, false);
+  return api.get(`/api/table/programs?${params.toString()}`, false);
 }
 
 export async function handleInsert<T>(tableName: TableName, data: T) {
     try {
-        return await api.post(`/create/${tableName}`, data);
+        return await api.post(`/api/create/${tableName}`, data);
     } catch (err: any) {
         const parsed = JSON.parse(err.message || "{}");
         throw new Error(parseApiError(parsed, parsed.status || 0));
@@ -78,7 +78,7 @@ export async function handleInsert<T>(tableName: TableName, data: T) {
 
 export async function handleUpdate<T>(tableName: TableName, updated: T, id: string | number) {
     try {
-        return await api.put(`/edit/${tableName}/${id}`, updated);
+        return await api.put(`/api/edit/${tableName}/${id}`, updated);
     } catch (err: any) {
         const parsed = JSON.parse(err.message || "{}");
         throw new Error(parseApiError(parsed, parsed.status || 0));
@@ -87,15 +87,15 @@ export async function handleUpdate<T>(tableName: TableName, updated: T, id: stri
 
 export async function handleDelete(tableName: TableName, id: string | number) {
     try {
-        return await api.delete(`/delete/${tableName}/${id}`);
+        return await api.delete(`/api/delete/${tableName}/${id}`);
     } catch (err: any) {
         const parsed = JSON.parse(err.message || "{}");
         throw new Error(parseApiError(parsed, parsed.status || 0));
     }
 }
 
-export async function fetchObject(object: TableName, id: string | number) {
-    return api.get(`/view/${object}/${id}`);
+export async function fetchObject(object: TableName, id: string | number | undefined) {
+    return api.get(`/api/view/${object}/${id}`);
 }
 
 export async function uploadImage(object: TableName, image: File, id: string | number) {
@@ -113,16 +113,16 @@ export async function uploadImage(object: TableName, image: File, id: string | n
 }
 
 export async function fetchMe() {
-    return api.get("/api/me");
+    return api.get("/api/auth/me");
 }
 
 export async function handleLogout() {
-    return api.post("/logout", {});
+    return api.post("/api/auth/logout", {});
 }
 
 export async function loginUser(data: UserData) {
     try {
-        return await api.post("/login", data)
+        return await api.post("/api/auth/login", data)
     } catch (err: any) {
         const parsed = JSON.parse(err.message || "{}")
         throw new Error(parseApiError(parsed, parsed.status || 0))
@@ -131,7 +131,7 @@ export async function loginUser(data: UserData) {
 
 export async function registerUser(data: UserData) {
     try {
-        return await api.post("/register", data)
+        return await api.post("/api/auth/register", data)
     } catch (err: any) {
         const parsed = JSON.parse(err.message || "{}")
         throw new Error(parseApiError(parsed, parsed.status || 0))
