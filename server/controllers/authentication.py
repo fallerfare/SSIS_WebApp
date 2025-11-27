@@ -70,7 +70,6 @@ def login():
         data = schema.load(request.json)
         auth_username = data["user_name"]
         auth_password = data["user_password"]
-        print(auth_username)
 
     except ValidationError as ve:
         return jsonify({
@@ -84,7 +83,6 @@ def login():
                                     .search(tag="user_name", key=auth_username)\
                                     .execute()\
                                     .retDict()
-    print("DEBUG EXIST_AUTH:", exist_auth)
     if not exist_auth:
         return jsonify({
             "success": False,
@@ -100,7 +98,6 @@ def login():
             "success": False,
             "message": "Incorrect password."
         }), 401
-
 
     session["user"] = valid_auth
     return jsonify({
@@ -126,25 +123,23 @@ def logout():
 # ==========
 @auth.route("/me", methods=["GET"])
 def me():
-    session_user = session.get("user")
-    if not session_user:
-        return jsonify({"isLoggedIn": False})
+    try:
+        session_user = session.get("user")
+        if session_user is None:
+            return jsonify({"isLoggedIn": False, "user": None}), 200
 
-    user_id = session_user["id_number"]
+        user_id = session_user["id_number"]
 
-    user = selector.table("users")\
-            .search(tag="id_number", key=user_id)\
-            .execute()\
-            .retDict()
+        user = selector.table("users").search(tag="id_number", key=user_id).execute().retDict()
+        if not user:
+            return jsonify({"isLoggedIn": False, "user": None}), 200
 
-    if not user:
-        return jsonify({
-            "isLoggedIn": False
-        }), 404
+        user_data = dict(user[0])
+        user_data.pop("user_password", None)
+        session["user"] = user_data
 
-    session["user"] = user[0]
+        return jsonify({"isLoggedIn": True, "user": user_data}), 200
 
-    return jsonify({
-        "isLoggedIn": True, 
-        "user": user[0]
-    }), 200
+    except Exception as e:
+        return jsonify({"isLoggedIn": False, "error": str(e)}), 500
+

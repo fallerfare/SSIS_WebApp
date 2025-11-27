@@ -1,7 +1,7 @@
 import NavBar from './NavBar'
-import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom"
+import { Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom"
 import RegistrationForm from './authentication/RegistrationForm'
-import { getSession } from '../controller/api'
+import { fetchMe } from '../controller/api'
 import { useEffect, useState } from 'react'
 import LogInForm from './authentication/LogInForm'
 import TableLayout from './TableLayout'
@@ -31,15 +31,15 @@ function Layout() {
 
     useEffect(() => {
         const checkSession = async () => {
-            try {
-                const data = await getSession();
-                setIsLoggedIn(data.isLoggedIn);
-            } catch {
-                setIsLoggedIn(false);
-            }
+            const data = await fetchMe();
+            console.log("isLoggedIn data: ", data)
+            console.log("isLoggedIn value: ", data.isLoggedIn)
+            setIsLoggedIn(data.isLoggedIn);
         };
         checkSession();
     }, []);
+
+    console.log(isLoggedIn)
 
 
     return (
@@ -58,7 +58,7 @@ function Layout() {
 
                     <Route path="/login" element={
                         <PublicRoute isLoggedIn={isLoggedIn}>
-                            <LogInForm />
+                            <LogInForm onLogIn={() => setIsLoggedIn(true)}/>
                         </PublicRoute>
                     } />
                     {/* PUBLIC */}

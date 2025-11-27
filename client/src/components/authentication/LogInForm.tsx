@@ -5,7 +5,11 @@ import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { loginUser } from "@/controller/api"
 
-export default function LogInForm() {
+interface LogInFormProps {
+    onLogIn?: () => void;
+}
+
+export default function LogInForm({onLogIn} : LogInFormProps) {
     
     const navigate = useNavigate()
 
@@ -29,6 +33,7 @@ export default function LogInForm() {
             console.log("Login data", data)
             if (data.success){
               setMessage(data.message || "Logged in successfully!")
+              if(onLogIn) onLogIn()
               setTimeout(() => navigate("/table/students"), 1500)
             }
             else{
