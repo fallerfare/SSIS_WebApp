@@ -115,7 +115,8 @@ export async function handleLogout() {
 
 export async function loginUser(data: UserData) {
     try {
-        return await api.post("/api/auth/login", data)
+        const res =  await api.post("/api/auth/login", data)
+        return res
     } catch (err: any) {
         return parseApiError(err);
     }
@@ -123,7 +124,8 @@ export async function loginUser(data: UserData) {
 
 export async function registerUser(data: UserData) {
     try {
-        return await api.post("/api/auth/register", data)
+        const res = await api.post("/api/auth/register", data)
+        return res
     } catch (err: any) {
         return parseApiError(err);
     }
