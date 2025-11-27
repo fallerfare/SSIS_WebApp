@@ -1,5 +1,5 @@
 import NavBar from './NavBar'
-import { Routes, Route, Navigate, useLocation } from "react-router-dom"
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom"
 import RegistrationForm from './authentication/RegistrationForm'
 import { getSession } from '../controller/api'
 import { useEffect, useState } from 'react'
@@ -15,6 +15,7 @@ import { ProtectedRoute } from './authentication/ProtectedRoute'
 function Layout() {
 
     const locator = useLocation()
+    const navigate = useNavigate()
 
     const hideNavBar = 
             locator.pathname === "/"            ||
@@ -22,6 +23,11 @@ function Layout() {
             locator.pathname === "/register"
 
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        navigate("/login", { replace: true });
+    };
 
     useEffect(() => {
         const checkSession = async () => {
@@ -86,7 +92,7 @@ function Layout() {
 
                     <Route path="/profile" element={
                         <ProtectedRoute isLoggedIn={isLoggedIn}>
-                            <ViewUserDetails />
+                            <ViewUserDetails onLogout={handleLogout}/>
                         </ProtectedRoute>
                     } />
                     {/* PRIVATE */}
