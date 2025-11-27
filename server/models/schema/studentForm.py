@@ -50,4 +50,6 @@ class StudentSchema(Schema):
         validate=validate.Length(min=1, max=15, error="Program must be 1 to 15 characters long")
     )
 
-    id_picture = fields.Str(required=False)
+    id_picture = fields.Str(
+        required=False,
+        allow_none=True)

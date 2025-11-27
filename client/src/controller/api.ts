@@ -57,7 +57,8 @@ export async function getProgramList(college_code: string): Promise<{ data: Prog
 
 export async function handleInsert<T>(tableName: TableName, data: T) {
     try {
-        return await api.post(`/api/create/${tableName}`, data);
+        const res =  await api.post(`/api/create/${tableName}`, data);
+        return res
     } catch (err: any) {
         return parseApiError(err);
     }
@@ -66,7 +67,8 @@ export async function handleInsert<T>(tableName: TableName, data: T) {
 
 export async function handleUpdate<T>(tableName: TableName, updated: T, id: string | number) {
     try {
-        return await api.put(`/api/edit/${tableName}/${id}`, updated);
+        const res = await api.put(`/api/edit/${tableName}/${id}`, updated);
+        return res
     } catch (err: any) {
         return parseApiError(err);
     }
@@ -76,7 +78,7 @@ export async function handleUpdate<T>(tableName: TableName, updated: T, id: stri
 export async function handleDelete(tableName: TableName, id: string | number) {
     try {
         const res = await api.delete(`/api/delete/${tableName}/${id}`);
-        return res.data
+        return res
     } catch (err: any) {
         return parseApiError(err);
     }
