@@ -20,7 +20,7 @@ def register():
     try:
         data = schema.load(request.json)
     except ValidationError as ve: 
-        return jsonify({"errors": ve.messages}), 400
+        return jsonify({"error": ve.messages}), 400
     
     hashed_pw = bcrypt.hashpw(data["user_password"].encode("utf-8"), bcrypt.gensalt())
     data["user_password"] = hashed_pw.decode("utf-8") 
@@ -43,7 +43,7 @@ def login():
         print(auth_username)
 
     except ValidationError as ve: 
-        return jsonify({"errors": ve.messages}), 400
+        return jsonify({"error": ve.messages}), 400
     
     exist_auth = selector.table("users")\
                                     .search(tag="user_name", key=auth_username)\

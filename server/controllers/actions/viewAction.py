@@ -18,8 +18,6 @@ def view_students(id_number):
     if not data:
         return jsonify({"error": "Student not found"}), 404
     
-    print("view route RETURN:", type(data), data)
-
     return jsonify(data), 200
 
 @viewer.route("/students/programName/<string:program_code>", methods = ["GET"])
