@@ -39,12 +39,12 @@ class Delete():
                 cursor.execute(self.query, self.params)
                 conn.commit()
         except errors.ForeignKeyViolation as fke:
-            print(f"Error selecting : {fke}")
+            print(f"Error selecting fke: {fke}")
             if conn:
                 conn.rollback()
             raise fke
         except psycopg2.Error as pge:
-            print(f"Error selecting : {pge}")
+            print(f"Error selecting pge: {pge}")
             if conn:
                 conn.rollback()
             raise pge
