@@ -805,25 +805,6 @@ html, body {
     background-color: #15803d; 
 }
 
-.button-upload {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem; 
-    padding: 0.5rem 1.5rem; 
-    background-color: #ffe260; 
-    color: #000000; 
-    border-radius: 0.5rem; 
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-    cursor: pointer;
-    font-size: 1rem;
-    margin: 5px auto 2px auto;
-}
-
-.button-upload:hover {
-    background-color: #ffa722; 
-}
-
 .button-remove {
     display: flex;
     align-items: center;
@@ -852,4 +833,52 @@ html, body {
 
 /* ===== */
 /* VIEW STUDENT DETAILS */
+/* ================ */
+
+
+/* ================ */
+/* UPLOAD IMAGE */
+/* ===== */
+.upload_button_row{
+  display: flex;
+  gap: 10px;
+  margin-top: 10px
+}
+
+.button-upload, .button-clear {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; 
+  padding: 0.5rem 1.5rem; 
+  color: #000000; 
+  border-radius: 0.5rem; 
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 5px auto 2px auto;
+}
+
+.button-upload {
+  background-color: #ffe260; 
+}
+
+.button-upload:hover {
+  background-color: #ffa722; 
+}
+
+.button-clear {
+  background-color: #933030; 
+}
+
+.button-clear:hover {
+  background-color: #801515; 
+}
+
+.button-clear:disabled {
+  background-color: #ff7474; 
+  cursor: not-allowed;
+}
+/* ===== */
+/* UPLOAD IMAGE */
 /* ================ */

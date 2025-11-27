@@ -10,10 +10,11 @@ type DeleteModalProps<T> = {
   children?: React.ReactNode 
   deleteData?: T
   onConfirm?: (data: T) => void
+  customMessage?: string
 }
 
 export default function DeleteModal<T extends Student | Program | College | UserData>(
-                                                { isOpen, onClose, deleteData, onConfirm }:
+                                                { isOpen, onClose, deleteData, onConfirm, customMessage }:
                                                 DeleteModalProps<T> ) {
 
   if (!isOpen || !deleteData) return null
@@ -21,7 +22,20 @@ export default function DeleteModal<T extends Student | Program | College | User
   let content: React.ReactNode = null
   let header: React.ReactNode = null
 
-  if ("id_number" in deleteData){
+  if (customMessage){
+    content = (
+      <Box className="text-label">        
+        {customMessage}
+      </Box>
+    )
+    header = (
+      <Box className="view-head-card">
+          <h1>Delete</h1>
+      </Box>
+    )
+  }
+
+  else if ("id_number" in deleteData){
     const student = deleteData as Student
     content = (
       <Box className="text-label">        
@@ -34,6 +48,7 @@ export default function DeleteModal<T extends Student | Program | College | User
       </Box>
     )
   }
+
   else if ("program_code" in deleteData){
     const program = deleteData as Program
     content = (
