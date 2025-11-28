@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from services.Functions.Select import Select
-import math
+import math, json
 
 tableList = Blueprint("tableList", __name__, url_prefix="/api/table")
 
@@ -12,16 +12,25 @@ def list(table):
 
     match table:
         case "students":
-            def_col = "id_number"
+            default_sort = [{"id": "id_number", "order": "ASC"}]
         case "programs":
-            def_col = "program_code"
+            default_sort = [{"id": "program_code", "order": "ASC"}]
         case "colleges":
-            def_col = "college_code"
+            default_sort = [{"id": "college_code", "order": "ASC"}]
     
     tag = request.args.get('tag', '')
     key = request.args.get('key', '')
-    sort = request.args.get('sort') or def_col
-    order = request.args.get('order', 'asc')
+
+    sorts_list = default_sort
+
+    sorts_str = request.args.get("sorts", "[]")
+    try:
+        sorts_list = json.loads(sorts_str)
+        if not isinstance(sorts_list, list) or len(sorts_list) == 0:
+            sorts = default_sort
+    except Exception:
+        sorts = default_sort
+
     limit = int(request.args.get('size', 10)) 
     page = int(request.args.get('page', 0))
 
@@ -30,15 +39,15 @@ def list(table):
     if tag == "name":
         total       = selector\
                             .table(table)\
-                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key})\
+                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key}, connector = " OR ")\
                             .execute()\
                             .retDict()
         contents = selector\
                             .table(table)\
-                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key})\
+                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key}, connector = " OR ")\
                             .limit(limit)\
                             .offset(page)\
-                            .sort(sort, order)\
+                            .sort(sorts_list)\
                             .execute()\
                             .retDict()
 
@@ -53,7 +62,7 @@ def list(table):
                             .search(tag, key)\
                             .limit(limit)\
                             .offset(page)\
-                            .sort(sort, order)\
+                            .sort(sorts_list)\
                             .execute()\
                             .retDict()
 

@@ -13,22 +13,22 @@ function parseApiError(err: any) {
     }
 }
 
+
+
 export async function fetchTableData(table: string,
                                                         page: number,
                                                         limit: number,
                                                         tag: string,
                                                         key: string,
-                                                        sort: string,
-                                                        order: string
+                                                        sorts: { id: string; order: string }[]
                                                         ) {
-                                                            
+ 
     const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
         tag: tag.toString(),
         key: key.toString(),
-        sort: sort.toString(),
-        order: order.toString()
+        sorts: JSON.stringify(sorts), 
     })
 
     return api.get(`/api/table/${table}?${params.toString()}`);

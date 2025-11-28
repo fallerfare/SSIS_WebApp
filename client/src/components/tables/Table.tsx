@@ -154,8 +154,7 @@ const Table = ({ tableName }: TableProps) => {
         pageSize: 10,
         search_tag: "",
         search_key: "",
-        sort: "",
-        order: "asc"
+        sorts: [],
       })
     }, [tableName])
 
@@ -189,8 +188,12 @@ const Table = ({ tableName }: TableProps) => {
                                             key={header.id}
                                             flex={(header.column.columnDef.meta as any)?.flex ?? 1}
                                             flexBasis={header.getSize()}
-                                            onClick={header.column.getToggleSortingHandler()}
-                                            cursor="pointer">
+                                            onClick={
+                                                header.column.getCanSort()
+                                                    ? header.column.getToggleSortingHandler()
+                                                    : undefined
+                                            }
+                                            cursor={header.column.getCanSort() ? "pointer" : "default"}>
                                         {
                                             flexRender(
                                                 header.column.columnDef.header,

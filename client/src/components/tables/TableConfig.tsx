@@ -51,10 +51,16 @@ export function getTable(tableName: TableName,
       pageSize = pagination.pageSize, 
       search_tag = selectedTag,
       search_key = searchKey,
-      sort = sorting[0]?.id || "",    
-      order = sorting[0]?.desc ? "desc" : "asc",} = {}) {
+      sorts = sorting,} = {}) {
+
+      const sortParams = sorts.map(s => ({
+        id: s.id,
+        order: s.desc ? "DESC" : "ASC"
+    }));
+
+        console.log("Sorting on reloadData", sorting)
         
-    fetchTableData(tableName, pageIndex, pageSize, search_tag, search_key, sort, order)
+    fetchTableData(tableName, pageIndex, pageSize, search_tag, search_key, sortParams)
       .then((result) => {
         setData(result.data)
         setPageCount(Math.ceil(result.total / pagination.pageSize))
@@ -62,9 +68,18 @@ export function getTable(tableName: TableName,
       .catch((err) => console.error(err))
   }
 
+   useEffect(() => {
+    console.log("Sorting on UseEffect", sorting)
+      reloadData({
+          sorts: sorting,
+          search_tag: selectedTag,
+          search_key: searchKey,
+      });
+    }, [sorting, selectedTag, searchKey]);
+
   useEffect(() => {
     reloadData()
-  }, [pagination.pageIndex, pagination.pageSize, sorting])
+  }, [pagination.pageIndex, pagination.pageSize])
   
 
   const table = useReactTable({
@@ -93,7 +108,8 @@ export function getTable(tableName: TableName,
     // ===============
     // Sorting
     onSortingChange: setSorting,
-    manualSorting: true
+    manualSorting: true,
+    enableMultiSort: true,
   })
 
   return { table, reloadData }

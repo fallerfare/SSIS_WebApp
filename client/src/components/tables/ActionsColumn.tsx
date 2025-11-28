@@ -28,6 +28,8 @@ export function getActionsColumns<T extends TableName>(
 ): ColumnDef<TableRow<T>>[] {
   const ActionsColumns: ColumnDef<TableRow<T>>[] = [
     {
+      enableSorting: false,         
+      enableColumnFilter: false,
       header: "Actions",
       accessorKey: "actions",
       cell: ({ row }) => {
