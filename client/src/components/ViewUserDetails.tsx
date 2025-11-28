@@ -211,7 +211,7 @@ const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
         return
     }
 
-    const hasProfilePic = user?.id_picture;
+    const hasProfilePic = user?.id_picture && user.id_picture !== "None";
 
     return (
         <>
