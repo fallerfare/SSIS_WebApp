@@ -26,8 +26,17 @@ export default function LogInForm() {
         e.preventDefault()
         try {
             const data = await loginUser(form)
-            setMessage(data.message || "Logged in successfully!")
-            setTimeout(() => navigate("/table/students"), 1500)
+            console.log("Login data", data)
+            if (data.success){
+              setMessage(data.message || "Logged in successfully!")
+              setTimeout(() => navigate("/table/students"), 1500)
+            }
+            else{
+              setMessage(
+                Object.values(data.errors || { message: data.message }).flat().join(" \n ")
+              )
+            }
+            
         } catch (err: any) {
             setMessage("Error: " + err.message)
         }

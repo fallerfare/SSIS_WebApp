@@ -9,6 +9,8 @@ import EnrollmentForm from './enrollment/EnrollmentForm'
 import EstablishProgram from './establish/EstablishProgram'
 import EstablishCollege from './establish/EstablishCollege'
 import ViewUserDetails from './ViewUserDetails'
+import { PublicRoute } from './authentication/PublicRoute'
+import { ProtectedRoute } from './authentication/ProtectedRoute'
 
 function Layout() {
 
@@ -22,10 +24,17 @@ function Layout() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     useEffect(() => {
-        getSession()
-        .then((data) => setIsLoggedIn(data.isLoggedIn))
-        .catch(() => setIsLoggedIn(false))
-    }, [])
+        const checkSession = async () => {
+            try {
+                const data = await getSession();
+                setIsLoggedIn(data.isLoggedIn);
+            } catch {
+                setIsLoggedIn(false);
+            }
+        };
+        checkSession();
+    }, []);
+
 
     return (
         <>
@@ -33,13 +42,58 @@ function Layout() {
             <div>
                 <Routes>
         
-                    <Route path="/register" element={<RegistrationForm />} />
-                    <Route path="/login" element={<LogInForm />} />
-                    <Route path="/table/*" element={<TableLayout />} />
-                    <Route path="/enrollment" element={<EnrollmentForm />} />
-                    <Route path="/establish/programs" element={<EstablishProgram />} />
-                    <Route path="/establish/colleges" element={<EstablishCollege />} />
-                    <Route path="/profile" element={<ViewUserDetails />} />
+                    {/* =========== */}
+                    {/* PUBLIC */}
+                    <Route path="/register" element={
+                        <PublicRoute isLoggedIn={isLoggedIn}>
+                            <RegistrationForm />
+                        </PublicRoute>
+                    } />
+
+                    <Route path="/login" element={
+                        <PublicRoute isLoggedIn={isLoggedIn}>
+                            <LogInForm />
+                        </PublicRoute>
+                    } />
+                    {/* PUBLIC */}
+                    {/* =========== */}
+
+                    {/* =========== */}
+                    {/* PRIVATE */}
+                    <Route path="/table/*" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <TableLayout />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/enrollment" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <EnrollmentForm />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/establish/programs" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <EstablishProgram />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/establish/colleges" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <EstablishCollege />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/profile" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <ViewUserDetails />
+                        </ProtectedRoute>
+                    } />
+                    {/* PRIVATE */}
+                    {/* =========== */}
+                    
+                    {/* =========== */}
+                    {/* MISC */}
                     <Route
                         path="*"
                         element={
@@ -48,6 +102,9 @@ function Layout() {
                             : <Navigate to="/login" replace />
                         }   
                     />
+                    {/* MISC */}
+                    {/* =========== */}
+
                 </Routes>
             </div>
         </>
