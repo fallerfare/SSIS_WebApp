@@ -19,7 +19,7 @@ const StudentDetailsPage = () => {
 
     const {id_number} = useParams();
     const passedStudent = location.state?.student as Student | undefined;
-    const [student, setStudent] = useState<Student | null>(passedStudent ?? null);
+    const [student, setStudent] = useState<Student | null>(null);
     
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -31,6 +31,7 @@ const StudentDetailsPage = () => {
     const [successMessage, setSuccessMessage] = useState<string>("")
 
     const [isDeleted, setIsDeleted] = useState(false)
+    const [handlingImage, setHandlingImage] = useState(false)
 
     const [programName, setProgramName] = useState("")
     const [collegeName, setCollegeName] = useState("")
@@ -41,31 +42,34 @@ const StudentDetailsPage = () => {
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-    useEffect(() => {
-        if(!student) return
-        getProgramName(student.program_code)
-        .then(({ program_name }) => setProgramName(program_name ?? ""))
-        getCollegeName(student.college_code)
-        .then(({ college_name }) => setCollegeName(college_name ?? ""))
-    }, [refresh])
-
     const populateData = async () => {
+        if (!id_number) return;
+        setLoading(true);
         try {
-            const fetch = await fetchObject("students", `${id_number}`)
-            const data = fetch[0]
-            setStudent(prev => ({ ...prev, ...data.student }))
+            const data = await fetchObject("students", `${id_number}`);
+            if (data) {
+                setStudent(data);
+                getProgramName(data.program_code).then(({ program_name }) => setProgramName(program_name ?? ""));
+                getCollegeName(data.college_code).then(({ college_name }) => setCollegeName(college_name ?? ""));
+            } else {
+                setErrorMessage("Student data not found.");
+                setIsErrorOpen(true);
+            }
         } catch (err) {
-            if (!student) setErrorMessage("Failed to load student data.");
+            setErrorMessage("Failed to load student data.");
+        
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
-        if (passedStudent) return; 
-        
-        populateData();
-    }, [id_number, passedStudent, refresh]);
+        if (passedStudent && !student) {
+            setStudent(passedStudent); 
+        }
+        populateData();  
+    }, [id_number, refresh]);
+
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] ?? null
@@ -89,14 +93,6 @@ const StudentDetailsPage = () => {
             return;
         }
 
-        if (file.size > maxSize) {
-            setErrorMessage("File size must be under 5MB.");
-            setIsErrorOpen(true);
-            e.target.value = "";
-            return;
-        }
-
-
         setSelectedFile(file);
     };
 
@@ -110,7 +106,7 @@ const StudentDetailsPage = () => {
             setStudent(prev => prev ? { ...prev, id_picture: result.url } : null)
             setSuccessMessage("Successfully uploaded Image!")
             setIsSuccessOpen(true)
-            setRefresh(prev => !prev)
+            setTimeout(() => setRefresh(prev => !prev), 1500)
         } catch (err) {
             setErrorMessage("Failed to upload Image!")
             setIsErrorOpen(true)
@@ -118,6 +114,27 @@ const StudentDetailsPage = () => {
             setUploading(false)
             setSelectedFile(null)
         }
+    }
+
+    const handleImageClear = async () => {
+        if (!selectedFile || !student) return
+
+        try{
+            setSelectedFile(null);
+            const input = document.getElementById("profileUpload") as HTMLInputElement;
+            if (input) input.value = "";
+        } catch (err) {
+            setErrorMessage("Failed to clear Image!")
+            setIsErrorOpen(true)
+        } finally {
+            setUploading(false)
+            setSelectedFile(null)
+        }
+    }
+
+    const handleImageRemove = () => {
+        setHandlingImage(true)
+        setIsDeleteOpen(true)
     }
 
     const handleDetailsEdit = () => {
@@ -128,20 +145,35 @@ const StudentDetailsPage = () => {
         setIsDeleteOpen(true)
     }
 
+    const handleConfirmImageRemove = () => {
+        if (!student) return
+
+        const updated = { ...student, id_picture: "NULL" }
+        setStudent(updated);
+        handleConfirmEdit(updated)
+        setRefresh(prev => !prev)
+    }
+
     const handleConfirmEdit = async (updated: any) => {
         const id = updated.id_number
         try {
-            await handleUpdate("students", updated, id)
-            setSuccessMessage(`Succesfully edited ${"students"}`)
-            setIsSuccessOpen(true)
-            setRefresh(prev => !prev)
-            setIsEditOpen(false)
-    
+            const res = await handleUpdate("students", updated, id)
+            if(res.success){
+                setSuccessMessage(res.message)
+                setIsSuccessOpen(true)
+                setRefresh(prev => !prev)
+                setIsEditOpen(false)
+            }
+            else {
+                setErrorMessage(res.error)
+                setIsErrorOpen(true)
+            }
+
         } catch (err: any) {
             setErrorMessage(err.error)
             setIsErrorOpen(true)
         } 
-      }
+    }
     
     const handleConfirmDelete = async () => {
         const id = student?.id_number
@@ -171,14 +203,12 @@ const StudentDetailsPage = () => {
         }
     }
 
+
     if (loading) {
-        setSuccessMessage("Loading...")
-        setIsSuccessOpen(true)
+        console.log("Ye, loaing")
     }
     if (!student) {
-        setErrorMessage("Server connection error. Please try again.")
-        setIsErrorOpen(true)
-        return <></>
+        return
     }
 
     return (
@@ -198,6 +228,7 @@ const StudentDetailsPage = () => {
                     <div className="card-flex">
                         {/* PROFILE PIC */}
                         <div className="profile-pic-wrapper">
+
                             <input
                                 type="file"
                                 id="profileUpload"
@@ -206,23 +237,57 @@ const StudentDetailsPage = () => {
                                 style={{ display: "none" }}
                             />
 
-                            <label htmlFor="profileUpload" className="profile-pic">
+                            <label
+                                htmlFor="profileUpload"
+                                className="profile-pic"
+                                onClick={() => document.getElementById("profileUpload")?.click()}
+                            >
                                 {uploading ? (
-                                    <p className="loading-text">Loading...</p> 
-                                ) : student.id_picture ? (
+                                    <p className="loading-text">Uploading...</p>
+                                ) : selectedFile ? (
+                                    <img src={URL.createObjectURL(selectedFile)} alt="Preview" className="profile-img" />
+                                ) : student?.id_picture && student.id_picture !== "NULL" ? (
                                     <img src={student.id_picture} alt="Profile" className="profile-img" />
                                 ) : (
-                                    <i className="bi bi-person profile-icon">Click to Upload Picture</i>
+                                    <i className="bi bi-person profile-icon"></i>
                                 )}
+
                             </label>
 
-                            {selectedFile && !uploading && (
-                                <button className="button-upload" onClick={handleImageUpload}>
-                                    Upload
-                                </button>
-                            )}
-                        </div>
+                            <div className="upload_button_row">
 
+                                <button
+                                    className="button-upload"
+                                    onClick={() => {
+                                        if (!selectedFile) {
+                                            document.getElementById("profileUpload")?.click();
+                                        } else {
+                                            handleImageUpload();
+                                        }
+                                    }}
+                                    disabled={uploading}
+                                >
+                                    {selectedFile ? "Confirm Upload" : "Upload"}
+                                </button>
+
+                                <button
+                                    className="button-clear"
+                                    onClick={() => {
+                                        if (!selectedFile && student?.id_picture) {
+                                            console.log("Handle Image Remove")
+                                            handleImageRemove()
+                                        } else if (selectedFile) {
+                                            console.log("Handle Image Clear")
+                                            handleImageClear()
+                                        }
+                                    }}
+                                    
+                                    disabled={(!selectedFile && (!student?.id_picture || student?.id_picture === "NULL"))}
+                                >
+                                    {selectedFile ? "Clear" : "Remove"}
+                                </button>
+                            </div>
+                        </div>
 
                         {/* INFO */}
                         <div className="info-section">
@@ -313,8 +378,9 @@ const StudentDetailsPage = () => {
                 isOpen={isDeleteOpen} 
                 onClose={() => setIsDeleteOpen(false)}
                 deleteData={student}
-                onConfirm={handleConfirmDelete}
-            >
+                onConfirm={handlingImage ? handleConfirmImageRemove : handleConfirmDelete}
+                customMessage={handlingImage ? "Are you sure you want to remove this profile picture?" : undefined}
+                >
             </DeleteModal>
 
             <ErrorPopup
@@ -331,6 +397,7 @@ const StudentDetailsPage = () => {
                     if (isDeleted) {
                     navigate(-1);
                     }
+                    setRefresh(prev => !prev)
                 }}
             />
 
