@@ -115,7 +115,10 @@ def login():
 @auth.route("/logout", methods = ["POST"])
 def logout():
     session.clear()
-    return jsonify({"success": True, "message": "Successfully Logged out"})
+    return jsonify({
+        "success": True, 
+        "message": "Successfully Logged out"
+    }), 200
 
 
 # ========================== 
