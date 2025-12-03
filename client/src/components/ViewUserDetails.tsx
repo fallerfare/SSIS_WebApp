@@ -12,7 +12,11 @@ import { fetchMe, handleLogout, handleUpdate, uploadImage } from "@/controller/a
 import LogOutModal from "./popups/LogOutDialog";
 import DeleteModal from "./popups/DeleteDialog";
 
-const userDetailsPage = () => {
+interface UserDetailsPageProps {
+    onLogout?: () => void;
+}
+
+const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
 
     const navigate = useNavigate();
 
@@ -166,6 +170,7 @@ const userDetailsPage = () => {
                 setIsLoggedOut(true)
                 setSuccessMessage(response.message)
                 setIsSuccessOpen(true)
+                if (onLogout) onLogout()
             }
     
         } catch (err: any) {
