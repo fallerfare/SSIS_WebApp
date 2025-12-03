@@ -56,11 +56,38 @@ import LogOutModal from "./popups/LogOutDialog";
         }, [refresh]);
 
         const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            const file = e.target.files?.[0] ?? null;
+            const file = e.target.files?.[0] ?? null
+
+            if (!file) return
+            const maxSize = 5 * 1024 * 1024
+
+            if (file.size > maxSize) {
+                setErrorMessage("File size must be under 5MB.")
+                setIsErrorOpen(true)
+                e.target.value = ""
+                return;
+            }
+
+            const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+            if (!allowedTypes.includes(file.type)) {
+                setErrorMessage("Only JPEG, JPG and PNG images are allowed.");
+                setIsErrorOpen(true);
+                e.target.value = "";
+                return;
+            }
+
+            if (file.size > maxSize) {
+                setErrorMessage("File size must be under 5MB.");
+                setIsErrorOpen(true);
+                e.target.value = "";
+                return;
+            }
+
+
             setSelectedFile(file);
         };
-
-
+        
         const handleImageUpload = async () => {
             if (!selectedFile || !user || !user.id_number) return
 
@@ -118,9 +145,15 @@ import LogOutModal from "./popups/LogOutDialog";
             }
         }
 
-        if (loading) return <p className="loading">Loading...</p>;
-        if (errorMessage) return <p className="error">{errorMessage}</p>;
-        if (!user) return <p className="undefined">No Data Found</p>;
+        if (loading) {
+            setSuccessMessage("Loading...")
+            setIsSuccessOpen(true)
+        }
+        if (!user) {
+            setErrorMessage("No Data Found")
+            setIsErrorOpen(true)
+            return <></>
+        }
 
         return (
             <>
@@ -134,7 +167,7 @@ import LogOutModal from "./popups/LogOutDialog";
                                 <input
                                     type="file"
                                     id="profileUpload"
-                                    accept="image/*"
+                                    accept=".jpg, .jpeg, .png"
                                     onChange={handleFileChange}
                                     style={{ display: "none" }}
                                 />
@@ -145,7 +178,7 @@ import LogOutModal from "./popups/LogOutDialog";
                                     ) : user.id_picture ? (
                                         <img src={user.id_picture} alt="Profile" className="profile-img" />
                                     ) : (
-                                        <i className="bi bi-person profile-icon"></i>
+                                        <i className="bi bi-person profile-icon">Click to Upload Picture</i>
                                     )}
                                 </label>
 

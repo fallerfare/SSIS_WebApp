@@ -27,18 +27,24 @@ def edit_users(id_number):
     try:
         validated_data = schema.load(updates)
         user.edit(id_number, validated_data)
-        return jsonify({"message": "User updated successfully"}), 200
+        return jsonify({
+            "success": True,
+            "message": "User updated successfully"
+        }), 200
     
     except ValidationError as err:
         return jsonify({
+            "success": False,
             "error": "Validation failed",
-            "details": err.messages,  
+            "message": err.messages,  
         }), 400
 
     except Exception as e:
         print(f"Server error: {e}")
         return jsonify({
-            "error": "Server error. Please try again later."
+            "success": False,
+            "error": "Unexpected error",
+            "message": f"Server error: {e}. Please try again later."
         }), 500
     
 # ========================== 
@@ -60,18 +66,24 @@ def edit_students(id_number):
     try:
         validated_data = schema.load(updates)
         student.edit(id_number, validated_data)
-        return jsonify({"message": "Student updated successfully"}), 200
+        return jsonify({
+            "success": True,
+            "message": "Student updated successfully"
+        }), 200
     
     except ValidationError as err:
         return jsonify({
+            "success": False,
             "error": "Validation failed",
-            "details": err.messages,  
+            "messages": err.messages,  
         }), 400
 
     except Exception as e:
         print(f"Server error: {e}")
         return jsonify({
-            "error": "Server error. Please try again later."
+            "success": False,
+            "error": "Unexpected error",
+            "message": f"Server error: {e}. Please try again later."
         }), 500
 
 
@@ -94,18 +106,24 @@ def edit_programs(program_code):
     try:
         validated_data = schema.load(updates)
         program.edit(program_code, validated_data)
-        return jsonify({"message": "Program updated successfully"}), 200
+        return jsonify({
+            "success": True,
+            "message": "Program updated successfully"
+        }), 200
     
     except ValidationError as err:
         return jsonify({
+            "success": False,
             "error": "Validation failed",
-            "details": err.messages
+            "message": err.messages
         }), 400
 
     except Exception as e:
         print(f"Server error: {e}")
         return jsonify({
-            "error": "Server error. Please try again later."
+            "success": False,
+            "error": "Unexpected error",
+            "message": f"Server error: {e}. Please try again later."
         }), 500
 
 
@@ -128,16 +146,22 @@ def edit_colleges(college_code):
     try:
         validated_data = schema.load(updates)
         college.edit(college_code, validated_data)
-        return jsonify({"message": "College updated successfully"}), 200
+        return jsonify({    
+            "success": True,
+            "message": "College updated successfully"
+        }), 200
     
     except ValidationError as err:
         return jsonify({
+            "success": False,
             "error": "Validation failed",
-            "details": err.messages
+            "message": err.messages
         }), 400
 
     except Exception as e:
         print(f"Server error: {e}")
         return jsonify({
-            "error": "Server error. Please try again later."
+            "success": False,
+            "error": "Unexpected error",
+            "message": f"Server error: {e}. Please try again later."
         }), 500
