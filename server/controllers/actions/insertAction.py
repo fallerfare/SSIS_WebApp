@@ -81,7 +81,7 @@ def edit_programs():
         program_code = validated_data.get('program_code')
         print(err_msg)
 
-        if "students_pkey" in err_msg:
+        if "programs_pkey" in err_msg:
             err_msg = f"Program of Code: {program_code} already exists."
 
         return jsonify({
@@ -124,7 +124,7 @@ def edit_colleges():
         college_code = validated_data.get('college_code')
         print(err_msg)
 
-        if "students_pkey" in err_msg:
+        if "colleges_pkey" in err_msg:
             err_msg = f"College of Code: {college_code} already exists."
 
         return jsonify({
