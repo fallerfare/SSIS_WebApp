@@ -34,13 +34,8 @@ export async function fetchTableData(table: string,
     return api.get(`/api/table/${table}?${params.toString()}`);
 }
 
-export async function getSession(): Promise<{ isLoggedIn: boolean; user_name? : string }> {
-    try {
-        const data = await api.get("/api/auth/me");
-        return { isLoggedIn: true, user_name: data.user_name };
-    } catch {
-        return { isLoggedIn: false };
-    }
+export async function fetchMe() {
+    return api.get("/api/auth/me");
 }
 
 export async function getCollegeName(college_code: string) {
@@ -103,10 +98,6 @@ export async function uploadImage(object: TableName, image: File, id: string | n
         return parseApiError(err);
     }
 
-}
-
-export async function fetchMe() {
-    return api.get("/api/auth/me");
 }
 
 export async function handleLogout() {
