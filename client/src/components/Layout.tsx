@@ -1,7 +1,7 @@
 import NavBar from './NavBar'
-import { Routes, Route, Navigate, useLocation } from "react-router-dom"
+import { Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom"
 import RegistrationForm from './authentication/RegistrationForm'
-import { getSession } from '../controller/api'
+import { fetchMe } from '../controller/api'
 import { useEffect, useState } from 'react'
 import LogInForm from './authentication/LogInForm'
 import TableLayout from './TableLayout'
@@ -9,10 +9,13 @@ import EnrollmentForm from './enrollment/EnrollmentForm'
 import EstablishProgram from './establish/EstablishProgram'
 import EstablishCollege from './establish/EstablishCollege'
 import ViewUserDetails from './ViewUserDetails'
+import { PublicRoute } from './authentication/PublicRoute'
+import { ProtectedRoute } from './authentication/ProtectedRoute'
 
 function Layout() {
 
     const locator = useLocation()
+    const navigate = useNavigate()
 
     const hideNavBar = 
             locator.pathname === "/"            ||
@@ -20,12 +23,26 @@ function Layout() {
             locator.pathname === "/register"
 
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [loading, setLoading] = useState(true)
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        navigate("/login", { replace: true });
+    };
 
     useEffect(() => {
-        getSession()
-        .then((data) => setIsLoggedIn(data.isLoggedIn))
-        .catch(() => setIsLoggedIn(false))
-    }, [])
+        setLoading(true)
+        const checkSession = async () => {
+            const data = await fetchMe();
+            console.log("isLoggedIn data: ", data)
+            console.log("isLoggedIn value: ", data.isLoggedIn)
+            setIsLoggedIn(data.isLoggedIn);
+            setLoading(false)
+        };
+        checkSession();
+    }, []);
+
+    if (loading) return null;
 
     return (
         <>
@@ -33,13 +50,58 @@ function Layout() {
             <div>
                 <Routes>
         
-                    <Route path="/register" element={<RegistrationForm />} />
-                    <Route path="/login" element={<LogInForm />} />
-                    <Route path="/table/*" element={<TableLayout />} />
-                    <Route path="/enrollment" element={<EnrollmentForm />} />
-                    <Route path="/establish/programs" element={<EstablishProgram />} />
-                    <Route path="/establish/colleges" element={<EstablishCollege />} />
-                    <Route path="/profile" element={<ViewUserDetails />} />
+                    {/* =========== */}
+                    {/* PUBLIC */}
+                    <Route path="/register" element={
+                        <PublicRoute isLoggedIn={isLoggedIn}>
+                            <RegistrationForm />
+                        </PublicRoute>
+                    } />
+
+                    <Route path="/login" element={
+                        <PublicRoute isLoggedIn={isLoggedIn}>
+                            <LogInForm onLogIn={() => setIsLoggedIn(true)}/>
+                        </PublicRoute>
+                    } />
+                    {/* PUBLIC */}
+                    {/* =========== */}
+
+                    {/* =========== */}
+                    {/* PRIVATE */}
+                    <Route path="/table/*" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <TableLayout />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/enrollment" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <EnrollmentForm />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/establish/programs" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <EstablishProgram />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/establish/colleges" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <EstablishCollege />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/profile" element={
+                        <ProtectedRoute isLoggedIn={isLoggedIn}>
+                            <ViewUserDetails onLogout={handleLogout}/>
+                        </ProtectedRoute>
+                    } />
+                    {/* PRIVATE */}
+                    {/* =========== */}
+                    
+                    {/* =========== */}
+                    {/* MISC */}
                     <Route
                         path="*"
                         element={
@@ -48,6 +110,9 @@ function Layout() {
                             : <Navigate to="/login" replace />
                         }   
                     />
+                    {/* MISC */}
+                    {/* =========== */}
+
                 </Routes>
             </div>
         </>

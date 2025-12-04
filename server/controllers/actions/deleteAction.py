@@ -75,7 +75,7 @@ def delete_colleges(college_code):
         constraint_name = getattr(fke.diag, "constraint_name", None)
         if constraint_name == "fk_program_college":
             message = "This college can not be deleted at the moment as there are still programs established under it!"
-            print(message)
+            print("Skibidi debug:", message)
         else:
             message = f"Deletion has been blocked by error: {constraint_name or 'unknown constraint'}"
         

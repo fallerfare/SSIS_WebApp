@@ -80,11 +80,30 @@ const Table = ({ tableName }: TableProps) => {
    const handleConfirmEdit = async (updated: any) => {
     const id = getId(updated)
     try {
-        await handleUpdate(tableName, updated, id)
-        setSuccessMessage(`Succesfully edited ${tableName}`)
-        setIsSuccessOpen(true)
-        reloadData()
-        setIsEditOpen(false)
+        const res = await handleUpdate(tableName, updated, id)
+        if(res.success){
+                setSuccessMessage(res.message)
+                setIsSuccessOpen(true)
+                reloadData()
+                setIsEditOpen(false)
+            }
+            else {
+                let details = "";
+
+                if (res.message && typeof res.message === "object") {
+                    details = Object.entries(res.message)
+                        .map(([field, msgs]) => {
+                            const arr = Array.isArray(msgs) ? msgs : [String(msgs)];
+                            return `${field}: ${arr.join(", ")}`;
+                        })
+                        .join("\n");
+                } else {
+                    details = res.error || "Unknown error";
+                }
+
+                setErrorMessage(details);
+                setIsErrorOpen(true);
+            }
 
     } catch (err: any) {
             setErrorMessage(err.message)

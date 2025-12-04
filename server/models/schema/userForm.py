@@ -11,7 +11,7 @@ class UserSchema(Schema):
     )
 
     user_password = fields.Str(
-        required=True,
+        required=False,
         load_only=True, 
         validate=validate.Length(
             min=6,
