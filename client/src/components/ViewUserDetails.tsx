@@ -144,8 +144,10 @@ const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
 
     const handleConfirmEdit = async (updated: any) => {
         const id = updated.id_number
+
         try {
             const res = await handleUpdate("users", updated, id)
+
             if(res.success){
                 setSuccessMessage(res.message)
                 setIsSuccessOpen(true)
@@ -153,8 +155,21 @@ const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
                 setIsEditOpen(false)
             }
             else {
-                setErrorMessage(res.error)
-                setIsErrorOpen(true)
+                let details = "";
+
+                if (res.message && typeof res.message === "object") {
+                    details = Object.entries(res.message)
+                        .map(([field, msgs]) => {
+                            const arr = Array.isArray(msgs) ? msgs : [String(msgs)];
+                            return `${field}: ${arr.join(", ")}`;
+                        })
+                        .join("\n");
+                } else {
+                    details = res.error || "Unknown error";
+                }
+
+                setErrorMessage(details);
+                setIsErrorOpen(true);
             }
 
         } catch (err: any) {
@@ -213,7 +228,7 @@ const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
                                     <p className="loading-text">Uploading...</p>
                                 ) : selectedFile ? (
                                     <img src={URL.createObjectURL(selectedFile)} alt="Preview" className="profile-img" />
-                                ) : user?.id_picture && user.id_picture !== "NULL" ? (
+                                ) : user?.id_picture && (user.id_picture !== "NULL" || user.id_picture !== null) ? (
                                     <img src={user.id_picture} alt="Profile" className="profile-img" />
                                 ) : (
                                     <i className="bi bi-person profile-icon"></i>

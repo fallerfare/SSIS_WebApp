@@ -165,8 +165,21 @@ const StudentDetailsPage = () => {
                 setIsEditOpen(false)
             }
             else {
-                setErrorMessage(res.error)
-                setIsErrorOpen(true)
+                let details = "";
+
+                if (res.message && typeof res.message === "object") {
+                    details = Object.entries(res.message)
+                        .map(([field, msgs]) => {
+                            const arr = Array.isArray(msgs) ? msgs : [String(msgs)];
+                            return `${field}: ${arr.join(", ")}`;
+                        })
+                        .join("\n");
+                } else {
+                    details = res.error || "Unknown error";
+                }
+
+                setErrorMessage(details);
+                setIsErrorOpen(true);
             }
 
         } catch (err: any) {
@@ -246,7 +259,7 @@ const StudentDetailsPage = () => {
                                     <p className="loading-text">Uploading...</p>
                                 ) : selectedFile ? (
                                     <img src={URL.createObjectURL(selectedFile)} alt="Preview" className="profile-img" />
-                                ) : student?.id_picture && student.id_picture !== "NULL" ? (
+                                ) : student?.id_picture !== null ? (
                                     <img src={student.id_picture} alt="Profile" className="profile-img" />
                                 ) : (
                                     <i className="bi bi-person profile-icon"></i>
