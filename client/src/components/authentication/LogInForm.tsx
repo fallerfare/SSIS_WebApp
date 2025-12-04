@@ -1,13 +1,19 @@
 import { useState, type ChangeEvent, type FormEvent } from "react"
 import type { UserData } from "../../models/types/UserData"
 import { Box } from "@chakra-ui/react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { loginUser } from "@/controller/api"
 
-export default function LogInForm() {
+interface LogInFormProps {
+    onLogIn?: () => void;
+}
+
+export default function LogInForm({onLogIn} : LogInFormProps) {
     
     const navigate = useNavigate()
+    const location = useLocation()
+    const from = (location.state as any)?.from?.pathname || "/table/students";
 
     const [form, setForm] = useState<UserData>({
         user_name: "",
@@ -26,8 +32,18 @@ export default function LogInForm() {
         e.preventDefault()
         try {
             const data = await loginUser(form)
-            setMessage(data.message || "Logged in successfully!")
-            setTimeout(() => navigate("/table/students"), 1500)
+            console.log("Login data", data)
+            if (data.success){
+              setMessage(data.message || "Logged in successfully!")
+              if(onLogIn) onLogIn()
+              setTimeout(() => navigate(from, { replace: true }), 500)
+            }
+            else{
+              setMessage(
+                Object.values(data.errors || { message: data.message }).flat().join(" \n ")
+              )
+            }
+            
         } catch (err: any) {
             setMessage("Error: " + err.message)
         }

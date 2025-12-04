@@ -9,6 +9,6 @@ export type Student = {
     year_level: number
     program_code: string
     college_code: string
-    id_picture: string
+    id_picture?: string
 }
 
