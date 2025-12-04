@@ -35,7 +35,7 @@ def register():
     validated_data["user_password"] = hashed_pw.decode("utf-8") 
 
     try:
-        insertor.table("users").values(data).execute()        
+        insertor.table("users").values(validated_data).execute()        
     except IntegrityError as ie:
         err_msg =  str(ie).split('\n')[0]
         user_name = validated_data.get('user_name')
@@ -79,10 +79,11 @@ def login():
         }), 400
 
     
-    exist_auth = selector.table("users")\
-                                    .search(tag="user_name", key=auth_username)\
-                                    .execute()\
-                                    .retDict()
+    auth = selector.table("users")
+    auth.searchquery = f" WHERE user_name = '{auth_username}'"
+
+    exist_auth = auth.execute().retDict()  
+
     if not exist_auth:
         return jsonify({
             "success": False,

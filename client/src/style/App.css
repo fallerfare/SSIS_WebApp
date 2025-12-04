@@ -69,6 +69,13 @@ html, body {
   font-family: 'NavFont';
 }
 
+#navbar-links .nav-link.active, .active-dropdown > a,
+.active-dropdown .dropdown-toggle {
+  font-weight: bold;
+  color: #ffcc00 !important; 
+  border-bottom: 2px solid #ffcc00;
+}
+
 .navbar-container {
     margin-top: 5px !important;
     margin-top: 5px !important;
@@ -94,7 +101,7 @@ html, body {
   background-color: #f1ba4a !important; 
 }
 
-.dropdown-item:hover{
+.dropdown-item:hover, .dropdown-menu .active{
   background-color: #b32d2d !important; 
   color: #f1ba4a !important;
 }
