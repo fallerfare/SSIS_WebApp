@@ -7,7 +7,7 @@ type TableName = "students" | "programs" | "colleges" | "users"
 
 function parseApiError(err: any) {
     try {
-        return JSON.parse(err.message || "{}");
+        return JSON.parse(err.message || err.error || "{}");
     } catch {
         return { success: false, message: "Network error" };
     }
@@ -96,6 +96,19 @@ export async function uploadImage(object: TableName, image: File, id: string | n
 
     try {
         return await api.upload("/api/files/upload", formData);
+    } catch (err: any) {
+        return parseApiError(err);
+    }
+
+}
+
+export async function deleteImage(object: TableName, id: string | number) {
+    
+    try {
+        return await api.delete("/api/files/delete", {
+            object,
+            id: id.toString()
+        });
     } catch (err: any) {
         return parseApiError(err);
     }

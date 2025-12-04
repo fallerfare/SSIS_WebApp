@@ -71,8 +71,17 @@ export const api = {
             csrf
         ),
 
-    delete: (url: string, csrf = true) =>
-        apiFetch(url, { method: "DELETE" }, csrf),
+    delete: (url: string, body: any = {}, csrf = true) =>
+        apiFetch(
+            url,
+            {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            },
+            csrf
+        ),
+
 
     upload: async (url: string, formData: FormData) =>
         apiFetch(

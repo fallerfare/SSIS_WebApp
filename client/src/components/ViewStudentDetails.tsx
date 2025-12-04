@@ -2,7 +2,7 @@ import type { Student } from "../models/types/students";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom"
-import { fetchObject, getCollegeName, getProgramName, handleDelete, handleUpdate, uploadImage } from "../controller/api";
+import { deleteImage, fetchObject, getCollegeName, getProgramName, handleDelete, handleUpdate, uploadImage } from "../controller/api";
 import "../style/App.css"
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import EditModal from "./popups/EditDialog";
@@ -145,14 +145,24 @@ const StudentDetailsPage = () => {
         setIsDeleteOpen(true)
     }
 
-    const handleConfirmImageRemove = () => {
-        if (!student) return
-
-        const updated = { ...student, id_picture: "NULL" }
-        setStudent(updated);
-        handleConfirmEdit(updated)
-        setRefresh(prev => !prev)
-    }
+    const handleConfirmImageRemove = async () => {
+            if (!student || !student.id_number) return
+    
+            try{
+                setUploading(true)
+                const result = await deleteImage("students", student.id_number);
+                setStudent(prev => prev ? { ...prev, id_picture: undefined } : null);
+                setSuccessMessage(result.message)
+                setIsSuccessOpen(true)
+                setTimeout(() => setRefresh(prev => !prev), 1500)
+            } catch (err: any) {
+                setErrorMessage(err.error)
+                setIsErrorOpen(true)
+            } finally {
+                setUploading(false)
+                setSelectedFile(null)
+            }
+        }
 
     const handleConfirmEdit = async (updated: any) => {
         const id = updated.id_number
@@ -223,6 +233,7 @@ const StudentDetailsPage = () => {
     if (!student) {
         return
     }
+    const hasProfilePic = student?.id_picture;
 
     return (
         <>
@@ -256,10 +267,10 @@ const StudentDetailsPage = () => {
                                 onClick={() => document.getElementById("profileUpload")?.click()}
                             >
                                 {uploading ? (
-                                    <p className="loading-text">Uploading...</p>
+                                    <p className="loading-text">Loading...</p>
                                 ) : selectedFile ? (
                                     <img src={URL.createObjectURL(selectedFile)} alt="Preview" className="profile-img" />
-                                ) : student?.id_picture !== null ? (
+                                ) : hasProfilePic ? (
                                     <img src={student.id_picture} alt="Profile" className="profile-img" />
                                 ) : (
                                     <i className="bi bi-person profile-icon"></i>
@@ -280,7 +291,7 @@ const StudentDetailsPage = () => {
                                     }}
                                     disabled={uploading}
                                 >
-                                    {selectedFile ? "Confirm Upload" : "Upload"}
+                                    {selectedFile ? "Confirm" : "Upload"}
                                 </button>
 
                                 <button
@@ -295,7 +306,7 @@ const StudentDetailsPage = () => {
                                         }
                                     }}
                                     
-                                    disabled={(!selectedFile && (!student?.id_picture || student?.id_picture === "NULL"))}
+                                    disabled={(!selectedFile && !hasProfilePic)}
                                 >
                                     {selectedFile ? "Clear" : "Remove"}
                                 </button>
