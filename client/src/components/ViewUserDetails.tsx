@@ -8,7 +8,7 @@ import SuccessPopup from "./popups/Success";
 import EditIcon from "../assets/icons/edit-idle.png"
 import DeleteIcon from "../assets/icons/trash-bin_close.png"
 import type { UserData } from "@/models/types/UserData";
-import { fetchMe, handleLogout, handleUpdate, uploadImage } from "@/controller/api";
+import { deleteImage, fetchMe, handleLogout, handleUpdate, uploadImage } from "@/controller/api";
 import LogOutModal from "./popups/LogOutDialog";
 import DeleteModal from "./popups/DeleteDialog";
 
@@ -106,13 +106,23 @@ const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
         setIsDeleteOpen(true)
     }
 
-    const handleConfirmImageRemove = () => {
-        if (!user) return
+    const handleConfirmImageRemove = async () => {
+        if (!user || !user.id_number) return
 
-        const updated = { ...user, id_picture: "NULL" }
-        setUser(updated);
-        handleConfirmEdit(updated)
-        setRefresh(prev => !prev)
+        try{
+            setUploading(true)
+            const result = await deleteImage("users", user.id_number);
+            setUser(prev => prev ? { ...prev, id_picture: undefined } : null);
+            setSuccessMessage(result.message)
+            setIsSuccessOpen(true)
+            setTimeout(() => setRefresh(prev => !prev), 1500)
+        } catch (err: any) {
+            setErrorMessage(err.error)
+            setIsErrorOpen(true)
+        } finally {
+            setUploading(false)
+            setSelectedFile(null)
+        }
     }
     
     const handleImageUpload = async () => {
@@ -201,6 +211,8 @@ const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
         return
     }
 
+    const hasProfilePic = user?.id_picture;
+
     return (
         <>
             <div className="page-container">
@@ -225,10 +237,10 @@ const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
                                 onClick={() => document.getElementById("profileUpload")?.click()}
                             >
                                 {uploading ? (
-                                    <p className="loading-text">Uploading...</p>
+                                    <p className="loading-text">Loading...</p>
                                 ) : selectedFile ? (
                                     <img src={URL.createObjectURL(selectedFile)} alt="Preview" className="profile-img" />
-                                ) : user?.id_picture && (user.id_picture !== "NULL" || user.id_picture !== null) ? (
+                                ) : hasProfilePic ? (
                                     <img src={user.id_picture} alt="Profile" className="profile-img" />
                                 ) : (
                                     <i className="bi bi-person profile-icon"></i>
@@ -249,7 +261,7 @@ const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
                                     }}
                                     disabled={uploading}
                                 >
-                                    {selectedFile ? "Confirm Upload" : "Upload"}
+                                    {selectedFile ? "Confirm" : "Upload"}
                                 </button>
 
                                 <button
@@ -264,7 +276,7 @@ const userDetailsPage = ({ onLogout }: UserDetailsPageProps) => {
                                         }
                                     }}
                                     
-                                    disabled={(!selectedFile && (!user?.id_picture || user?.id_picture === "NULL"))}
+                                    disabled={(!selectedFile && !hasProfilePic)}
                                 >
                                     {selectedFile ? "Clear" : "Remove"}
                                 </button>
