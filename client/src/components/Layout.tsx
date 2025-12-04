@@ -23,6 +23,7 @@ function Layout() {
             locator.pathname === "/register"
 
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     const handleLogout = () => {
         setIsLoggedIn(false);
@@ -30,17 +31,18 @@ function Layout() {
     };
 
     useEffect(() => {
+        setLoading(true)
         const checkSession = async () => {
             const data = await fetchMe();
             console.log("isLoggedIn data: ", data)
             console.log("isLoggedIn value: ", data.isLoggedIn)
             setIsLoggedIn(data.isLoggedIn);
+            setLoading(false)
         };
         checkSession();
     }, []);
 
-    console.log(isLoggedIn)
-
+    if (loading) return null;
 
     return (
         <>

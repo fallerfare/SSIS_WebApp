@@ -33,6 +33,7 @@ def edit_users(id_number):
         }), 200
     
     except ValidationError as err:
+        print(f"Validation Error: ", err)
         return jsonify({
             "success": False,
             "error": "Validation failed",
@@ -72,10 +73,11 @@ def edit_students(id_number):
         }), 200
     
     except ValidationError as err:
+        print(f"Validation Error: ", err)
         return jsonify({
             "success": False,
             "error": "Validation failed",
-            "messages": err.messages,  
+            "message": err.messages,  
         }), 400
 
     except Exception as e:
@@ -112,6 +114,7 @@ def edit_programs(program_code):
         }), 200
     
     except ValidationError as err:
+        print(f"Validation Error: ", err)
         return jsonify({
             "success": False,
             "error": "Validation failed",
@@ -152,6 +155,7 @@ def edit_colleges(college_code):
         }), 200
     
     except ValidationError as err:
+        print(f"Validation Error: ", err)
         return jsonify({
             "success": False,
             "error": "Validation failed",
