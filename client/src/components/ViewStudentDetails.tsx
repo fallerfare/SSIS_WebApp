@@ -233,7 +233,7 @@ const StudentDetailsPage = () => {
     if (!student) {
         return
     }
-    const hasProfilePic = student?.id_picture;
+    const hasProfilePic = student?.id_picture && student.id_picture !== "None";
 
     return (
         <>
