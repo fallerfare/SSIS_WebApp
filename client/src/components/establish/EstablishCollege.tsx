@@ -31,13 +31,13 @@ const EnrollmentForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
-            await handleInsert<College>("colleges", formData)
+            const res = await handleInsert<College>("colleges", formData)
 
-            setSuccessMessage("Successfully established new college!")
+            setSuccessMessage(res.message || "Successfully established new college!")
             setIsSuccessOpen(true)
             setFormData(defaultFormData)
         } catch (err: any) {
-            setErrorMessage(err.message)
+            setErrorMessage(err.details || err.error || err.message)
             setIsErrorOpen(true)
         } 
     }
@@ -59,7 +59,7 @@ const EnrollmentForm = () => {
                     gap={6}>
                 <GridItem colStart={1} rowStart={1} colSpan={1}>
                 <FormControl>
-                    <FormLabel className="text-label">College Name</FormLabel>
+                    <FormLabel className="text-label">College Code</FormLabel>
                     <Input   value={formData.college_code}
                                 className="text-box"
                                 onChange={handleChange("college_code")}
@@ -68,7 +68,7 @@ const EnrollmentForm = () => {
                 </GridItem>
                 <GridItem colStart={1} rowStart={2} colSpan={1}>
                 <FormControl>
-                    <FormLabel className="text-label">College</FormLabel>
+                    <FormLabel className="text-label">College Name</FormLabel>
                     <Input   value={formData.college_name}
                                 className="text-box"
                                 onChange={handleChange("college_name")}

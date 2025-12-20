@@ -22,7 +22,29 @@ class Select():
         self.table_name = table
         self.tablequery = f"FROM {table}"
         self.columns = connection.get_columns(f"{table}")
-        self.columnquery = ", ".join([f"{table}.{col}" for col in self.columns])
+
+        if self.table_name == "students":
+            full_expr = (
+                f"TRIM({table}.first_name || ' ' || "
+                f"COALESCE({table}.middle_name || ' ', '') || "
+                f"{table}.last_name)"
+            )
+
+            self.columnquery = ", ".join(
+                [f"{table}.{col}" for col in self.columns] +
+                [f"{full_expr} AS full_name"]
+            )
+
+            self.columns = self.columns + ["full_name"]
+
+            self.aliascolumn["name"] = full_expr 
+            self.aliascolumn["full_name"] = full_expr
+        
+        else:
+            self.columnquery = ", ".join(
+                [f"{table}.{col}" for col in self.columns]
+            )
+    
         return self
     
     def limit(self, limit):
@@ -71,68 +93,114 @@ class Select():
         self.columns = [col.split(" AS ")[-1].split(".")[-1] for col in spec_col]
         return self
     
-    def search(self, tag = None, key = None, table = None, search_mult = {}, connector = "AND"):
+    def search(self, tag = None, key = None, table = None, search_mult = None, connector = "AND"):
         self.searchquery = ""
         self.params = []
 
         if table is None:
             table = self.table_name
 
-        if search_mult:
-            conditions = []
-            for col, val in search_mult.items():
-                search_tag = self.aliascolumn.get(col, f"{table}.{col}")
-                if col == "year_level" or (col == "id_number" and self.table_name == "users"):
+        if search_mult is None:
+            search_mult = {}
+
+        excluded = {"id_picture", "first_name", "middle_name", "last_name"}
+
+        usable_columns = [c for c in self.columns if c not in excluded]
+
+        fullname_expr = f"{self.aliascolumn.get('name')}"
+
+        conditions = []
+
+        for col, val in search_mult.items():
+            if val in (None, ""):
+                continue
+
+            search_tag = self.aliascolumn.get(col, f"{table}.{col}")
+
+            if col == "year_level" or (col == "id_number" and self.table_name == "users"):
+                if val == 0: 
+                    continue
+                else:
                     conditions.append(f"{search_tag} = %s")
                     self.params.append(int(val))
-                elif col == "id_picture":
-                    continue
-                elif val == "Male":  
-                    conditions.append(f"{search_tag} = %s")
-                    self.params.append(val)
-                else:
-                    conditions.append(f"{search_tag} LIKE %s")
-                    self.params.append(f"%{val}%")
-            self.searchquery = "WHERE " + connector.join(conditions)
 
-        elif tag and key not in (None, ""):
+            elif col == "id_picture":
+                continue
+
+            elif val == "Male":  
+                conditions.append(f"{search_tag} = %s")
+                self.params.append(val)
+
+            elif col == "name":
+                conditions.append(f"LOWER({fullname_expr}) LIKE LOWER(%s)")
+                self.params.append(f"%{val.strip()}%")
+
+            else:
+                conditions.append(f"{search_tag} ILIKE %s")
+                self.params.append(f"%{val}%")
+
+        if tag and key not in (None, ""):
             search_tag = self.aliascolumn.get(tag, f"{table}.{tag}")
-            self.searchquery = f"WHERE {search_tag} LIKE %s "
+
             if tag == "year_level" or (tag == "id_number" and self.table_name == "users"):
-                self.searchquery = f"WHERE {search_tag} = %s"
-                self.params.append(int(key))
+                if key == 0:
+                    pass
+                else:
+                    conditions.append(f"{search_tag} = %s")
+                    self.params.append(int(key))
+                
             elif search_tag == "id_picture":
                 pass
+
             elif key == "Male":
-                self.params.append(f"{key}")
+                conditions.append(f"{search_tag} = %s")
+                self.params.append(key)
+
+            elif tag == "name":
+                conditions.append(f"LOWER({fullname_expr}) LIKE LOWER(%s)")
+                self.params.append(f"%{key.strip()}%")
+                print("SEARCHING PRINT NAME: ", tag, key)
+
             else:
+                conditions.append(f"{search_tag} ILIKE %s")
                 self.params.append(f"%{key}%")
 
-        elif key not in (None, ""):            
-            searchAll = []
-            for col in self.columns:
-                if col == "id_picture":
-                    continue  
-                elif col == "year_level" or (col == "id_number" and self.table_name == "users"):
-                    if isinstance(key, int):
-                        searchAll.append(f"{col} = %s")
-                    else:
-                        continue
-                else:
-                    searchAll.append(f"{col} LIKE %s")
+        elif key not in (None, ""):
+            global_cond = []
+            connector = "OR"
 
-            for col in self.columns:
-                if col == "id_picture":
-                    continue        
-                elif col == "year_level" or (col == "id_number" and self.table_name == "users"):
-                    if isinstance(key, int):
-                        self.params.append(key)
+            for col in usable_columns:
+                col_tag = f"{table}.{col}"
+
+                if self.table_name == "students" and col in ["program_code", "college_code", "year_level", "gender", "email"]:
+                    continue
+
+                elif col in ("year_level",) or (col == "id_number" and self.table_name == "users"):
+                    if str(key).isdigit():
+                        if key == 0:
+                            pass
+                        else:
+                            global_cond.append(f"{col_tag} = %s")
+                            self.params.append(int(key))
                     else:
                         continue
+                
+                elif col == "full_name":
+                    conditions.append(f"LOWER({fullname_expr}) LIKE LOWER(%s)")
+                    self.params.append(f"%{key.strip()}%")
+                    
                 else:
+                    global_cond.append(f"{col_tag} ILIKE %s")
                     self.params.append(f"%{key}%")
-            self.searchquery = "WHERE " + " OR ".join(searchAll)
-        
+
+            if global_cond:
+                conditions.extend(global_cond)
+
+        if conditions:
+            self.searchquery = "WHERE " + f" {connector} ".join(conditions)
+        else:
+            self.searchquery = ""
+
         return self
     
     def execute(self, params = None):

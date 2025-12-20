@@ -32,13 +32,13 @@ const EnrollmentForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
-            await handleInsert<Program>("programs", formData)
+            const res = await handleInsert<Program>("programs", formData)
 
-            setSuccessMessage("Successfully established new program!")
+            setSuccessMessage(res.message || "Successfully established new program!")
             setIsSuccessOpen(true)
             setFormData(defaultFormData)
         } catch (err: any) {
-            setErrorMessage(err.message)
+            setErrorMessage(err.details || err.error || err.message)
             setIsErrorOpen(true)        
         }
     }

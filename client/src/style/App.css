@@ -116,7 +116,7 @@ html, body {
   border-radius: 0.5rem;     
   box-shadow: 2px 3px 5px #664400;
   overflow: hidden;
-  width: 40%;
+  width: 65%;
   padding: 30px;
   margin: 50px auto -10px auto;
   z-index: -1;
@@ -141,11 +141,6 @@ html, body {
   width: 80%;
   margin: 0rem auto 0rem auto;
 }
-
-/* .table-scroll {
-  width: 100%;
-  overflow-y: scroll;
-} */
 
 .table {
   width: 100%;
@@ -233,6 +228,7 @@ html, body {
   margin-top: 1rem;
   display: flex;
   position: relative;
+  gap: 5px;
 }
 
 .search-icon {
@@ -435,10 +431,17 @@ html, body {
   border-radius: 5px;
   margin: 7px ;
   padding: 3px;
-  background-color: #cbfafa;
+  color: #2c2c2c;
+  background-color: #dbceb1;
   border-color: #000000;
   border-width: 3px;
   width: 45%;
+}
+
+.auth-card input:hover{
+  color: #000000;
+  background-color: #d4b97f;
+  font-weight: bold;
 }
 
 .auth-button{
@@ -508,15 +511,15 @@ html, body {
 
 .text-box {
   color: #7a7a7a;
-  background-color: #9df7f7;
+  background-color: #dbceb1;
   border: 2px solid #000000;
   border-radius: 7px;
   width: 100%
 }
 
 .text-box:hover{
-  color: #ff4848;
-  background-color: #ffffff;
+  color: #000000;
+  background-color: #d4b97f;
   font-weight: bold;
 }
 
@@ -617,9 +620,9 @@ html, body {
   color: #b32d2d;
 }
 
-.options {
-  color: #7a7a7a;
-  background-color: #9df7f7;
+.options {  
+  color: #2c2c2c;
+  background-color: #dbceb1;
   border: 2px solid #000000;
   border-radius: 7px;
   width: 100%;
@@ -627,8 +630,8 @@ html, body {
 }
 
 .options:hover{
-  color: #ff4848;
-  background-color: #ffffff;
+  color: #000000;
+  background-color: #d4b97f;
   font-weight: bold;
 }
 

@@ -9,13 +9,15 @@ import { fetchTableData } from "../../controller/api"
 
 export type TableName = "students" | "programs" | "colleges"
 
-export function getTable(tableName: TableName,
-                                      onView: (data:any) => void, 
-                                      onEdit: (data:any) => void,
-                                      onDelete: (data:any) => void,
-                                      selectedTag: string,
-                                      searchKey: string) {
-
+export function getTable(
+  tableName: TableName,
+  onView: (data: any) => void,
+  onEdit: (data: any) => void,
+  onDelete: (data: any) => void,
+  selectedTag: string,
+  searchKey: string,
+  selectedFilters: Record<string, string | number | undefined>
+) {
   const [data, setData] = useState<any[]>([])
 
   // ===============
@@ -51,31 +53,38 @@ export function getTable(tableName: TableName,
       pageSize = pagination.pageSize, 
       search_tag = selectedTag,
       search_key = searchKey,
-      sorts = sorting,} = {}) {
+      filters: filterParams = selectedFilters,
+      sorts: sortState = sorting, 
+}: {
+  pageIndex?: number
+  pageSize?: number
+  search_tag?: string
+  search_key?: string
+  filters?: Record<string, string | number | undefined>
+  sorts?: typeof sorting 
+} = {}) {
 
-      const sortParams = sorts.map(s => ({
-        id: s.id,
-        order: s.desc ? "DESC" : "ASC"
-    }));
+  const sortArray: { id: string; order: string }[] = sortState.map(s => ({
+    id: s.id,
+    order: s.desc ? "DESC" : "ASC",
+  }))
 
-        console.log("Sorting on reloadData", sorting)
-        
-    fetchTableData(tableName, pageIndex, pageSize, search_tag, search_key, sortParams)
-      .then((result) => {
-        setData(result.data)
-        setPageCount(Math.ceil(result.total / pagination.pageSize))
-      })
-      .catch((err) => console.error(err))
-  }
+  fetchTableData(tableName, pageIndex, pageSize, search_tag, search_key, sortArray, filterParams)
+    .then(result => {
+      setData(result.data)
+      setPageCount(Math.ceil(result.total / pageSize))
+    })
+    .catch(err => console.error(err))
+}
 
    useEffect(() => {
-    console.log("Sorting on UseEffect", sorting)
       reloadData({
           sorts: sorting,
           search_tag: selectedTag,
           search_key: searchKey,
-      });
-    }, [sorting, selectedTag, searchKey]);
+          filters: selectedFilters,
+    })
+  }, [sorting, selectedTag, searchKey, selectedFilters])
 
   useEffect(() => {
     reloadData()

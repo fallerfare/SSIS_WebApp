@@ -3,7 +3,10 @@ from marshmallow import Schema, fields, validate, ValidationError
 class StudentSchema(Schema):
     id_number = fields.Str(
         required=True,
-        validate=validate.Length(equal=9, error="Student ID must be 9 characters long in the format YYYY-NNNN")
+        validate=validate.Regexp(
+            r'^\d{4}-\d{4}$',
+            error="Student ID must be in the format YYYY-NNNN"
+        )
     )
 
     first_name = fields.Str(

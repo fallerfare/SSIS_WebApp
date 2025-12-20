@@ -20,7 +20,15 @@ type TableProps = {
     tableName: "students" | "programs" | "colleges"
 }
 
+type StudentFilters = {
+  year_level?: number
+  college_code?: string
+  program_code?: string
+  gender?: string
+}
+
 const Table = ({ tableName }: TableProps) => {
+    const navigate = useNavigate()
 
     const [isViewOpen, setIsViewOpen] = useState(false)
     const [viewData, setViewData] = useState<any>(null)
@@ -33,6 +41,7 @@ const Table = ({ tableName }: TableProps) => {
 
     const [selectedTag, setSelectedTag] = useState<string>("")
     const [searchKey, setSearchKey] = useState<string>("")
+    const [selectedFilters, setSelectedFilters] = useState<StudentFilters>({})
 
     const [isErrorOpen, setIsErrorOpen] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string>("")
@@ -40,7 +49,6 @@ const Table = ({ tableName }: TableProps) => {
     const [isSuccessOpen, setIsSuccessOpen] = useState(false)
     const [successMessage, setSuccessMessage] = useState<string>("")
 
-    const navigate = useNavigate()
 
     // REDIRECT
     const handleTableView = (data: any) => {
@@ -67,8 +75,15 @@ const Table = ({ tableName }: TableProps) => {
     }
     
     // REDIRECT
-    const { table, reloadData } = getTable(tableName, handleTableView, handleTableEdit, handleTableDelete, selectedTag, searchKey)
-
+    const { table, reloadData } = getTable(
+        tableName,
+        handleTableView,
+        handleTableEdit,
+        handleTableDelete,
+        selectedTag,
+        searchKey,
+        selectedFilters
+    )
     const getId = (row: any) => {
     switch (tableName) {
       case "students": return row.id_number
@@ -105,8 +120,8 @@ const Table = ({ tableName }: TableProps) => {
                 setIsErrorOpen(true);
             }
 
-    } catch (err: any) {
-            setErrorMessage(err.message)
+    }catch (err: any) {
+            setErrorMessage(err.details || err.error || err.message)
             setIsErrorOpen(true)
     } 
   }
@@ -114,37 +129,39 @@ const Table = ({ tableName }: TableProps) => {
   const handleConfirmDelete = async () => {
         const id = getId(deleteData)
         try {
-            const response = await handleDelete(tableName, id)
+            await handleDelete(tableName, id)
 
-            if (!response.success) {
-                if (response.error === "ForeignKeyViolation") {
-                    setErrorMessage(response.message || "Delete restricted.")
-                    setIsErrorOpen(true)
-                } else {
-                    setErrorMessage(response.message || "An unexpected error occurred.")
-                    setIsErrorOpen(true)
-                }
-            } else {
             setSuccessMessage(`Succesfully deleted ${tableName}`)
             setIsSuccessOpen(true)
             reloadData()
+        } catch (err: any) {
+            console.log(err)
+            if (err.error === "ForeignKeyViolation") {
+                setErrorMessage(err.details || "Delete restricted.")
+                setIsErrorOpen(true)
+            } else {
+                setErrorMessage(err.details || "An unexpected error occurred.")
+                setIsErrorOpen(true)
             }
-        } catch (err) {
-            setErrorMessage("Server connection error. Please try again.")
-            setIsErrorOpen(true)
         } finally {
             setIsDeleteOpen(false)
         }
     }
 
-  const handleFilters = async () => {
-    table.setPageIndex(0)
-    reloadData({ search_tag: selectedTag, search_key: searchKey })
-  }
+    const handleFilters = (tag: string, key: string, filters: StudentFilters) => {
+        table.setPageIndex(0)
+        reloadData({
+        pageIndex: 0,
+        search_tag: tag,
+        search_key: key,
+        filters,
+        })
+    }
 
   useEffect(() => {
       setSelectedTag("")
       setSearchKey("")
+    setSelectedFilters({})
   
       table.setPageIndex(0)
       table.resetSorting()
@@ -155,6 +172,7 @@ const Table = ({ tableName }: TableProps) => {
         search_tag: "",
         search_key: "",
         sorts: [],
+        filters: {},
       })
     }, [tableName])
 
@@ -175,6 +193,8 @@ const Table = ({ tableName }: TableProps) => {
                 setSelectedKey={setSearchKey}
                 selectedTag={selectedTag}
                 setSelectedTag={setSelectedTag}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
             />
         </Box>
         <Box className="table-card">

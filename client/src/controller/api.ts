@@ -6,21 +6,34 @@ import type { UserData } from "@/models/types/UserData";
 type TableName = "students" | "programs" | "colleges" | "users"
 
 function parseApiError(err: any) {
+    let parsed: any = {};
     try {
-        return JSON.parse(err.message || err.error || "{}");
+        parsed = JSON.parse(err.message || "{}");
     } catch {
-        return { success: false, message: "Network error" };
+        return { error: "Network error", details: null };
     }
+
+    let details = parsed.details;
+    if (details && typeof details === "object") {
+        details = Object.values(details)
+            .flat()
+            .join(", "); 
+    }
+
+    return {
+        error: parsed.error || "Unknown error",
+        details: details || null,
+        status: parsed.status || null
+    };
 }
-
-
 
 export async function fetchTableData(table: string,
                                                         page: number,
                                                         limit: number,
                                                         tag: string,
                                                         key: string,
-                                                        sorts: { id: string; order: string }[]
+                                                        sorts: { id: string; order: string }[],
+                                                        filters: Record<string, string | number | undefined> = {}
                                                         ) {
  
     const params = new URLSearchParams({
@@ -29,6 +42,7 @@ export async function fetchTableData(table: string,
         tag: tag.toString(),
         key: key.toString(),
         sorts: JSON.stringify(sorts), 
+        filters: JSON.stringify(filters), 
     })
 
     return api.get(`/api/table/${table}?${params.toString()}`);
@@ -58,19 +72,21 @@ export async function getProgramList(college_code: string): Promise<{ data: Prog
 export async function handleInsert<T>(tableName: TableName, data: T) {
     try {
         const res =  await api.post(`/api/create/${tableName}`, data);
-        return res
+        console.log(res)
+        if ("error" in res) throw res;
+        return res;
     } catch (err: any) {
-        return parseApiError(err);
+        throw parseApiError(err);
     }
-
 }
 
 export async function handleUpdate<T>(tableName: TableName, updated: T, id: string | number) {
     try {
         const res = await api.put(`/api/edit/${tableName}/${id}`, updated);
-        return res
+        if ("error" in res) throw res;
+        return res;
     } catch (err: any) {
-        return parseApiError(err);
+        throw parseApiError(err);
     }
 
 }
@@ -78,9 +94,10 @@ export async function handleUpdate<T>(tableName: TableName, updated: T, id: stri
 export async function handleDelete(tableName: TableName, id: string | number) {
     try {
         const res = await api.delete(`/api/delete/${tableName}/${id}`);
-        return res
+        if ("error" in res) throw res;
+        return res;
     } catch (err: any) {
-        return parseApiError(err);
+        throw parseApiError(err);
     }
 }
 
@@ -97,7 +114,7 @@ export async function uploadImage(object: TableName, image: File, id: string | n
     try {
         return await api.upload("/api/files/upload", formData);
     } catch (err: any) {
-        return parseApiError(err);
+        throw parseApiError(err);
     }
 
 }
@@ -110,7 +127,7 @@ export async function deleteImage(object: TableName, id: string | number) {
             id: id.toString()
         });
     } catch (err: any) {
-        return parseApiError(err);
+        throw parseApiError(err);
     }
 
 }
@@ -124,7 +141,7 @@ export async function loginUser(data: UserData) {
         const res =  await api.post("/api/auth/login", data)
         return res
     } catch (err: any) {
-        return parseApiError(err);
+        throw parseApiError(err);
     }
 }
 
@@ -133,6 +150,6 @@ export async function registerUser(data: UserData) {
         const res = await api.post("/api/auth/register", data)
         return res
     } catch (err: any) {
-        return parseApiError(err);
+        throw parseApiError(err);
     }
 }

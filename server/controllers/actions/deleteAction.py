@@ -50,7 +50,7 @@ def delete_programs(program_code):
             "success": False,
             "error": "ForeignKeyViolation",
             "constraint": constraint_name,
-            "message": message
+            "details": message
         }), 400
 
 
@@ -83,6 +83,6 @@ def delete_colleges(college_code):
             "success": False,
             "error": "ForeignKeyViolation",
             "constraint": constraint_name,
-            "message": message
+            "details": message
         }), 400
     

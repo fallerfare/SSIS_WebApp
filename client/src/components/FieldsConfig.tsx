@@ -23,7 +23,7 @@ export const GenderDropdown = ({
       className="options"
       required
     >
-      <option value="" disabled hidden>
+      <option value="">
         Select Gender
       </option>
       {genders.map((gender) => (
@@ -42,8 +42,8 @@ export const YearLevelDropdown = ({
   selectedYear,
   setSelectedYear,
 }: {
-  selectedYear: number
-  setSelectedYear: (value: number) => void
+  selectedYear: number | ""
+  setSelectedYear: (value: number | "") => void
 }) => {
   const years = [1, 2, 3, 4, 5]
 
@@ -51,12 +51,14 @@ export const YearLevelDropdown = ({
     <select
       id="year"
       value={selectedYear}                   
-      onChange={(e) => setSelectedYear(Number(e.target.value))}
+      onChange={(e) =>
+        setSelectedYear(e.target.value === "" ? "" : Number(e.target.value))
+      }
       className="options"
       required
     >
 
-      <option value="" disabled hidden>
+      <option value="">
         Select Year Level
       </option>
       {years.map((ylevel) => (
@@ -101,7 +103,7 @@ export const CollegesDropdown = ({
       className="options"
       required
     >
-      <option value="" disabled hidden>
+      <option value="">
         Select College
       </option>
       {listColleges.map((college) => (
@@ -152,7 +154,7 @@ export const ProgramsDropdown = ({
       disabled={!selectedCollege}
       required
     >
-      <option value="" disabled hidden>
+      <option value="">
         Select Program
       </option>
       {listPrograms.map((program) => (

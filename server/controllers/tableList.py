@@ -21,50 +21,40 @@ def list(table):
     tag = request.args.get('tag', '')
     key = request.args.get('key', '')
 
-    sorts_list = default_sort
-
     sorts_str = request.args.get("sorts", "[]")
     try:
-        sorts_list = json.loads(sorts_str)
-        if not isinstance(sorts_list, list) or len(sorts_list) == 0:
+        sorts = json.loads(sorts_str)
+        if not isinstance(sorts, list) or len(sorts) == 0:
             sorts = default_sort
     except Exception:
         sorts = default_sort
+
+    filters_str = request.args.get("filters", "{}")
+    try:
+        filters = json.loads(filters_str)
+        if not isinstance(filters, dict):
+            filters = {}
+    except Exception:
+        filters = {}
 
     limit = int(request.args.get('size', 10)) 
     page = int(request.args.get('page', 0))
 
     selector = Select()   
 
-    if tag == "name":
-        total       = selector\
-                            .table(table)\
-                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key}, connector = " OR ")\
-                            .execute()\
-                            .retDict()
-        contents = selector\
-                            .table(table)\
-                            .search(search_mult={"first_name": key, "middle_name": key, "last_name": key}, connector = " OR ")\
-                            .limit(limit)\
-                            .offset(page)\
-                            .sort(sorts_list)\
-                            .execute()\
-                            .retDict()
-
-    else:
-        total       = selector\
-                            .table(table)\
-                            .search(tag, key)\
-                            .execute()\
-                            .retDict()
-        contents = selector\
-                            .table(table)\
-                            .search(tag, key)\
-                            .limit(limit)\
-                            .offset(page)\
-                            .sort(sorts_list)\
-                            .execute()\
-                            .retDict()
+    total       = selector\
+                        .table(table)\
+                        .search(tag = tag, key = key, search_mult=filters)\
+                        .execute()\
+                        .retDict()
+    contents = selector\
+                        .table(table)\
+                        .search(tag = tag, key = key, search_mult=filters)\
+                        .limit(limit)\
+                        .offset(page)\
+                        .sort(sorts)\
+                        .execute()\
+                        .retDict()
 
     return jsonify({
         "data": contents,

@@ -17,7 +17,7 @@ const EnrollmentForm = () => {
     last_name: "",
     email: "",
     gender: "",
-    year_level: 1,
+    year_level: "",
     college_code: "",
     program_code: "",
     id_picture: ""
@@ -40,9 +40,9 @@ const EnrollmentForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
-            await handleInsert<Student>("students", formData)
+            const res = await handleInsert<Student>("students", formData)
 
-            setSuccessMessage("Successfully enrolled new student!")
+            setSuccessMessage(res.message || "Successfully enrolled new student!")
             setIsSuccessOpen(true)
             setFormData(defaultFormData)
         } catch (err: any) {
@@ -68,6 +68,15 @@ const EnrollmentForm = () => {
                     gap={6}>
                 <GridItem colStart={1} rowStart={1} colSpan={2}>
                 <FormControl isRequired>
+                    <FormLabel className="text-label">Student ID</FormLabel>
+                    <Input   value={formData.id_number}
+                                className="text-box"
+                                onChange={handleChange("id_number")} 
+                                required/>
+                </FormControl>
+                </GridItem>
+                <GridItem colStart={1} rowStart={2} colSpan={2}>
+                <FormControl isRequired>
                     <FormLabel className="text-label">First Name</FormLabel>
                     <Input   value={formData.first_name}
                                 className="text-box"
@@ -75,7 +84,7 @@ const EnrollmentForm = () => {
                                 required/>
                 </FormControl>
                 </GridItem>
-                <GridItem colStart={3} rowStart={1} colSpan={1}>
+                <GridItem colStart={3} rowStart={2} colSpan={1}>
                 <FormControl>
                     <FormLabel className="text-label">Middle Name</FormLabel>
                     <Input   value={formData.middle_name}
@@ -84,8 +93,8 @@ const EnrollmentForm = () => {
                                 required/>
                 </FormControl>
                 </GridItem>
-                <GridItem colStart={4} rowStart={1} colSpan={1}>
-                <FormControl>
+                <GridItem colStart={4} rowStart={2} colSpan={1}>
+                <FormControl isRequired>
                     <FormLabel className="text-label">Last Name</FormLabel>
                     <Input value={formData.last_name}
                                 className="text-box"
@@ -93,8 +102,8 @@ const EnrollmentForm = () => {
                                 required/>
                 </FormControl>
                 </GridItem>
-                <GridItem colStart={1} rowStart={2} colSpan={4}>
-                <FormControl>
+                <GridItem colStart={1} rowStart={3} colSpan={4}>
+                <FormControl isRequired>
                     <FormLabel className="text-label">Email</FormLabel>
                     <Input value={formData.email}
                                 className="text-box"
@@ -102,8 +111,8 @@ const EnrollmentForm = () => {
                                 required/>
                 </FormControl>
                 </GridItem>
-                <GridItem colStart={1} rowStart={3} colSpan={1}>
-                <FormControl>
+                <GridItem colStart={1} rowStart={4} colSpan={1}>
+                <FormControl isRequired>
                     <FormLabel className="text-label">Gender</FormLabel>
                     <GenderDropdown
                         selectedGender={formData.gender}
@@ -113,8 +122,8 @@ const EnrollmentForm = () => {
                     />
                 </FormControl>
                 </GridItem>
-                <GridItem colStart={2} rowStart={3} colSpan={1}>
-                <FormControl>
+                <GridItem colStart={2} rowStart={4} colSpan={1}>
+                <FormControl isRequired>
                     <FormLabel className="text-label">Year Level</FormLabel>
                     <YearLevelDropdown
                         selectedYear={formData.year_level}
@@ -124,34 +133,25 @@ const EnrollmentForm = () => {
                     />
                 </FormControl>
                 </GridItem>
-                <GridItem colStart={3} rowStart={3} colSpan={2}>
-                <FormControl>
-                    <FormLabel className="text-label">Student ID</FormLabel>
-                    <Input   value={formData.id_number}
-                                className="text-box"
-                                onChange={handleChange("id_number")} 
-                                required/>
+                <GridItem colStart={1} rowStart={5} colSpan={2}>
+                <FormControl isRequired>
+                    <FormLabel className="text-label">College</FormLabel>
+                    <CollegesDropdown
+                        selectedCollege={formData.college_code}
+                        setSelectedCollege={(val) =>
+                            setFormData({ ...formData, college_code: val })
+                            }
+                    />
                 </FormControl>
                 </GridItem>
-                <GridItem colStart={1} rowStart={4} colSpan={2}>
-                <FormControl>
+                 <GridItem colStart={3} rowStart={5} colSpan={2}>
+                <FormControl isRequired>
                     <FormLabel className="text-label">Program</FormLabel>
                     <ProgramsDropdown
                         selectedCollege={formData.college_code}
                         selectedProgram={formData.program_code}
                         setSelectedProgram={(val) =>
                             setFormData({ ...formData, program_code: val })
-                            }
-                    />
-                </FormControl>
-                </GridItem>
-                <GridItem colStart={3} rowStart={4} colSpan={2}>
-                <FormControl>
-                    <FormLabel className="text-label">College</FormLabel>
-                    <CollegesDropdown
-                        selectedCollege={formData.college_code}
-                        setSelectedCollege={(val) =>
-                            setFormData({ ...formData, college_code: val })
                             }
                     />
                 </FormControl>

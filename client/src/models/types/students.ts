@@ -6,7 +6,7 @@ export type Student = {
     last_name: string
     gender: string
     email: string
-    year_level: number
+    year_level: number | ""
     program_code: string
     college_code: string
     id_picture?: string

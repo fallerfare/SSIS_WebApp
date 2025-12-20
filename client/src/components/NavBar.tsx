@@ -58,17 +58,17 @@ function NavBar() {
                 <div className='nav-dropdown'>
                 <NavDropdown.Item>
                   <Nav.Link as={NavLink} to="/enrollment">
-                    admission
+                    enrollment
                   </Nav.Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item>
                   <Nav.Link as={NavLink} to="/establish/programs">
-                    create program
+                    establish program
                   </Nav.Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item>
                   <Nav.Link as={NavLink} to="/establish/colleges">
-                    create college
+                    establish college
                   </Nav.Link>
                 </NavDropdown.Item>
                 </div>
